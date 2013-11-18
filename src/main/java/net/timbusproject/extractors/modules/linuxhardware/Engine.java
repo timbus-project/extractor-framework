@@ -1,15 +1,14 @@
 package net.timbusproject.extractors.modules.linuxhardware;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import net.timbusproject.extractors.modules.Endpoint;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.Scanner;
 
 /**
@@ -22,18 +21,20 @@ import java.util.Scanner;
 public class Engine {
     public void run(SSHManager instance) throws JSchException, IOException, JSONException {
         //uncomment these for testing proposes
-        instance = new SSHManager(
-                "jorge",
-                "",
-                "10.10.96.59",
-                "",
-                "/home/cmdesktop/.ssh/id_rsa"
-        );
+        //SSHManager instance = sshManager;
+//        instance = new SSHManager(
+//                "jorge",
+//                "",
+//                "10.10.96.59",
+//                "",
+//                "/home/cmdesktop/.ssh/id_rsa"
+//        );
+
         instance.connect();
         //Get cpu
-        String result = instance.sendCommand("lscpu");
-//        System.out.println(result);
-       JSONObject jsonObject =  parseCPU(result);
+        String result = instance.sendCommand("sudo cat /sys/class/dmi/id/");
+        System.out.println("RESULT " + result);
+        JSONObject jsonObject = parseCPU(result);
         instance.close();
         JSONArray jsonArray = new JSONArray();
         jsonArray.put(jsonObject);
@@ -63,7 +64,7 @@ public class Engine {
                     case "byte order":
                     case "cpu op-mode(s)":
                     case "architecture":
-                        jsonObject.put(tmp[i], tmp[i+1].trim());
+                        jsonObject.put(tmp[i], tmp[i + 1].trim());
                         break;
                 }
             }
@@ -71,5 +72,6 @@ public class Engine {
 //        System.out.println("JSON OBJECT: " + jsonObject.toString(2));
         return jsonObject;
     }
+
 }
 

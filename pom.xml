@@ -90,17 +90,12 @@
             <version>0.1.41</version>
             <!--<scope>provided</scope>-->
         </dependency>
-        <dependency>
-            <groupId>net.timbusproject.expopulator</groupId>
-            <artifactId>converters-core</artifactId>
-            <version>1.0.0-RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>net.timbusproject.expopulator</groupId>
-            <artifactId>converters-core</artifactId>
-            <version>1.0.0-RELEASE</version>
-        </dependency>
 
+        <dependency>
+            <groupId>net.timbusproject.expopulator</groupId>
+            <artifactId>converters-core</artifactId>
+            <version>1.0.0-RELEASE</version>
+        </dependency>
 
     </dependencies>
 

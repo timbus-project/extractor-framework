@@ -13,15 +13,20 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class TestEngine {
-    public static void main (String...args) throws IOException, JSchException, JSONException {
+    public static void main(String... args) throws IOException, JSchException, JSONException {
         SSHManager instance = new SSHManager(
-                "jorge",
+                "cmdesktop",
+                "cmdesktop",
+                "localhost",
                 "",
-                "10.10.96.59",
-                "",
-                "/home/cmdesktop/.ssh/id_rsa"
+                ""
         );
-        Engine engine =  new Engine();
-        engine.run(instance);
+        instance.connect();
+//        Engine engine =  new Engine();
+//        engine.run(instance);
+//        instance.sendCommandSudo("cat /sys/class/dmi/id/board_serial", "cmdesktop");
+        String result = instance.sendCommandSudo("dmidecode --type baseboard", "cmdesktop");
+        instance.close();
+        System.out.println("RESULT: " + result);
     }
 }

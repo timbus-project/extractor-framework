@@ -4,6 +4,7 @@ import com.jcraft.jsch.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -109,6 +110,41 @@ public class SSHManager {
             return null;
         }
         return outputBuffer.toString();
+    }
+
+    public String sendCommandSudo(String command, String sudoPass) throws IOException,JSchException{
+        Channel channel = sesConnection.openChannel("exec");
+        ((ChannelExec)channel).setCommand("sudo -S -p '' " + command);
+
+
+        InputStream in=channel.getInputStream();
+        OutputStream out=channel.getOutputStream();
+        ((ChannelExec)channel).setErrStream(System.err);
+
+        channel.connect();
+
+        out.write((sudoPass+"\n").getBytes());
+        out.flush();
+
+        StringBuilder stringBuilder = new StringBuilder();
+        byte[] tmp=new byte[1024];
+        while(true){
+            while(in.available()>0){
+                int i=in.read(tmp, 0, 1024);
+                if(i<0)break;
+                String str = new String(tmp,0,i);
+                stringBuilder.append(str);
+            }
+            if(channel.isClosed()){
+//                Uncomment for debug purposes
+//                System.out.println("exit-status: "+channel.getExitStatus());
+                break;
+            }
+            try{Thread.sleep(1000);}catch(Exception ee){}
+        }
+        channel.disconnect();
+//        System.out.println(stringBuilder.toString());
+        return stringBuilder.toString();
     }
 
     public void close() {
