@@ -22,11 +22,13 @@ public class TestEngine {
                 ""
         );
         instance.connect();
-//        Engine engine =  new Engine();
+        instance.sendCommandSudo("dmidecode --type baseboard", "cmdesktop");
+//  Engine engine =  new Engine();
 //        engine.run(instance);
-//        instance.sendCommandSudo("cat /sys/class/dmi/id/board_serial", "cmdesktop");
-        String result = instance.sendCommandSudo("dmidecode --type baseboard", "cmdesktop");
+
         instance.close();
-        System.out.println("RESULT: " + result);
+//        instance.sendCommandSudo("cat /sys/class/dmi/id/board_serial", "cmdesktop");
+//        String result = instance.sendCommandSudo("dmidecode --type baseboard", "cmdesktop");
+//        System.out.println("RESULT: " + result);
     }
 }

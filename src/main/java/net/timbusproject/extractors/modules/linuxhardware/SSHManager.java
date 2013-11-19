@@ -114,8 +114,9 @@ public class SSHManager {
 
     public String sendCommandSudo(String command, String sudoPass) throws IOException,JSchException{
         Channel channel = sesConnection.openChannel("exec");
-        ((ChannelExec)channel).setCommand("sudo -S -p '' " + command);
+        ((ChannelExec)channel).setCommand("sudo -S -p '' "+command);
 
+        StringBuilder stringBuilder = new StringBuilder();
 
         InputStream in=channel.getInputStream();
         OutputStream out=channel.getOutputStream();
@@ -123,10 +124,9 @@ public class SSHManager {
 
         channel.connect();
 
-        out.write((sudoPass+"\n").getBytes());
+        out.write((sudoPass + "\n").getBytes());
         out.flush();
 
-        StringBuilder stringBuilder = new StringBuilder();
         byte[] tmp=new byte[1024];
         while(true){
             while(in.available()>0){
@@ -136,16 +136,17 @@ public class SSHManager {
                 stringBuilder.append(str);
             }
             if(channel.isClosed()){
-//                Uncomment for debug purposes
-//                System.out.println("exit-status: "+channel.getExitStatus());
+                System.out.println("exit-status: "+channel.getExitStatus());
                 break;
             }
             try{Thread.sleep(1000);}catch(Exception ee){}
         }
         channel.disconnect();
+        close();
 //        System.out.println(stringBuilder.toString());
         return stringBuilder.toString();
     }
+
 
     public void close() {
         sesConnection.disconnect();

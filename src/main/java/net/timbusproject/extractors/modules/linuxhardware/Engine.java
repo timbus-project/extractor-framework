@@ -31,18 +31,21 @@ public class Engine {
 //        );
 
         instance.connect();
-        //Get cpu
-        String result = instance.sendCommand("sudo cat /sys/class/dmi/id/");
-        System.out.println("RESULT " + result);
-        JSONObject jsonObject = parseCPU(result);
+        //Get CPU
+//        String result = instance.sendCommand("lscpu");
+//        System.out.println("RESULT " + result);
+//        JSONObject jsonObject = parseCPU(result);
+        instance.sendCommandSudo("dmidecode --type baseboard", "cmdesktop");
+
         instance.close();
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.put(jsonObject);
-        writeToFile(jsonArray);
+//        System.out.println(result);
+//        JSONArray jsonArray = new JSONArray();
+//        jsonArray.put(jsonObject);
+//        writeToFile(jsonArray);
     }
 
     private void writeToFile(JSONArray jsonArray) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
-        PrintWriter writer = new PrintWriter("output.json", "UTF-8");
+        PrintWriter writer = new PrintWriter("output_2.json", "UTF-8");
         writer.write(jsonArray.toString(2));
         writer.close();
     }
@@ -71,6 +74,20 @@ public class Engine {
         }
 //        System.out.println("JSON OBJECT: " + jsonObject.toString(2));
         return jsonObject;
+    }
+
+    private String parseMotherBoard(String result){
+        Scanner scanner = new Scanner(result);
+        String [] tmp;
+        while(scanner.hasNextLine()){
+            System.out.println(scanner.nextLine());
+
+        }
+        return null;
+    }
+
+    private String parseGPU(String result){
+        return null;
     }
 
 }
