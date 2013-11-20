@@ -21,12 +21,9 @@ public class TestEngine {
                 "",
                 ""
         );
-        instance.connect();
-        instance.sendCommandSudo("dmidecode --type baseboard", "cmdesktop");
-//  Engine engine =  new Engine();
-//        engine.run(instance);
+        Engine engine = new Engine();
+        engine.run(instance);
 
-        instance.close();
 //        instance.sendCommandSudo("cat /sys/class/dmi/id/board_serial", "cmdesktop");
 //        String result = instance.sendCommandSudo("dmidecode --type baseboard", "cmdesktop");
 //        System.out.println("RESULT: " + result);

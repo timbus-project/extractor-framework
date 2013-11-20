@@ -1,9 +1,6 @@
 package net.timbusproject.extractors.modules.linuxhardware;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
-import net.timbusproject.extractors.modules.Endpoint;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -20,74 +17,63 @@ import java.util.Scanner;
  */
 public class Engine {
     public void run(SSHManager instance) throws JSchException, IOException, JSONException {
-        //uncomment these for testing proposes
-        //SSHManager instance = sshManager;
-//        instance = new SSHManager(
-//                "jorge",
-//                "",
-//                "10.10.96.59",
-//                "",
-//                "/home/cmdesktop/.ssh/id_rsa"
-//        );
 
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
         instance.connect();
-        //Get CPU
-//        String result = instance.sendCommand("lscpu");
-//        System.out.println("RESULT " + result);
-//        JSONObject jsonObject = parseCPU(result);
-        instance.sendCommandSudo("dmidecode --type baseboard", "cmdesktop");
+        //get Motherboard
+//        String result = ;
+//        jsonObject.put("CPU", parse(result));
+//        jsonObject.put("MotherBoard",parse(result));
+//        System.out.println("JSON OBJECT " + jsonObject.toString(2));
 
+//        jsonObject.put("Output",instance.sendCommandSudo("lshw -json", "cmdesktop").trim());
+//        System.out.println("OUTPUT " + instance.sendCommandSudo("lshw -json", "cmdesktop"));
+//        jsonArray.put(jsonObject.toString(2));
+//        jsonArray.put(getComponent("dmidecode --type baseboard","Motherboard",instance));
+//        jsonArray.put(getComponent("lshw -C display","Graphic Card",instance));
+        writeToFile(instance.sendCommandSudo("lshw -json", "cmdesktop"));
         instance.close();
 //        System.out.println(result);
-//        JSONArray jsonArray = new JSONArray();
-//        jsonArray.put(jsonObject);
-//        writeToFile(jsonArray);
     }
 
-    private void writeToFile(JSONArray jsonArray) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
-        PrintWriter writer = new PrintWriter("output_2.json", "UTF-8");
-        writer.write(jsonArray.toString(2));
-        writer.close();
-    }
-
-    private JSONObject parseCPU(String result) throws JSONException {
-        Scanner scanner = new Scanner(result);
-        String[] tmp;
+    private JSONObject getComponent(String command, String component, SSHManager instance) throws IOException, JSchException, JSONException {
+        instance.connect();
+        String result = instance.sendCommandSudo(command, "cmdesktop");
         JSONObject jsonObject = new JSONObject();
-        while (scanner.hasNextLine()) {
-            tmp = scanner.nextLine().split(":");
-            for (int i = 0; i < tmp.length; i++) {
-//                System.out.println("KEY :" + tmp[i]);
-                switch (tmp[i].toLowerCase()) {
-                    case "cpu mhz":
-                    case "cpu family":
-                    case "vendor id":
-                    case "on-line cpu(s) list":
-                    case "cpu(s)":
-                    case "byte order":
-                    case "cpu op-mode(s)":
-                    case "architecture":
-                        jsonObject.put(tmp[i], tmp[i + 1].trim());
-                        break;
-                }
-            }
-        }
-//        System.out.println("JSON OBJECT: " + jsonObject.toString(2));
+        jsonObject.put(component, parse(result));
+        instance.close();
         return jsonObject;
     }
 
-    private String parseMotherBoard(String result){
-        Scanner scanner = new Scanner(result);
-        String [] tmp;
-        while(scanner.hasNextLine()){
-            System.out.println(scanner.nextLine());
-
-        }
-        return null;
+    private void writeToFile(String output) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
+        PrintWriter writer = new PrintWriter("output_2.json", "UTF-8");
+        writer.write(output);
+        writer.close();
     }
 
-    private String parseGPU(String result){
-        return null;
+    private JSONObject parse(String result) throws JSONException {
+        Scanner scanner = new Scanner(result);
+        JSONObject jsonObject = new JSONObject();
+//        cleanHeader(scanner);
+//        String info = scanner.nextLine();
+        while (scanner.hasNextLine()) {
+            String[] tmp = scanner.nextLine().trim().split(":");
+//            jsonObject.put(scanner.next(),scanner.next());
+            String key = "", value = "";
+            for (int i = 0, tmpLength = tmp.length; i < tmpLength; i++) {
+//                String str = tmp[i];
+                if (i % 2 != 0) {
+                    value = tmp[i].trim();
+                } else if (i % 2 == 0) {
+//                    System.out.println(tmp[i]);
+                    key = tmp[i].trim();
+                }
+                jsonObject.put(key, value);
+            }
+        }
+        System.out.println(jsonObject.toString(2));
+        return jsonObject;
     }
 
 }
