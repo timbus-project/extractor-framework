@@ -150,41 +150,6 @@ public class SSHManager {
         return stringBuilder.toString();
     }
 
-    public JSONArray sendCommandSudo2 (String command, String sudoPass) throws IOException,JSchException{
-        Channel channel = sesConnection.openChannel("exec");
-        ((ChannelExec)channel).setCommand("sudo -S -p '' "+command);
-
-        JSONArray jsonArray = new JSONArray();
-
-        InputStream in=channel.getInputStream();
-        OutputStream out=channel.getOutputStream();
-        ((ChannelExec)channel).setErrStream(System.err);
-
-        channel.connect();
-
-        out.write((sudoPass + "\n").getBytes());
-        out.flush();
-
-        byte[] tmp=new byte[1024];
-        while(true){
-            while(in.available()>0){
-                int i=in.read(tmp, 0, 1024);
-                if(i<0)break;
-                String str = new String(tmp,0,i);
-                jsonArray.put(str.trim());
-            }
-            if(channel.isClosed()){
-                System.out.println("exit-status: "+channel.getExitStatus());
-                break;
-            }
-            try{Thread.sleep(1000);}catch(Exception ee){}
-        }
-        channel.disconnect();
-        close();
-//        System.out.println(stringBuilder.toString());
-        return jsonArray;
-    }
-
 
     public void close() {
         sesConnection.disconnect();

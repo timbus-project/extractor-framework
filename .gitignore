@@ -36,3 +36,6 @@ bin/
 
 # PDT-specific
 .buildpath
+
+# Output Files
+*.json

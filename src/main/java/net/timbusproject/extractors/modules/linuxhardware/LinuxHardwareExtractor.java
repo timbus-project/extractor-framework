@@ -54,9 +54,9 @@ public class LinuxHardwareExtractor implements IExtractor{
                 "/home/cmdesktop/.ssh/id_rsa"
         );
         Engine engine = new Engine();
-        engine.run(instance);
+        String result = engine.run(instance);
 
 
-        return null;
+        return result;
     }
 }
