@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.timbusproject.extractors</groupId>
+    <artifactId>debian-software-extractor</artifactId>
+    <packaging>bundle</packaging>
+    <name>Debian Software Extractor</name>
+    <version>1.0-SNAPSHOT</version>
+    <url>http://www.springframework.org/osgi</url>
+
+    <properties>
+        <compiler.version>1.7</compiler.version>
+        <springframework.version>3.2.3.RELEASE</springframework.version>
+        <osgi.version>4.3.1</osgi.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.timbusproject.extractors</groupId>
+            <artifactId>extractors-core</artifactId>
+            <version>1.0.0-RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <!--
+            Also imports:
+            org.springframework:spring-beans
+            org.springframework:spring-core
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${springframework.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>${osgi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>${osgi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+            <version>1.3.4</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>stax</groupId>
+                    <artifactId>stax-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jcraft.jsch</groupId>
+            <artifactId>com.springsource.com.jcraft.jsch</artifactId>
+            <version>0.1.41</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.cli</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.3</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- for packaging as an OSGi bundle, we use the maven-bundle-plugin -->
+
+    <!-- see http://felix.apache.org/site/maven-bundle-plugin-bnd.html for more info -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${compiler.version}</source>
+                    <target>${compiler.version}</target>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <version>2.4.0</version>
+                <configuration>
+                    <manifestLocation>META-INF</manifestLocation>
+                    <instructions>
+                        <Export-Package>!*</Export-Package>
+                        <Import-Package>*</Import-Package>
+                        <!--
+                           add ,plugin.xml if it's present i.e.
+                           src/main/resources,plugin.xml
+                        -->
+                        <!--<Include-Resource>src/main/resources</Include-Resource>-->
+                    </instructions>
+                </configuration>
+            </plugin>
+
+            <!-- generate manifest automatically once the classes are processed -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.4.0</version>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>cli</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathLayoutType>repository</classpathLayoutType>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>net.timbusproject.extractors.modules.debiansoftwareextractor.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <repositories>
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+<!--
+    <repositories>
+        <repository>
+            <id>apache.m2.incubator</id>
+            <name>Apache M2 Incubator Repository</name>
+            <url>http://people.apache.org/repo/m2-incubating-repository/</url>
+        </repository>
+        <repository>
+            <id>eclipse-repository</id>
+            <name>Eclipse Repository</name>
+            <url>http://repo1.maven.org/eclipse/</url>
+        </repository>
+        <repository>
+            <id>safehaus-repository</id>
+            <name>Safehaus Repository</name>
+            <url>http://m2.safehaus.org</url>
+        </repository>
+        <repository>
+            <id>spring-ext</id>
+            <name>Spring External Dependencies Repository</name>
+            <url>
+                https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/
+            </url>
+        </repository>
+
+
+        <repository>
+            <id>i21-s3-osgi-repo</id>
+            <name>i21 osgi artifacts repo</name>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <url>http://s3.amazonaws.com/maven.springframework.org/osgi</url>
+        </repository>
+
+
+        <repository>
+            <id>i21-s3-maven-repo</id>
+            <name>i21 S3 milestone repo</name>
+            <url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
+        </repository>
+
+        &lt;!&ndash;
+
+        Spring-DM snapshot repository - disabled by default
+
+        <repository>
+         <snapshots><enabled>true</enabled></snapshots>
+          <id>springframework.org</id>
+          <name>Springframework Maven SNAPSHOT Repository</name>
+          <url>http://s3.amazonaws.com/maven.springframework.org/snapshot</url>
+        </repository>
+        &ndash;&gt;
+    </repositories>
+-->
+
+</project>
