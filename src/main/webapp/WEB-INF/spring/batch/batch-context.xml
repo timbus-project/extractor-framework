@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+            http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <task:executor id="poolTaskExecutor" pool-size="200" rejection-policy="ABORT"/>
+    <bean id="taskExecutor" parent="throttledTaskExecutor"/>
+    <bean id="throttledTaskExecutor" class="net.timbusproject.extractors.ThrottledTaskExecutor">
+        <property name="taskExecutor" ref="poolTaskExecutor"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
+
+    <bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository"/>
+        <property name="taskExecutor" ref="taskExecutor"/>
+    </bean>
+
+    <bean id="jobExplorer" class="org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean">
+        <property name="repositoryFactory" ref="&amp;jobRepository"/>
+    </bean>
+
+    <bean id="simpleJob" class="org.springframework.batch.core.job.SimpleJob" abstract="true">
+        <property name="jobRepository" ref="jobRepository"/>
+        <property name="restartable" value="true"/>
+    </bean>
+
+    <!-- extraction batch job -->
+    <batch:job id="extractionJob" restartable="true" job-repository="jobRepository" parent="simpleJob">
+        <batch:step id="extraction">
+            <batch:tasklet ref="extractStep"/>
+        </batch:step>
+    </batch:job>
+
+    <bean id="extractStep" class="net.timbusproject.extractors.batch.Extract"/>
+
+    <context:annotation-config/>
+</beans>

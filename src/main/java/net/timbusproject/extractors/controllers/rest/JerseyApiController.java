@@ -1,0 +1,210 @@
+/**
+ * Copyright (c) 2013, Caixa Magica Software Lda (CMS).
+ * The work has been developed in the TIMBUS Project and the above-mentioned are Members of the TIMBUS Consortium.
+ * TIMBUS is supported by the European Union under the 7th Framework Programme for research and technological
+ * development and demonstration activities (FP7/2007-2013) under grant agreement no. 269940.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at:   http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including without
+ * limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTIBITLY, or FITNESS FOR A PARTICULAR
+ * PURPOSE. In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise,
+ * unless required by applicable law or agreed to in writing, shall any Contributor be liable for damages, including
+ * any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this
+ * License or out of the use or inability to use the Work.
+ * See the License for the specific language governing permissions and limitation under the License.
+ */
+package net.timbusproject.extractors.controllers.rest;
+
+import net.timbusproject.extractors.osgi.OSGiClient;
+import net.timbusproject.extractors.pojo.RequestExtraction;
+import net.timbusproject.extractors.pojo.RequestExtractionList;
+import net.timbusproject.extractors.pojo.ResponseJob;
+import net.timbusproject.extractors.pojo.ResponseJobsList;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.osgi.service.log.LogService;
+import org.springframework.batch.core.*;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.NoSuchJobException;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.List;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: lduarte
+ * Date: 8/20/13
+ * Time: 9:30 AM
+ * To change this template use File | Settings | File Templates.
+ */
+
+@Component
+@Scope(WebApplicationContext.SCOPE_REQUEST)
+@Path("/")
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+public class JerseyApiController {
+
+    private static Hashtable<Long, RequestExtractionList> extractions;
+    private static final Object LOCK = new Object();
+
+    @Qualifier("jobLauncher")
+    @Autowired
+    private JobLauncher launcher;
+
+    @Qualifier("extractionJob")
+    @Autowired
+    private Job job;
+
+    @Autowired
+    private LogService log;
+
+    @Autowired
+    private OSGiClient osgiClient;
+
+    public JerseyApiController() {
+        if (extractions == null) {
+            extractions = new Hashtable<>();
+        }
+    }
+
+    @GET
+    @Path("/modules")
+    public Response modulesList() {
+        log.log(LogService.LOG_INFO, "modules list requested: " + osgiClient.getExtractors());
+        return Response.ok(osgiClient.getExtractorsAsResponse()).build();
+    }
+
+    @GET
+    @Path("/extractors")
+    public Response extractorsList() {
+        log.log(LogService.LOG_INFO, "extractors list requested");
+        return modulesList();
+    }
+
+    @POST
+    @Path("/extract")
+    public Response extract(RequestExtractionList extractionsList) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
+        log.log(LogService.LOG_INFO, "extraction requested" + extractionsList);
+        long key;
+        synchronized (LOCK) {
+            key = extractions.keySet().size();
+            extractions.put(key, extractionsList);
+        }
+        if (extractions.get(key).extractions.length == 1 && extractions.get(key).extractions[0].user == null && extractions.get(key).extractions[0].module != null && extractions.get(key).extractions[0].module.equals("Debian Software Extractor")) {
+            // temporary fallback if clause
+            extractions.get(key).extractions[0] = RequestExtraction.fromFile(getClass().getResourceAsStream("/default/debiansoftware"));
+            extractions.get(key).extractions[0].module = "Debian Software Extractor";
+        }
+        for(RequestExtraction extraction : extractions.get(key).extractions) {
+            extraction.setJob(launcher.run(job,
+                    new JobParametersBuilder()
+                            .addString("user", extraction.user)
+                            .addString("password", extraction.password != null && extraction.password.length() > 0 ? "" : null)
+                            .addString("fqdn", extraction.fqdn) // newMachine (fqdn = fully qualified domain name)
+                            .addString("knownHosts", extraction.knownHosts)
+                            .addLong("port", (long) extraction.port) // newMachinePort
+                            .addString("privateKey", extraction.privateKey)
+                            .addString("module", extraction.module) // selectedModule.name
+                            .addLong("timestamp", System.currentTimeMillis())
+                            .toJobParameters()));
+            extraction.getJob().getExecutionContext().putString("password", extraction.password);
+            extraction.unsetPassword();
+        }
+        return Response.status(Response.Status.ACCEPTED)
+                .entity(getRequestInfo(key))
+                .location(UriBuilder.fromPath("/requests/{id}").build(key))
+                .build();
+    }
+
+/*
+    @POST
+    @Path("/extract")
+    public Response extract(@FormParam("extractions") String extractionsList) throws JSONException, JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
+        log.log(LogService.LOG_INFO, "extraction requested" + extractionsList);
+        return extract(RequestExtractionList.fromJSON(new JSONArray(extractionsList)));
+    }
+*/
+
+    @GET
+    @Path("/extract/fallback")
+    public Response extractFallback() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
+        log.log(LogService.LOG_INFO, "starting fallback extraction");
+        RequestExtraction extraction = RequestExtraction.fromFile(getClass().getResourceAsStream("/default/debiansoftware"));
+        extraction.module = "Debian Software Extractor";
+        RequestExtractionList extractionsList = new RequestExtractionList();
+        extractionsList.extractions = new RequestExtraction[] { extraction };
+        return extract(extractionsList);
+    }
+
+    @GET
+    @Path("/requests")
+    public Response allRequestsList() throws NoSuchJobException {
+        log.log(LogService.LOG_INFO, "request list requested");
+        List<ResponseJobsList> response = new ArrayList<>();
+        for (Long id : extractions.keySet()) {
+            response.add(getRequestInfo(id));
+        }
+        return Response.ok(response).build();
+    }
+
+    @GET
+    @Path("/requests/{id}")
+    public Response requestInfo(@PathParam("id") long id) {
+        log.log(LogService.LOG_INFO, "request #" + id + " requested");
+        return Response.ok(getRequestInfo(id)).build();
+    }
+
+    private ResponseJobsList getRequestInfo(long id) {
+        ResponseJobsList list = new ResponseJobsList();
+        if (!extractions.containsKey(id)) {
+            return list;
+        }
+        log.log(LogService.LOG_INFO, "packing request #" + id + " info");
+        list.setId(id);
+        for (RequestExtraction request : extractions.get(id).extractions) {
+            list.add(request.getJob());
+        }
+        return list;
+    }
+
+    @GET
+    @Path("/requests/{id}/finished")
+    public Response requestInfoFinish(@PathParam("id") long id) {
+        log.log(LogService.LOG_INFO, "finish polling received for extraction # " + id);
+        if (!extractions.containsKey(id))
+            return Response.status(Response.Status.NOT_FOUND).build();
+        for (RequestExtraction extraction : extractions.get(id).extractions) {
+            if (extraction.getJob() != null && extraction.getJob().getStatus().equals(BatchStatus.FAILED)) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(false).build();
+            } else if (extraction.getJob() == null || !extraction.getJob().getStatus().equals(BatchStatus.COMPLETED)) {
+                return Response.status(Response.Status.CREATED).entity(false).build();
+            }
+        }
+        return Response.ok(true).build();
+    }
+
+    private ResponseJob getJobInfo(JobExecution execution) {
+        if (execution == null)
+            return new ResponseJob();
+        log.log(LogService.LOG_INFO, "packing job's info. id: " + execution.getJobId());
+        return new ResponseJob(execution);
+    }
+
+}
