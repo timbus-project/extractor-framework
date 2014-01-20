@@ -47,9 +47,9 @@ public class LinuxHardwareExtractor implements IExtractor{
     @Override
     public String extract(Endpoint endpoint) throws Exception {
         SSHManager instance = new SSHManager(
-                endpoint.getUser(),
+                endpoint.getProperty("user"),
                 "",
-                endpoint.getHostname(),
+                endpoint.getFQDN(),
                 "",
                 "/home/cmdesktop/.ssh/id_rsa"
         );
