@@ -18,9 +18,9 @@
 
 package net.timbusproject.extractors.modules.local.sshwrapper;
 
-import net.timbusproject.extractors.modules.Endpoint;
-import net.timbusproject.extractors.modules.OperatingSystem;
-import net.timbusproject.extractors.modules.contracts.IExtractor;
+import net.timbusproject.extractors.core.Endpoint;
+import net.timbusproject.extractors.core.OperatingSystem;
+import net.timbusproject.extractors.core.IExtractor;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
@@ -61,7 +61,7 @@ public class SSHExtractor implements IExtractor {
     }
 
     @Override
-    public String extract(Endpoint endpoint) throws Exception {
+    public JSONObject extract(Endpoint endpoint, boolean useCache) throws Exception {
         JSONArray responseArray = new JSONArray();
         Engine engine = new Engine();
 
@@ -85,6 +85,7 @@ public class SSHExtractor implements IExtractor {
                 responseArray.put(engine.runWithPath(instance, (String)receivedPathsArray.getJSONObject(i).get("path")));
             }
         }
-        return responseArray.toString();
+
+        return new JSONObject().put("extractor", getSymbolicName()).put("result", responseArray);
     }
 }

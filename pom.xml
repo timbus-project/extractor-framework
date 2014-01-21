@@ -24,7 +24,7 @@
         <dependency>
             <groupId>net.timbusproject.extractors</groupId>
             <artifactId>extractors-core</artifactId>
-            <version>1.0.0-RELEASE</version>
+            <version>0.0.3-RELEASE</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -107,6 +107,11 @@
     </build>
 
     <repositories>
+        <repository>
+            <id>local.repos</id>
+            <name>Maven local repo</name>
+            <url>http://maven.testbed/</url>
+        </repository>
         <repository>
             <id>com.springsource.repository.bundles.external</id>
             <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
