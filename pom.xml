@@ -15,66 +15,15 @@
     </parent>
 
     <properties>
-        <compiler.version>1.7</compiler.version>
-        <springframework.version>3.2.3.RELEASE</springframework.version>
-        <osgi.version>4.3.1</osgi.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <!--
-            Also imports:
-            org.springframework:spring-beans
-            org.springframework:spring-core
-            -->
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${springframework.version}</version>
-            <!--<scope>provided</scope>-->
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-aop</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-expression</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>${osgi.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
-            <version>${osgi.version}</version>
+            <version>${dependency.osgi.version}</version>
             <!--<scope>provided</scope>-->
         </dependency>
-
-        <!-- test scoped dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.timbusproject.extractors</groupId>
-            <artifactId>extractors-core</artifactId>
-            <version>1.0.0-RELEASE</version>
-        </dependency>
-
 
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
@@ -94,12 +43,6 @@
             <artifactId>com.springsource.com.jcraft.jsch</artifactId>
             <version>0.1.41</version>
             <!--<scope>provided</scope>-->
-        </dependency>
-
-        <dependency>
-            <groupId>net.timbusproject.expopulator</groupId>
-            <artifactId>converters-core</artifactId>
-            <version>1.0.0-RELEASE</version>
         </dependency>
 
     </dependencies>
@@ -125,49 +68,8 @@
 
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>${compiler.version}</source>
-                    <target>${compiler.version}</target>
-                    <compilerArgument>-Xlint:all</compilerArgument>
-                    <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <version>1.0.0</version>
-                <configuration>
-                    <manifestLocation>META-INF</manifestLocation>
-                    <instructions>
-                        <Export-Package>!linux-hardware-extractor.impl,linux-hardware-extractor*</Export-Package>
-                        <Import-Package>*</Import-Package>
-                        <!--
-                           add ,plugin.xml if it's present i.e.
-                           src/main/resources,plugin.xml
-                        -->
-                        <Include-Resource>src/main/resources</Include-Resource>
-                    </instructions>
-                </configuration>
-            </plugin>
-
-            <!-- generate manifest automatically once the classes are processed -->
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

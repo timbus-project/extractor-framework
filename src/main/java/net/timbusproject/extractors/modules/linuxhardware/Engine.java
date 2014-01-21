@@ -19,17 +19,19 @@
 package net.timbusproject.extractors.modules.linuxhardware;
 
 import com.jcraft.jsch.JSchException;
-import org.codehaus.jettison.json.JSONArray;
+import net.timbusproject.extractors.core.Endpoint;
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 
-import java.io.*;
-import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 public class Engine {
-    public String run(SSHManager instance) throws JSchException, IOException, JSONException {
+
+    public String run(SSHManager instance, Endpoint endpoint) throws JSchException, IOException, JSONException {
         instance.connect();
-        String output = instance.sendCommandSudo("lshw -json", "cmdesktop");
+        String output = instance.sendCommandSudo("lshw -json",endpoint.getProperty("password"));
         writeToFile(output);
         instance.close();
         return output;

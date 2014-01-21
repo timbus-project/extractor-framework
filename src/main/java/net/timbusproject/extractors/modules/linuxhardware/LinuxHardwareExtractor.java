@@ -18,9 +18,11 @@
 
 package net.timbusproject.extractors.modules.linuxhardware;
 
-import net.timbusproject.extractors.modules.Endpoint;
-import net.timbusproject.extractors.modules.OperatingSystem;
-import net.timbusproject.extractors.modules.contracts.IExtractor;
+import net.timbusproject.extractors.core.Endpoint;
+import net.timbusproject.extractors.core.IExtractor;
+import net.timbusproject.extractors.core.OperatingSystem;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 import org.osgi.service.log.LogService;
@@ -28,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.EnumSet;
 
-public class LinuxHardwareExtractor implements IExtractor{
+public class LinuxHardwareExtractor implements IExtractor {
     @Autowired
     private BundleContext bundleContext;
 
@@ -56,18 +58,21 @@ public class LinuxHardwareExtractor implements IExtractor{
     }
 
     @Override
-    public String extract(Endpoint endpoint) throws Exception {
+    public JSONObject extract(Endpoint endpoint, boolean b) throws Exception {
         SSHManager instance = new SSHManager(
                 endpoint.getProperty("user"),
-                "",
+                endpoint.getProperty("password"),
                 endpoint.getFQDN(),
-                "",
-                "/home/cmdesktop/.ssh/id_rsa"
+                endpoint.getProperty("knownHosts"),
+                endpoint.hasProperty("port") ? Integer.parseInt(endpoint.getProperty("port")) : Endpoint.DEFAULT_SSH_PORT,
+                endpoint.getProperty("privateKey")
         );
+
         Engine engine = new Engine();
-        String result = engine.run(instance);
-
-
-        return result;
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(engine.run(instance,endpoint));
+        return new JSONObject().put("extractor", getName()).put("return", jsonArray);
     }
+
+
 }
