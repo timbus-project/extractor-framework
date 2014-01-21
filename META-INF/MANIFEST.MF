@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1390238734931
+Build-Jdk: 1.7.0_45
+Built-By: miguel
+Bundle-ManifestVersion: 2
+Bundle-Name: SSH Wrapper Extractor
+Bundle-SymbolicName: net.timbusproject.extractors.sshwrapper-extractor
+Bundle-Version: 1.0.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Embed-Directory: lib
+Embed-Transitive: true
+Import-Package: com.jcraft.jsch;version="[0.1,1)",net.timbusproject.extr
+ actors.modules,net.timbusproject.extractors.modules.contracts,org.codeh
+ aus.jettison.json;version="[1.3,2)",org.osgi.framework;version="[1.6,2)
+ ",org.osgi.service.log;version="[1.3,2)",org.springframework.beans.fact
+ ory.annotation
+Tool: Bnd-2.1.0.20130426-122213
