@@ -24,7 +24,7 @@
         <dependency>
             <groupId>net.timbusproject.extractors</groupId>
             <artifactId>extractors-core</artifactId>
-            <version>0.0.3-RELEASE</version>
+            <version>0.0.2-RELEASE</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -62,6 +62,13 @@
             <version>${jsch.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-bundle</artifactId>
+            <version>1.17.1</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

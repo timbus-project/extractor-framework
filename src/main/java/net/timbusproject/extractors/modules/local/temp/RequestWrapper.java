@@ -15,47 +15,58 @@
  * License or out of the use or inability to use the Work.
  * See the License for the specific language governing permissions and limitation under the License.
  */
+package net.timbusproject.extractors.modules.local.temp;
 
-package net.timbusproject.extractors.modules.local.sshwrapper;
-
-import com.jcraft.jsch.JSchException;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import java.io.IOException;
+import javax.xml.bind.annotation.XmlElement;
+import java.util.Arrays;
+import java.util.HashMap;
 
-public class Engine {
+/**
+ * Created with IntelliJ IDEA.
+ * User: jorge
+ * Date: 1/21/14
+ * Time: 3:40 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class RequestWrapper {
 
-    public JSONObject runWithPath(SSHManager instance, String path) {
-        String command;
-        path.trim();
-        if (path.endsWith(".jar"))
-            command = "Test -jar " + path;
-        else if (path.endsWith(".pl"))
-            command = "perl " + path;
-        else if (path.endsWith(".py"))
-            command = "python " + path;
-        else
-            command = path;
-        return run(instance, command);
-    }
+    @XmlElement
+    public String[] commands;
+    @XmlElement
+    public String[] paths;
+    @XmlElement
+    public HashMap<String, String>[] urls;
 
-    public JSONObject run(SSHManager instance, String command) {
+    /*
+    * [
+    *   {
+    *       "url":"jlhsoid:1435?hdushi",
+    *       "method":"get",
+    *       "port":"45",
+    *       "params":"hdeoi=hud&gudha=hud",
+    *       "accept":"application/json"
+    *   },
+    *   {
+    *       "url":"dhlsahdoia",
+    *       "method":"post",
+    *       "body":".iuhoid",
+    *       "content-type":"application/json",
+    *       "accept":"application/json"
+    *   }
+    * ]
+    * */
+
+    @Override
+    public String toString() {
         try {
-            instance.connect();
-            command = command.substring(1);
-            command = command.substring(0, command.length() - 1);
-            command = command.replaceAll("\\\\", "");
-            return new JSONObject(instance.sendCommand(command));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSchException e) {
-            e.printStackTrace();
+            return new JSONObject("{commands:" + Arrays.asList(commands) + ",urls:" + Arrays.asList(urls) + "}").toString();
         } catch (JSONException e) {
             e.printStackTrace();
-        } finally {
-            instance.close();
         }
-        return null;
+        return new JSONObject().toString();
     }
+
 }

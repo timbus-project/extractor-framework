@@ -100,8 +100,8 @@ public class SSHManager {
         try {
             Channel channel = sesConnection.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
-            InputStream commandOutput = channel.getInputStream();
             channel.connect();
+            InputStream commandOutput = channel.getInputStream();
             int readByte = commandOutput.read();
 
             while (readByte != 0xffffffff) {

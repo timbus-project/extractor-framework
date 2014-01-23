@@ -19,8 +19,8 @@
 package net.timbusproject.extractors.modules.local.sshwrapper;
 
 import net.timbusproject.extractors.core.Endpoint;
-import net.timbusproject.extractors.core.OperatingSystem;
 import net.timbusproject.extractors.core.IExtractor;
+import net.timbusproject.extractors.core.OperatingSystem;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
@@ -61,7 +61,7 @@ public class SSHExtractor implements IExtractor {
     }
 
     @Override
-    public JSONObject extract(Endpoint endpoint, boolean useCache) throws Exception {
+    public String extract(Endpoint endpoint, boolean useCache) throws Exception {
         JSONArray responseArray = new JSONArray();
         Engine engine = new Engine();
 
@@ -73,19 +73,26 @@ public class SSHExtractor implements IExtractor {
                 endpoint.hasProperty("port") ? Integer.parseInt(endpoint.getProperty("port")) : Endpoint.DEFAULT_SSH_PORT,
                 endpoint.getProperty("privateKey")
         );
-        if (endpoint.getProperty("commands") != null) {
-            JSONArray receivedCommandsArray = new JSONArray(endpoint.getProperty("commands"));
-            for (int i = 0; i < receivedCommandsArray.length(); i++) {
-                responseArray.put(engine.run(instance, (String)receivedCommandsArray.getJSONObject(i).get("command")));
-            }
-        }
-        if (endpoint.getProperty("paths") != null) {
-            JSONArray receivedPathsArray = new JSONArray(endpoint.getProperty("paths"));
-            for (int i = 0; i < receivedPathsArray.length(); i++) {
-                responseArray.put(engine.runWithPath(instance, (String)receivedPathsArray.getJSONObject(i).get("path")));
-            }
+
+        JSONObject jsonObject = new JSONObject(endpoint.getProperty("wrapper"));
+
+        if (jsonObject.has("commands")) {
+            JSONArray receivedCommandsArray = jsonObject.getJSONArray("commands");
+            if (receivedCommandsArray.length() != 0)
+                for (int i = 0; i < receivedCommandsArray.length(); i++) {
+                    responseArray.put(engine.run(instance, (String) receivedCommandsArray.get(i)));
+                }
         }
 
-        return new JSONObject().put("extractor", getSymbolicName()).put("result", responseArray);
+        /*if (jsonObject.has("paths")) {
+            JSONArray receivedPathsArray = new JSONArray(endpoint.getProperty("paths"));
+            if (receivedPathsArray.length() != 0) {
+                for (int i = 0; i < receivedPathsArray.length(); i++) {
+                    responseArray.put(engine.runWithPath(instance, (String) receivedPathsArray.get(i)));
+                }
+            }
+        }*/
+
+        return new JSONObject().put("extractor", getSymbolicName()).put("result", responseArray).toString();
     }
 }
