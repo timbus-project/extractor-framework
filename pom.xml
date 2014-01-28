@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>pt.caixamagica.parents</groupId>
+        <artifactId>osgi</artifactId>
+        <version>1</version>
+    </parent>
+
+	<groupId>net.timbusproject.extractors</groupId>
+	<artifactId>extractors-core</artifactId>
+    <version>0.0.2-RELEASE</version>
+    <packaging>bundle</packaging>
+    <name>Context Population Framework</name>
+    <url>http://www.timbusproject.net/</url>    
+
+	<developers>
+        <developer>
+            <name>Luís Duarte</name>
+            <email>luis.duarte@caixamagica.pt</email>
+        </developer>
+        <developer>
+            <name>Jorge Simões</name>
+            <email>jorge.simoes@caixamagica.pt</email>
+        </developer>
+    </developers>
+    <contributors/>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+	<properties>
+        <plugin.bundle.export>net.timbusproject.extractors.core</plugin.bundle.export>
+	</properties>
+
+    <dependencies/>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>local.repo</id>
+            <url>http://maven.testbed/</url>
+        </repository>
+    </repositories>
+</project>
