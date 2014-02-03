@@ -17,8 +17,8 @@
  */
 package net.timbusproject.extractors.pojo;
 
-import net.timbusproject.extractors.modules.contracts.IExtractor;
-import net.timbusproject.extractors.modules.OperatingSystem;
+import net.timbusproject.extractors.core.IExtractor;
+import net.timbusproject.extractors.core.OperatingSystem;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -58,7 +58,7 @@ import java.util.List;
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
 @Path("/")
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class JerseyApiController {
 
     private static Hashtable<Long, RequestExtractionList> extractions;
@@ -112,7 +112,9 @@ public class JerseyApiController {
             extractions.get(key).extractions[0] = RequestExtraction.fromFile(getClass().getResourceAsStream("/default/debiansoftware"));
             extractions.get(key).extractions[0].module = "Debian Software Extractor";
         }
-        for(RequestExtraction extraction : extractions.get(key).extractions) {
+        for (RequestExtraction extraction : extractions.get(key).extractions) {
+            if (extraction.wrap != null)
+                log.log(LogService.LOG_INFO, extraction.wrap.toString());
             extraction.setJob(launcher.run(job,
                     new JobParametersBuilder()
                             .addString("user", extraction.user)
@@ -121,6 +123,7 @@ public class JerseyApiController {
                             .addString("knownHosts", extraction.knownHosts)
                             .addLong("port", (long) extraction.port) // newMachinePort
                             .addString("privateKey", extraction.privateKey)
+                            .addString("wrapper", extraction.wrap != null ? extraction.wrap.toString() : null)
                             .addString("module", extraction.module) // selectedModule.name
                             .addLong("timestamp", System.currentTimeMillis())
                             .toJobParameters()));
@@ -149,7 +152,7 @@ public class JerseyApiController {
         RequestExtraction extraction = RequestExtraction.fromFile(getClass().getResourceAsStream("/default/debiansoftware"));
         extraction.module = "Debian Software Extractor";
         RequestExtractionList extractionsList = new RequestExtractionList();
-        extractionsList.extractions = new RequestExtraction[] { extraction };
+        extractionsList.extractions = new RequestExtraction[]{extraction};
         return extract(extractionsList);
     }
 

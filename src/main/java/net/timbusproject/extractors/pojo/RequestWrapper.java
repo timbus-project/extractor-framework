@@ -15,43 +15,59 @@
  * License or out of the use or inability to use the Work.
  * See the License for the specific language governing permissions and limitation under the License.
  */
-package net.timbusproject.extractors.modules;
+package net.timbusproject.extractors.pojo;
+
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
+import javax.xml.bind.annotation.XmlElement;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
  * User: jorge
- * Date: 10/16/13
- * Time: 3:51 PM
+ * Date: 1/21/14
+ * Time: 3:40 PM
  * To change this template use File | Settings | File Templates.
  */
-public enum OperatingSystem {
+public class RequestWrapper {
 
-    LINUX("Linux"),
-    OSX("OSX"),
-    WINDOWS("Windows");
+    @XmlElement
+    public String[] commands;
+    @XmlElement
+    public HashMap<String, String>[] urls;
 
-    private final String family;
-    private double kernel;
-
-    OperatingSystem(String family) {
-        this.family = family;
-    }
-
-    public String getFamily() {
-        return family;
-    }
-
-    public double getKernel() {
-        return kernel;
-    }
-
-    public void setKernel(double kernel) {
-        this.kernel = kernel;
-    }
-
-    @Override
     public String toString() {
-        return family + " " + kernel;
+        if (commands != null) {
+            for (int i = 0; i < commands.length; i++) {
+                commands[i] = JSONObject.quote(commands[i]);
+            }
+        }
+        JSONArray list = null;
+        if (urls != null) {
+            list = new JSONArray();
+            for (HashMap<String, String> url : urls) {
+                JSONObject json = new JSONObject();
+                for (Map.Entry<String, String> entry : url.entrySet()) {
+                    if (entry == null || entry.getKey() == null || entry.getValue() == null)
+                        continue;
+                    try {
+                        json.put(
+                                entry.getKey(),
+                                JSONObject.quote(entry.getValue())
+                        );
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                list.put(json);
+            }
+        }
+        return "{commands:" + (commands != null ? Arrays.asList(commands) : "[]")
+                + ",urls:" + (list != null ? list : "[]") + "}";
     }
-
 }

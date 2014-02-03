@@ -17,6 +17,7 @@
  */
 package net.timbusproject.extractors.pojo;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
 
@@ -66,7 +67,8 @@ public class ResponseJob {
                 default: input.put(parameter.getKey(), String.valueOf(parameter.getValue())); break;
             }
         }
-        if (job.getExecutionContext().containsKey("result")) result = job.getExecutionContext().getString("result");
+        if (job.getExecutionContext().containsKey("result"))
+            result = job.getExecutionContext().getString("result");
     }
 
 }

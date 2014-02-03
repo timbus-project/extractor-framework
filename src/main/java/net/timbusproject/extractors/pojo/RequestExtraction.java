@@ -50,6 +50,8 @@ public class RequestExtraction {
     public String privateKey;
     @XmlElement
     public String module;
+    @XmlElement
+    public RequestWrapper wrap;
 
     private JobExecution job;
 

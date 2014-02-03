@@ -17,7 +17,7 @@
  */
 package net.timbusproject.extractors.osgi;
 
-import net.timbusproject.extractors.modules.contracts.IExtractor;
+import net.timbusproject.extractors.core.IExtractor;
 import net.timbusproject.extractors.pojo.ResponseExtractor;
 import net.timbusproject.extractors.pojo.ResponseExtractorsList;
 

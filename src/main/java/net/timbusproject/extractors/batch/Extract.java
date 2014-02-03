@@ -17,9 +17,10 @@
  */
 package net.timbusproject.extractors.batch;
 
-import net.timbusproject.extractors.modules.Endpoint;
-import net.timbusproject.extractors.modules.contracts.IExtractor;
+import net.timbusproject.extractors.core.Endpoint;
+import net.timbusproject.extractors.core.IExtractor;
 import net.timbusproject.extractors.osgi.OSGiClient;
+import org.codehaus.jettison.json.JSONObject;
 import org.osgi.service.log.LogService;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
@@ -28,8 +29,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.text.MessageFormat;
 
 /**
  * Created with IntelliJ IDEA.
@@ -64,16 +63,18 @@ public class Extract implements Tasklet {
         endpoint.setProperty("knownHosts", parameters.getString("knownHosts"));
         endpoint.setProperty("port", String.valueOf(parameters.getLong("port")));
         endpoint.setProperty("privateKey", parameters.getString("privateKey"));
+        if (parameters.getString("wrapper") != null)
+            endpoint.setProperty("wrapper", parameters.getString("wrapper"));
         //noinspection StatementWithEmptyBody
         while (parameters.getString("password") != null && !chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().containsKey("password"));
+        log.log(LogService.LOG_INFO, "job #" + jobId + ": " + endpoint.toString());
         if (chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("password") != null) {
             endpoint.setProperty("password", String.valueOf(chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().remove("password")));
         }
-        log.log(LogService.LOG_INFO, "job #" + jobId + ": " + endpoint.toString());
 
-        String result = extractor.extract(endpoint);
+        String result = extractor.extract(endpoint, false);
         log.log(LogService.LOG_INFO, "extracted result: " + result);
-        chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().putString("result", result);
+        chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("result", result);
 
         return RepeatStatus.FINISHED;
     }

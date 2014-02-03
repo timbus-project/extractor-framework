@@ -9,7 +9,7 @@
         <property name="extractors" ref="extractors"/>
     </bean>
 
-    <osgi:list id="extractors" interface="net.timbusproject.extractors.modules.contracts.IExtractor"/>
+    <osgi:list id="extractors" interface="net.timbusproject.extractors.core.IExtractor"/>
 
     <osgi:reference id="log" interface="org.osgi.service.log.LogService"/>
 

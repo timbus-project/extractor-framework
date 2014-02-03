@@ -38,7 +38,7 @@
     <servlet>
         <servlet-name>Jersey Web Application</servlet-name>
         <servlet-class>net.timbusproject.extractors.JerseySpringCorsServlet</servlet-class>
-s        <init-param>
+        <init-param>
             <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
             <param-value>true</param-value>
         </init-param>
