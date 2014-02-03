@@ -17,10 +17,9 @@
  */
 package net.timbusproject.extractors.modules.debiansoftwareextractor;
 
+import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,4 +39,5 @@ public class ReadJSON {
     public JSONArray getJsonArray() {
         return jsonArray;
     }
+
 }

@@ -18,10 +18,7 @@
 
 package net.timbusproject.extractors.modules.debiansoftwareextractor;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -32,6 +29,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Engine {
@@ -39,21 +39,20 @@ public class Engine {
     @Autowired
     private LogService log;
 
-    public JSONArray run(SSHManager instance) throws JSchException, IOException, JSONException {
-//        String prettyCmd = "dpkg -l | awk '{print $2,\"\\t\",$3;}' | column -t | sed 1d | sed 1d";
+    public JSONArray run(SSHManager instance) throws JSchException, IOException, JSONException, ParseException {
         String dpkg = "dpkg -l | grep ^ii | awk '{print $2;}'";
         String dpkgStatus = "dpkg --status ";
 
         // call sendCommand for each command and the output (without prompts) is returned
-        log.log(LogService.LOG_INFO, "connection: " + instance.connect());
-//        System.out.println(instance.sendCommand(prettyCmd));
+        instance.connect();
+//        log.log(LogService.LOG_INFO, "connection: " + instance.connect());
         String pkgList = instance.sendCommand(dpkg);
         Scanner scanner = new Scanner(pkgList);
 
         JSONArray jsonArray = new JSONArray();
         while (scanner.hasNextLine()) {
+//            log.log(LogService.LOG_INFO, "extracting " + pkg);
             String pkg = scanner.nextLine();
-            log.log(LogService.LOG_INFO, "extracting " + pkg);
             jsonArray.put(parser(instance.sendCommand(dpkgStatus + pkg)));
 //            jsonArray.put(parser(instance.sendCommand(dpkgStatus + "bash")));
 
@@ -63,9 +62,10 @@ public class Engine {
 
         // close only after all commands are sent
         instance.close();
+        //put the date in JSOn array
 
-        //uncomment this line to save to file
-        writeToFile(jsonArray);
+//        System.out.println(jsonArray.toString(2));
+//        writeToFile(jsonArray);
         return jsonArray;
     }
 
@@ -81,9 +81,17 @@ public class Engine {
                 }
                 switch (key.toLowerCase()) {
                     case "description":
-                        JSONArray jsonArray = getDescription(scanner, tmp, key);
-                        if (jsonArray.length() > 0)
-                            jsonObject.put(key, jsonArray);
+                        StringBuilder stringBuilder = new StringBuilder();
+                        while (scanner.hasNextLine() && !tmp.contains(key)) {
+                            String str = scanner.nextLine();
+                            if (str.length() == 0)
+                                System.out.println(pkg);
+                            else
+                            if (!(Character.isUpperCase(str.charAt(0)) && str.contains(":"))) {
+                                stringBuilder.append(str);
+                            }
+                        }
+                        jsonObject.put(key, stringBuilder);
                         break;
                     case "conffiles":
                         getConffiles(scanner, jsonObject, tmp, key);
@@ -95,32 +103,7 @@ public class Engine {
                     case "conflicts":
                     case "replaces":
                     case "depends":
-                        String[] depends = scanner.nextLine().trim().split(",");
-                        JSONArray jsonArrayAnd = new JSONArray();
-                        for (String s : depends) {
-                            JSONArray jsonArrayOr = new JSONArray();
-                            String[] temp = s.trim().split("\\|");
-                            for (String pkgOr : temp) {
-                                JSONObject jsonDependency = new JSONObject();
-                                String[] split = pkgOr.trim().split(" ");
-                                for (String string : split) {
-                                    if (string.contains("(")) {
-                                        jsonDependency.put("Comparator", string.replace("(", ""));
-                                    } else if (string.contains(")")) {
-                                        jsonDependency.put("Version", string.replace(")", ""));
-                                    } else if (string.length() > 0) {
-                                        jsonDependency.put("Package", string.trim());
-                                    }
-
-                                }
-                                jsonArrayOr.put(jsonDependency);
-                            }
-                            if(jsonArrayOr.length() == 1)
-                                jsonArrayAnd.put(jsonArrayOr.get(0));
-                            else
-                                jsonArrayOr.put(jsonArrayOr);
-
-                        }
+                         JSONArray jsonArrayAnd = getDepends(scanner);
                         jsonObject.put(key, jsonArrayAnd);
                         break;
                     default:
@@ -131,100 +114,34 @@ public class Engine {
         }
         return jsonObject;
     }
-
-    private void writeToFile(JSONArray jsonArray) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
-        PrintWriter writer = new PrintWriter("output.json", "UTF-8");
-        writer.write(jsonArray.toString(2));
-        writer.close();
-    }
-
-    /*
-      Gets all the packages from the Depends field
-      Returns them in a JSONArray
-     */
     private JSONArray getDepends(Scanner scanner) throws JSONException {
         String[] depends = scanner.nextLine().trim().split(",");
-        JSONArray jsonArrayDepends = new JSONArray();
+        JSONArray jsonArrayAnd = new JSONArray();
         for (String s : depends) {
-            String[] splitDepends = s.split(" \\|");
-            for (String t : splitDepends) {
-                String[] temp = t.split(" ");
-                JSONObject jsonObjectDepends = parseString(temp);
-                jsonArrayDepends.put(jsonObjectDepends);
-            }
-        }
-        return jsonArrayDepends;
-    }
-
-    private JSONArray getDepends2(Scanner scanner) throws JSONException {
-        String[] depends = scanner.nextLine().trim().split(",");
-        JSONArray jsonArray1 = new JSONArray();
-        for (String s : depends) {
-            JSONArray jsonArrayDepends = new JSONArray();
-            if (s.contains("|")) {
-                // removes the disjunction (pipe)
-                String[] temp = s.trim().split("\\|");
-                for (String aTemp : temp) {
-//                                    System.out.println("TEMP:" + temp[i]);
-                    JSONObject jsonObject2 = new JSONObject();
-                    String[] split = aTemp.split(" ");
-                    for (String str : split) {
-                        if (str.contains("(") && !str.equals("") ) {
-                            jsonObject2.put("Comparator", str.replace("(", ""));
-//                                            System.out.println("Comparator " + str);
-                        } else if (str.contains(")") && !str.equals("")) {  //version
-                            jsonObject2.put("", str.replace(")", ""));
-//                                            System.out.println("Version " + str);
-                        } else if (str.length() > 0 && !str.equals("")) {
-                            jsonObject2.put("Package", str);
-//                                            System.out.println("Package " + str);
-                        }
-                    }
-                    jsonArrayDepends.put(jsonObject2);
-//                    System.out.println("JSONDEPENDS " + jsonArrayDepends.toString(2));
-                }
-                jsonArray1.put(jsonArrayDepends);
-//                jsonObject.put(key, jsonArray1);
-            } else {
-                for (String strng : depends) {
-                    String[] splitDepends = strng.split(" ");
-                    for (String t : splitDepends) {
-                        String[] temp = t.split(" ");
-                        JSONObject jsonObjectDepends = new JSONObject();
-                        for (String str : temp) {
-                            if (str.contains("(") && !str.equals("")) {
-                                jsonObjectDepends.put("Comparator", str.replace("(", ""));
-                            } else if (str.contains(")") && !str.equals("")) {
-                                jsonObjectDepends.put("Version", str.replace(")", ""));
-                            } else if (!str.equals("")) {
-                                jsonObjectDepends.put("Package", str);
-                            }
-                        }
-                        jsonArrayDepends.put(jsonObjectDepends);
+            JSONArray jsonArrayOr = new JSONArray();
+            String[] temp = s.trim().split("\\|");
+            for (String pkgOr : temp) {
+                JSONObject jsonDependency = new JSONObject();
+                String[] split = pkgOr.trim().split(" ");
+                for (String string : split) {
+                    if (string.contains("(")) {
+                        jsonDependency.put("Comparator", string.replace("(", ""));
+                    } else if (string.contains(")")) {
+                        jsonDependency.put("Version", string.replace(")", ""));
+                    } else if (string.length() > 0) {
+                        jsonDependency.put("Package", string.trim());
                     }
                 }
-                jsonArray1.put(jsonArrayDepends);
+                jsonArrayOr.put(jsonDependency);
             }
+            if (jsonArrayOr.length() == 1)
+                jsonArrayAnd.put(jsonArrayOr.get(0));
+            else
+                jsonArrayOr.put(jsonArrayOr);
         }
-        return jsonArray1;
+        return jsonArrayAnd;
     }
 
-    /*
-     Auxiliary function to parse dependencies packages
-     */
-    private JSONObject parseString(String[] arrayString) throws JSONException {
-        JSONObject jsonObject = new JSONObject();
-        for (String str : arrayString) {
-            if (str.contains("(") && !str.equals("")) {
-                jsonObject.put("Comparator", str.replace("(", ""));
-            } else if (str.contains(")") && !str.equals("")) {
-                jsonObject.put("Version", str.replace(")", ""));
-            } else if (!str.equals("") && str.length() > 0) {
-                jsonObject.put("Package", str);
-            }
-        }
-        return jsonObject;
-    }
 
     private void getConffiles(Scanner scanner, JSONObject jsonObject, String tmp, String key) throws JSONException {
         JSONArray jsonArray = new JSONArray();

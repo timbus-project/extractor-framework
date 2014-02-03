@@ -1,0 +1,9 @@
+[
+{
+"fqdn":"http://localhost",
+"user":"username",
+"password": "123",
+"port":80
+}
+
+]

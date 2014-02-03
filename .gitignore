@@ -1,6 +1,8 @@
 *.class
 
 javadoc/
+src/main/resources/default/
+src/main/java/net/timbusproject/extractors/modules/debiansoftwareextractor/test/
 
 # Package Files
 *.jar
@@ -18,7 +20,7 @@ META-INF/
 lib/
 bin/
 
-# VIM Stuff
+# VIM stuff
 *~
 
 # IntelliJ Stuff

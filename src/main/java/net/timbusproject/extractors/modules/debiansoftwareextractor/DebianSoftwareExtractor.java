@@ -18,16 +18,16 @@
 
 package net.timbusproject.extractors.modules.debiansoftwareextractor;
 
-import net.timbusproject.extractors.modules.Endpoint;
-import net.timbusproject.extractors.modules.OperatingSystem;
-import net.timbusproject.extractors.modules.contracts.IExtractor;
+import net.timbusproject.extractors.core.Endpoint;
+import net.timbusproject.extractors.core.IExtractor;
+import net.timbusproject.extractors.core.OperatingSystem;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 import org.osgi.service.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-//import java.io.IOException;
 import java.util.EnumSet;
 
 public class DebianSoftwareExtractor implements IExtractor {
@@ -59,7 +59,7 @@ public class DebianSoftwareExtractor implements IExtractor {
     }
 
     @Override
-    public String extract(Endpoint endpoint) throws Exception {
+    public String extract(Endpoint endpoint, boolean b) throws Exception {
         SSHManager instance = new SSHManager(
                 endpoint.getProperty("user"),
                 endpoint.getProperty("password"),
@@ -70,8 +70,7 @@ public class DebianSoftwareExtractor implements IExtractor {
         );
         Engine engine = new Engine();
         JSONArray jsonArray = engine.run(instance);
-        return jsonArray.toString();
+        return new JSONObject().put("extractor", getName()).put("result", jsonArray).toString();
     }
-
 }
 
