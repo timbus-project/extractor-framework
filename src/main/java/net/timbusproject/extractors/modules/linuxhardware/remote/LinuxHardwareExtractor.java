@@ -15,12 +15,12 @@
  * License or out of the use or inability to use the Work.
  * See the License for the specific language governing permissions and limitation under the License.
  */
-
-package net.timbusproject.extractors.modules.linuxhardware;
+package net.timbusproject.extractors.modules.linuxhardware.remote;
 
 import net.timbusproject.extractors.core.Endpoint;
 import net.timbusproject.extractors.core.IExtractor;
 import net.timbusproject.extractors.core.OperatingSystem;
+import net.timbusproject.extractors.modules.linuxhardware.absolute.Engine;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
@@ -58,7 +58,7 @@ public class LinuxHardwareExtractor implements IExtractor {
     }
 
     @Override
-    public JSONObject extract(Endpoint endpoint, boolean b) throws Exception {
+    public String extract(Endpoint endpoint, boolean b) throws Exception {
         SSHManager instance = new SSHManager(
                 endpoint.getProperty("user"),
                 endpoint.getProperty("password"),
@@ -71,7 +71,7 @@ public class LinuxHardwareExtractor implements IExtractor {
         Engine engine = new Engine();
         JSONArray jsonArray = new JSONArray();
         jsonArray.put(engine.run(instance,endpoint));
-        return new JSONObject().put("extractor", getName()).put("return", jsonArray);
+        return new JSONObject().put("extractor", getName()).put("return", jsonArray).toString();
     }
 
 

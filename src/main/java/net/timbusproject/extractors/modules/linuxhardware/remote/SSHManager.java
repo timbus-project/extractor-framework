@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and limitation under the License.
  */
 
-package net.timbusproject.extractors.modules.linuxhardware;
+package net.timbusproject.extractors.modules.linuxhardware.remote;
 
 import com.jcraft.jsch.*;
 import org.codehaus.jettison.json.JSONArray;
@@ -33,23 +33,18 @@ public class SSHManager {
     private String strPassword;
     private Session sesConnection;
     private int intTimeOut;
-    private String privKey;
 
     private void doCommonConstructorActions(String userName, String password, String connectionIP,
                                             String knownHostsFileName, String privateKey) throws JSchException {
         jschSSHChannel = new JSch();
-        try {
+        if (knownHostsFileName != null && knownHostsFileName.length() > 0)
             jschSSHChannel.setKnownHosts(knownHostsFileName);
-        } catch (JSchException jschX) {
-            logError(jschX.getMessage());
-        }
 
         strUserName = userName;
         strPassword = password;
         strConnectionIP = connectionIP;
-        privKey = privateKey;
-        if(!privateKey.equals(""))
-            jschSSHChannel.addIdentity(privKey);
+        if (privateKey != null && privateKey.length() > 0)
+            jschSSHChannel.addIdentity(privateKey);
     }
 
     public SSHManager(String userName, String password, String connectionIP, String knownHostsFileName,
@@ -139,7 +134,7 @@ public class SSHManager {
         out.write((sudoPass + "\n").getBytes());
         out.flush();
 
-        byte[] tmp=new byte[1024];
+        byte[] tmp = new byte[1024];
         while(true){
             while(in.available()>0){
                 int i=in.read(tmp, 0, 1024);
