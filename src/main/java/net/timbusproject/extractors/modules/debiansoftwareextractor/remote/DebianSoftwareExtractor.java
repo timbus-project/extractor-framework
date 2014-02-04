@@ -16,11 +16,13 @@
  * See the License for the specific language governing permissions and limitation under the License.
  */
 
-package net.timbusproject.extractors.modules.debiansoftwareextractor;
+package net.timbusproject.extractors.modules.debiansoftwareextractor.remote;
 
 import net.timbusproject.extractors.core.Endpoint;
 import net.timbusproject.extractors.core.IExtractor;
 import net.timbusproject.extractors.core.OperatingSystem;
+import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.Engine;
+import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.SSHManager;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
