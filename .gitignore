@@ -16,7 +16,7 @@ target/
 build/
 
 # Other Build Directories
-META-INF/
+/META-INF/
 lib/
 bin/
 
