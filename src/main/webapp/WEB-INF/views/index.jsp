@@ -58,8 +58,8 @@
 
         <!-- headline
         ================================================== -->
-        <div class="hero-unit text-center">
-            <img src="<%= request.getContextPath() %>/resources/img/logo3.png" class="img-rounded" />
+        <div class="hero-unit text-center" style="padding: 0px; margin-bottom: 10px; background-color: #FFF">
+            <img src="<%= request.getContextPath() %>/resources/img/logo3_cut.png" class="img-rounded" />
         </div>
 
         <!-- dropdown
@@ -75,10 +75,10 @@
             </div>
         </div>
 
-        <!-- Control Center
+        <!-- Control Extraction Center
         ================================================== -->
         <div id="control-center" style="padding-top: 40px;" ng-controller='MainController'>
-            <h2>Control Center</h2>
+            <h2>Extraction Center</h2>
             <hr/>
             <div class="box">
                 <div class="well" >
@@ -86,7 +86,7 @@
                         <p><i class="icon-sitemap"></i> Remote Extracting</p>
                     </div>
 
-                    <fieldset>
+                    <!-- <fieldset>
                         <label>Select a business case</label>
                         <div id="business-cases" class="form-inline">
                             <select id="business-cases-select">
@@ -94,13 +94,15 @@
                             </select>
                         </div>
                         <span class="help-block">&nbsp;</span>
-                    </fieldset>
+                    </fieldset> -->
 
                     <fieldset>
                         <label>Insert node</label>
                         <div id="node-div" class="form-inline">
                             <input id="node-text" type="text" placeholder="127.0.0.1" ng-model="newMachine" ng-required="true">
                             <input id="node-text-port" type="text" placeholder="80" ng-model="newMachinePort">
+                            <input id="node-text-user" type="text" placeholder="User" ng-model="newMachineUser">
+                            <input id="node-text-password" type="password" placeholder="Password" ng-model="newMachinePassword">
                             <select id="os-text"
                                     ng-model="selectedModule"
                                     ng-options="extractor as (extractor.name+' '+extractor.version) for extractor in installedExtractors"
@@ -123,7 +125,8 @@
                                                  <th data-sorter="false">&nbsp;</th>
                                                  <th>Id</th>
                                                  <th>Node</th>
-                                                 <th>Operating System</th>
+                                                 <th>User</th>
+                                                 <th>Module</th>
                                                  <th data-sorter="false">Extractors</th>
                                                  <th data-sorter="false">&nbsp;</th>
                                                </tr>
@@ -137,7 +140,8 @@
                                     <th>Id</th>
                                     <th>Node</th>
                                     <th>Port</th>
-                                    <th>Operating System</th>
+                                    <th>User</th>
+                                    <th>Module</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -150,6 +154,9 @@
                                     </td>
                                     <td title="Port">
                                         {{machine.port}}
+                                    </td>
+                                    <td title="User">
+                                        {{machine.user}}
                                     </td>
                                     <td title="Extractor">
                                         {{machine.module}}
@@ -168,8 +175,85 @@
                 </div> <!-- well -->
             </div> <!-- box -->
         </div> <!-- control center -->
+<!-- 
 
+        Conversion Control Center
+        ================================================== 
+        <div id="conversion-control-center" style="padding-top: 40px;" ng-controller='MainController'>
+            <h2>Conversion Center</h2>
+            <hr/>
+            <div class="box">
+                <div class="well" >
+                    <div class="title" style="display: block; width: 100%; padding: 0; margin-bottom: 20px; font-size: 21px; line-height: 40px; color: #333333; border: 0; border-bottom: 1px solid #e5e5e5;">
+                        <p><i class="icon-sitemap"></i> Remote Extracting</p>
+                    </div>
 
+                    <fieldset>
+                        <label>Insert info</label>
+                        <div id="node-div" class="form-inline">
+                            <input id="request-text" type="text" placeholder="Extraction Request Number" ng-model="requestId" ng-required="true">
+                            <input id="fuseki-url-text" type="text" placeholder="Fuseki URL" ng-model="fuseki">
+                            
+
+                        </div>
+                        <span class="help-block" style="margin-top: 10px">Insert a new request info into the conversion request table.</span>
+                        <button id="node-submit" type="submit" class="btn btn-success" ng-click="addNewConversion()">Add</button>
+                    </fieldset>
+
+                    <fieldset>
+                        <label>Filter</label>
+                        <input type='text' ng-model='searchText' />
+                        <label>List of Requests</label>
+                        <div id="table1-div" style="display: inline-block;">
+                                            <table id="table1" class="tablesorter table-striped" style="float: left;">
+                                              <thead>
+                                               <tr>
+                                                 <th data-sorter="false">&nbsp;</th>
+                                                 <th>Id</th>
+                                                 <th>Node</th>
+                                                 <th>User</th>
+                                                 <th>Module</th>
+                                                 <th data-sorter="false">Extractors</th>
+                                                 <th data-sorter="false">&nbsp;</th>
+                                               </tr>
+                                             </thead>
+                                             <tbody>
+                                             </tbody>
+                                           </table>
+                            <table ng-table class="table table-bordered table-striped" style="float: left;">
+                                <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Request Id</th>
+                                    <th>Fuseki Url</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="machine in machines | filter:searchText">
+                                    <td title="Id">
+                                        {{ $index + 1 }}
+                                    </td>
+                                    <td title="RequestId">
+                                        {{machine.fqdn}}
+                                    </td>
+                                    <td title="FusekiUrl">
+                                        {{machine.port}}
+                                    <td>
+                                        <button class="btn btn-danger" ng-click="removeMachine(machine)">Remove</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <span class="help-block">Select which nodes and extractors you want to capture information.</span>
+                    </fieldset>
+                    <div id="hidden-form"></div>
+                    <button id="extractors-submit-link" type="submit" class="btn btn-primary" ng-click="submitRequest()"><i class="icon-magic"></i> Extract</button>
+                </div> 
+            </div> 
+        </div> 
+
+ -->
         <!-- Reports
         ================================================== -->
         <div id="reports" style="padding-top: 40px;">

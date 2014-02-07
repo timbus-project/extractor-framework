@@ -13,18 +13,28 @@ app.controller("MainController", function($scope, $http){
 
     $scope.newMachine = null;
     $scope.newMachinePort = null;
+    $scope.newMachineUser = null;
+    $scope.newMachinePassword = null;
+
 
     $scope.selectedModule = null;
 
     $scope.addNew = function() {
         if ($scope.newMachine != null && $scope.newMachine != "" && $scope.newMachinePort != null && $scope.newMachinePort != "") {
-            $scope.machines.push({
-                fqdn: $scope.newMachine,
-                port: $scope.newMachinePort,
-                module: $scope.selectedModule.name
-            });
+            var jsonInput = {
+                   fqdn: $scope.newMachine,
+                   port: $scope.newMachinePort,
+                   module: $scope.selectedModule.name
+            };
+            if($scope.newMachineUser != null && $scope.newMachineUser != "")
+                   jsonInput.user = $scope.newMachineUser;
+            if($scope.newMachinePassword != null && $scope.newMachinePassword != "" )
+                   jsonInput.password = $scope.newMachinePassword;
+            $scope.machines.push(jsonInput);
             $scope.newMachine = null;
             $scope.newMachinePort = null;
+            $scope.newMachineUser = null;
+            $scope.newMachinePassword = null;
         }
     }
 
