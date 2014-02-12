@@ -15,7 +15,7 @@
  * License or out of the use or inability to use the Work.
  * See the License for the specific language governing permissions and limitation under the License.
  */
-package net.timbusproject.extractors.controllers.rest;
+package net.timbusproject.extractors.controllers;
 
 import net.timbusproject.extractors.osgi.OSGiClient;
 import net.timbusproject.extractors.pojo.RequestExtraction;

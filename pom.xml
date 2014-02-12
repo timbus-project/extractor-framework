@@ -29,7 +29,7 @@
 
 	<properties>
         <project.java.version>1.7</project.java.version>
-        <project.web.context>extractors</project.web.context>
+        <project.web.context>extractors/api</project.web.context>
         <plugin.bundle.embed.dependency>*;scope=compile</plugin.bundle.embed.dependency>
         <plugin.bundle.embed.directory>WEB-INF/lib</plugin.bundle.embed.directory>
         <plugin.bundle.import>com.sun.jersey.api.json,*</plugin.bundle.import>
@@ -96,7 +96,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- compile scoped -->
+         <!--compile scoped-->
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
