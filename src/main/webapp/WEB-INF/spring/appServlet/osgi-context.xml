@@ -9,6 +9,8 @@
         <property name="extractors" ref="extractors"/>
     </bean>
 
+    <import resource="bundle-context.xml"/>
+
     <osgi:list id="extractors" interface="net.timbusproject.extractors.core.IExtractor"/>
 
     <osgi:reference id="log" interface="org.osgi.service.log.LogService"/>

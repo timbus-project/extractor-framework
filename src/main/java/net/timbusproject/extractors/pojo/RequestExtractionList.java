@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,6 +40,10 @@ public class RequestExtractionList {
 
     @XmlElement
     public RequestExtraction[] extractions;
+    @XmlElement
+    public CallBackInfo callback;
+
+    private Semaphore semaphore;
 
     public static RequestExtractionList fromJSON(JSONArray jsonArray) throws JSONException {
         RequestExtractionList extractionList = new RequestExtractionList();
@@ -52,5 +57,22 @@ public class RequestExtractionList {
     public String toString() {
         return "RequestExtractionList { extractions : " + Arrays.asList(extractions) + " }";
     }
+
+    public CallBackInfo getCallbackInfo(){
+        return callback;
+    }
+
+    public void setSemaphore(){
+        semaphore = new Semaphore(extractions.length);
+    }
+
+    public void acquireSemaphore() throws InterruptedException {
+        semaphore.acquire();
+    }
+
+    public int getSemaphoreAvailablePermits(){
+        return semaphore.availablePermits();
+    }
+
 
 }

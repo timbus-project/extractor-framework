@@ -38,11 +38,17 @@
     <!-- extraction batch job -->
     <batch:job id="extractionJob" restartable="true" job-repository="jobRepository" parent="simpleJob">
         <batch:step id="extraction">
-            <batch:tasklet ref="extractStep"/>
+            <batch:tasklet ref="extractStep">
+                <batch:listeners>
+                    <batch:listener ref="extractStepListener"/>
+                </batch:listeners>
+            </batch:tasklet>
         </batch:step>
     </batch:job>
 
     <bean id="extractStep" class="net.timbusproject.extractors.batch.Extract"/>
+    <bean id="extractStepListener" class="net.timbusproject.extractors.batch.ExtractListener"/>
+
 
     <context:annotation-config/>
 </beans>

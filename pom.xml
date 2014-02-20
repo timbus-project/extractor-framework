@@ -46,6 +46,20 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>3.0-Prelude-Embedded-m2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-osgi</artifactId>
+            <version>4.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Spring Framework -->
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>

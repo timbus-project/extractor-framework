@@ -17,6 +17,8 @@
  */
 package net.timbusproject.extractors.controllers;
 
+import net.timbusproject.extractors.data.RequestHandler;
+import net.timbusproject.extractors.data.ResponseConverter;
 import net.timbusproject.extractors.osgi.OSGiClient;
 import net.timbusproject.extractors.pojo.RequestExtraction;
 import net.timbusproject.extractors.pojo.RequestExtractionList;
@@ -42,6 +44,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -63,6 +66,12 @@ public class JerseyApiController {
 
     private static Hashtable<Long, RequestExtractionList> extractions;
     private static final Object LOCK = new Object();
+
+    @Autowired
+    private RequestHandler requestHandler;
+
+    @Autowired
+    ResponseConverter responseConverter;
 
     @Qualifier("jobLauncher")
     @Autowired
@@ -98,7 +107,7 @@ public class JerseyApiController {
         return modulesList();
     }
 
-    @POST
+  /*  @POST
     @Path("/extract")
     public Response extract(RequestExtractionList extractionsList) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
         log.log(LogService.LOG_INFO, "extraction requested" + extractionsList);
@@ -134,6 +143,17 @@ public class JerseyApiController {
                 .entity(getRequestInfo(key))
                 .location(UriBuilder.fromPath("/requests/{id}").build(key))
                 .build();
+    }*/
+
+    @POST
+    @Path("/extract")
+    public Response extract(RequestExtractionList extractionsList) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
+        log.log(LogService.LOG_INFO, extractionsList.toString());
+        long key = requestHandler.requestExtraction(extractionsList);
+        return Response.status(Response.Status.ACCEPTED)
+                .entity(responseConverter.getRequestInfo(key))
+                .location(UriBuilder.fromPath("/requests/{id}").build(key))
+                .build();
     }
 
 /*
@@ -145,7 +165,7 @@ public class JerseyApiController {
     }
 */
 
-    @GET
+/*    @GET
     @Path("/extract/fallback")
     public Response extractFallback() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
         log.log(LogService.LOG_INFO, "starting fallback extraction");
@@ -154,9 +174,20 @@ public class JerseyApiController {
         RequestExtractionList extractionsList = new RequestExtractionList();
         extractionsList.extractions = new RequestExtraction[]{extraction};
         return extract(extractionsList);
-    }
+    }*/
 
     @GET
+    @Path("/extract/fallback")
+    public Response extractFallback() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
+        log.log(LogService.LOG_INFO, "starting fallback extraction");
+        long key = requestHandler.requestExtractionFallback();
+        return Response.status(Response.Status.ACCEPTED)
+                .entity(responseConverter.getRequestInfo(key))
+                .location(UriBuilder.fromPath("/requests/{id}").build(key))
+                .build();
+    }
+
+/*    @GET
     @Path("/requests")
     public Response allRequestsList() throws NoSuchJobException {
         log.log(LogService.LOG_INFO, "request list requested");
@@ -165,16 +196,36 @@ public class JerseyApiController {
             response.add(getRequestInfo(id));
         }
         return Response.ok(response).build();
+    }*/
+
+    @GET
+    @Path("/requests")
+    public Response allRequestsList() throws NoSuchJobException {
+        return Response.ok(responseConverter.allRequestsList()).build();
+    }
+
+    /*@GET
+    @Path("/requests/{id}")
+    public Response requestInfo(@PathParam("id") long id) {
+        log.log(LogService.LOG_INFO, "request #" + id + " requested");
+        return Response.ok(getRequestInfo(id)).build();
+    }*/
+
+    @GET
+    @Path("/testcallback")
+    public Response testCallbackGet() {
+        log.log(LogService.LOG_INFO, "JerseyApiController: received http request from callback. extractions finished");
+        return Response.ok().build();
     }
 
     @GET
     @Path("/requests/{id}")
     public Response requestInfo(@PathParam("id") long id) {
-        log.log(LogService.LOG_INFO, "request #" + id + " requested");
-        return Response.ok(getRequestInfo(id)).build();
+        log.log(LogService.LOG_INFO, MessageFormat.format("id: {0}", id));
+        return Response.ok(responseConverter.getRequestInfo(id)).build();
     }
 
-    private ResponseJobsList getRequestInfo(long id) {
+/*    private ResponseJobsList getRequestInfo(long id) {
         ResponseJobsList list = new ResponseJobsList();
         if (!extractions.containsKey(id)) {
             return list;
@@ -185,7 +236,7 @@ public class JerseyApiController {
             list.add(request.getJob());
         }
         return list;
-    }
+    }*/
 
     @GET
     @Path("/requests/{id}/finished")
