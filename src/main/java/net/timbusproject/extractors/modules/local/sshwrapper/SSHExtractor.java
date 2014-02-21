@@ -80,7 +80,9 @@ public class SSHExtractor implements IExtractor {
             JSONArray receivedCommandsArray = jsonObject.getJSONArray("commands");
             if (receivedCommandsArray.length() != 0)
                 for (int i = 0; i < receivedCommandsArray.length(); i++) {
-                    responseArray.put(engine.run(instance, (String) receivedCommandsArray.get(i)));
+                    JSONObject toPut = engine.run(instance, (String) receivedCommandsArray.get(i));
+                    System.out.println("OUTPUT: " + engine.run(instance, (String) receivedCommandsArray.get(i)));
+                    responseArray.put(toPut);
                 }
         }
 
@@ -93,6 +95,6 @@ public class SSHExtractor implements IExtractor {
             }
         }*/
 
-        return new JSONObject().put("extractor", getSymbolicName()).put("result", responseArray).toString();
+        return new JSONObject().put("extractor", getName()).put("result", responseArray).toString();
     }
 }

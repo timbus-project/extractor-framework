@@ -2,7 +2,6 @@
 
 javadoc/
 .git/
-src/main/resources/*/
 
 # Package Files
 *.jar

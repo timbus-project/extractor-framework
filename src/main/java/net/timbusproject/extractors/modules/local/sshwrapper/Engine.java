@@ -43,10 +43,13 @@ public class Engine {
     public JSONObject run(SSHManager instance, String command) {
         try {
             instance.connect();
-            command = command.substring(1);
-            command = command.substring(0, command.length() - 1);
+//            command = command.substring(1);
+//            command = command.substring(0, command.length() - 1);
             command = command.replaceAll("\\\\", "");
-            return new JSONObject(instance.sendCommand(command));
+            System.out.println("IN ENGINE: SENDING COMMAND " + command);
+            String output = instance.sendCommand(command);
+            System.out.println("IN ENGINE. OUTPUT:" + output);
+            return new JSONObject(output);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSchException e) {
