@@ -17,13 +17,14 @@
  */
 package net.timbusproject.extractors.pojo;
 
+import net.timbusproject.extractors.core.Parameter;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.batch.core.JobExecution;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -34,9 +35,11 @@ import java.util.Scanner;
  * To change this template use File | Settings | File Templates.
  */
 @XmlRootElement
+@XmlSeeAlso(Parameter.class)
+@XmlAccessorType(XmlAccessType.NONE)
 public class RequestExtraction {
 
-    @XmlElement
+   /* @XmlElement
     public String user;
     @XmlElement
     public String password;
@@ -47,9 +50,12 @@ public class RequestExtraction {
     @XmlElement
     public int port;
     @XmlElement
-    public String privateKey;
+    public String privateKey;*/
     @XmlElement
     public String module;
+//    @XmlAnyAttribute
+    @XmlElement
+    public HashMap<String, Parameter> parameters;
     @XmlElement
     public RequestWrapper wrap;
 
@@ -57,7 +63,7 @@ public class RequestExtraction {
 
     public RequestExtraction() {}
 
-    public static RequestExtraction fromJSON(JSONObject jsonObject) throws JSONException {
+    /*public static RequestExtraction fromJSON(JSONObject jsonObject) throws JSONException {
         RequestExtraction extraction = new RequestExtraction();
         while (jsonObject.keys().hasNext()) {
             String key = jsonObject.keys().next().toString();
@@ -73,9 +79,9 @@ public class RequestExtraction {
             }
         }
         return extraction;
-    }
+    }*/
 
-    public static RequestExtraction fromFile(InputStream file) {
+   /* public static RequestExtraction fromFile(InputStream file) {
         RequestExtraction extraction = new RequestExtraction();
         Scanner s = new Scanner(file);
         s.findInLine("fqdn:");
@@ -93,7 +99,7 @@ public class RequestExtraction {
         extraction.user = "timbus-cms";
         extraction.port = 22;
         return extraction;
-    }
+    }*/
 
     public void setJob(JobExecution job) {
         this.job = job;
@@ -103,21 +109,21 @@ public class RequestExtraction {
         return job;
     }
 
-    public void unsetPassword() {
+    /*public void unsetPassword() {
         this.password = null;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         RequestExtraction other = (RequestExtraction) o;
         return fqdn != null && other.fqdn != null && fqdn.equals(other.fqdn) && port == other.port
                 && user != null && other.user != null && user.equals(other.user);
-    }
+    }*/
 
     @Override
     public String toString() {
-        return "RequestExtraction { " + user + "@" + fqdn + ":" + port + ", module: '" + module + "' }";
+//        return "RequestExtraction { " + user + "@" + fqdn + ":" + port + ", module: '" + module + "' }";
+        return "RequestExtraction { module:" + module + ", " + parameters;
     }
-
 }

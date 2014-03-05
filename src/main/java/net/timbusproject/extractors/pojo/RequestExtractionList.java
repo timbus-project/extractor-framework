@@ -45,13 +45,13 @@ public class RequestExtractionList {
 
     private Semaphore semaphore;
 
-    public static RequestExtractionList fromJSON(JSONArray jsonArray) throws JSONException {
+    /*public static RequestExtractionList fromJSON(JSONArray jsonArray) throws JSONException {
         RequestExtractionList extractionList = new RequestExtractionList();
         List<RequestExtraction> list = new LinkedList<>();
         for (int i = 0; i != jsonArray.length(); ++i) list.add(RequestExtraction.fromJSON(jsonArray.getJSONObject(i)));
         extractionList.extractions = list.toArray(new RequestExtraction[list.size()]);
         return extractionList;
-    }
+    }*/
 
     @Override
     public String toString() {

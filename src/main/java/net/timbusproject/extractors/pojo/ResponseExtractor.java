@@ -19,11 +19,13 @@ package net.timbusproject.extractors.pojo;
 
 import net.timbusproject.extractors.core.IExtractor;
 import net.timbusproject.extractors.core.OperatingSystem;
+import net.timbusproject.extractors.core.Parameter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -44,6 +46,8 @@ public class ResponseExtractor {
     protected String symbolicName;
     @XmlElement
     protected OperatingSystem[] supportedOperatingSystems;
+    @XmlElement
+    protected HashMap<String, Parameter> parameters;
 
     public ResponseExtractor() {}
 
@@ -53,6 +57,7 @@ public class ResponseExtractor {
         symbolicName = extractor.getSymbolicName();
         supportedOperatingSystems = extractor.getSupportedOperatingSystems().toArray(
                 new OperatingSystem[extractor.getSupportedOperatingSystems().size()]);
+        parameters = extractor.getParameters();
     }
 
 }

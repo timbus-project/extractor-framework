@@ -20,8 +20,10 @@ package net.timbusproject.extractors.batch;
 import net.timbusproject.extractors.core.Endpoint;
 import net.timbusproject.extractors.core.IExtractor;
 import net.timbusproject.extractors.osgi.OSGiClient;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.service.log.LogService;
+import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -46,7 +48,8 @@ public class Extract implements Tasklet {
     @Autowired
     private OSGiClient client;
 
-    public Extract() {}
+    public Extract() {
+    }
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
@@ -58,20 +61,37 @@ public class Extract implements Tasklet {
             throw new IllegalArgumentException("Extractor module does not exist");
         }
 
-        Endpoint endpoint = new Endpoint(parameters.getString("fqdn"));
-        endpoint.setProperty("user", parameters.getString("user"));
+        Endpoint endpoint = new Endpoint();
+
+        if (parameters.getString("hiddenFields") != null) {
+            JSONArray hiddenArray = new JSONArray(parameters.getString("hiddenFields"));
+            while (!chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().containsKey(hiddenArray.getString(hiddenArray.length() - 1)))
+                ;
+            for (int i = 0; i < hiddenArray.length(); i++)
+                endpoint.setProperty(hiddenArray.getString(i), String.valueOf(chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().remove(hiddenArray.getString(i))));
+        }
+
+        for (String s : parameters.getParameters().keySet()) {
+            if (s != "module") {
+                if (parameters.getParameters().get(s).getType() == JobParameter.ParameterType.LONG)
+                    endpoint.setProperty(s, String.valueOf(parameters.getLong(s)));
+                else if (parameters.getParameters().get(s).getType() == JobParameter.ParameterType.STRING)
+                    endpoint.setProperty(s, parameters.getString(s));
+            }
+        }
+        /*endpoint.setProperty("user", parameters.getString("user"));
         endpoint.setProperty("knownHosts", parameters.getString("knownHosts"));
         endpoint.setProperty("port", String.valueOf(parameters.getLong("port")));
-        endpoint.setProperty("privateKey", parameters.getString("privateKey"));
+        endpoint.setProperty("privateKey", parameters.getString("privateKey"));*/
         if (parameters.getString("wrapper") != null)
             endpoint.setProperty("wrapper", parameters.getString("wrapper"));
         //noinspection StatementWithEmptyBody
-        while (parameters.getString("password") != null && !chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().containsKey("password"));
         log.log(LogService.LOG_INFO, "job #" + jobId + ": " + endpoint.toString());
-        if (chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("password") != null) {
-            endpoint.setProperty("password", String.valueOf(chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().remove("password")));
+        if (chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("hiddenFields") != null) {
+            JSONArray hiddenArray = new JSONArray(parameters.getString("hiddenFields"));
+            for (int i = 0; i < hiddenArray.length(); i++)
+                chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().remove(hiddenArray.getString(i));
         }
-
         String result = extractor.extract(endpoint, false);
         log.log(LogService.LOG_INFO, "extracted result: " + result);
         chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("result", result);

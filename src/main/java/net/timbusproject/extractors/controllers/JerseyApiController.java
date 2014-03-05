@@ -176,7 +176,9 @@ public class JerseyApiController {
         return extract(extractionsList);
     }*/
 
-    @GET
+
+    //UNCOMMENT THIS!! 5 MARÇO 2014
+    /*@GET
     @Path("/extract/fallback")
     public Response extractFallback() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
         log.log(LogService.LOG_INFO, "starting fallback extraction");
@@ -185,7 +187,7 @@ public class JerseyApiController {
                 .entity(responseConverter.getRequestInfo(key))
                 .location(UriBuilder.fromPath("/requests/{id}").build(key))
                 .build();
-    }
+    }*/
 
 /*    @GET
     @Path("/requests")
