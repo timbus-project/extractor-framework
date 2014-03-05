@@ -37,7 +37,7 @@ public final class Endpoint implements Serializable {
     public static final int DEFAULT_SSH_PORT = 22;
     private static final long serialVersionUID = 4173041842315029534L;
 
-    private final String fqdn;
+    private String fqdn;
     private final Properties properties;
 
     /**
@@ -49,6 +49,10 @@ public final class Endpoint implements Serializable {
     public Endpoint(String fqdn) {
         if (fqdn == null || fqdn.length() == 0) throw new IllegalArgumentException();
         this.fqdn = fqdn;
+        properties = new Properties();
+    }
+
+    public Endpoint(){
         properties = new Properties();
     }
 

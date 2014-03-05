@@ -11,7 +11,7 @@
 
 	<groupId>net.timbusproject.extractors</groupId>
 	<artifactId>extractors-core</artifactId>
-    <version>0.0.2-RELEASE</version>
+    <version>0.0.3-RELEASE</version>
     <packaging>bundle</packaging>
     <name>Context Population Framework</name>
     <url>http://www.timbusproject.net/</url>    

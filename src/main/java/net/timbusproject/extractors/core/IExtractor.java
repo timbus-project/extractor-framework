@@ -17,6 +17,8 @@
  */
 package net.timbusproject.extractors.core;
 
+import java.util.HashMap;
+
 /**
  * Interface for extractors to implement.
  *
@@ -55,6 +57,7 @@ public interface IExtractor {
      */
     public java.util.EnumSet<net.timbusproject.extractors.core.OperatingSystem> getSupportedOperatingSystems();
 
+    public HashMap<String, Parameter> getParameters();
     /**
      * Extraction request.
      *
