@@ -52,6 +52,8 @@ public class CommonsEngine2 {
 
     private void execute() throws IOException, JSONException, JSchException, java.text.ParseException {
         String result = "";
+        if(!cmd.hasOption("l") && !cmd.hasOption("s") && !cmd.hasOption("o") && !cmd.hasOption("j"))
+            printUsage(System.out);
         if (cmd.hasOption("l")) {
             boolean show = false;
             if (cmd.hasOption("s"))
