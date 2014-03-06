@@ -18,9 +18,7 @@
 
 package net.timbusproject.extractors.modules.debiansoftwareextractor.remote;
 
-import net.timbusproject.extractors.core.Endpoint;
-import net.timbusproject.extractors.core.IExtractor;
-import net.timbusproject.extractors.core.OperatingSystem;
+import net.timbusproject.extractors.core.*;
 import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.Engine;
 import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.SSHManager;
 import org.codehaus.jettison.json.JSONArray;
@@ -31,6 +29,7 @@ import org.osgi.service.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 
 public class DebianSoftwareExtractor implements IExtractor {
 
