@@ -55,7 +55,7 @@ public class RequestExtraction {
     public String module;
 //    @XmlAnyAttribute
     @XmlElement
-    public HashMap<String, Parameter> parameters;
+    public HashMap<String, String> parameters;
     @XmlElement
     public RequestWrapper wrap;
 

@@ -82,8 +82,8 @@ public class RequestHandler {
             if (req.parameters != null) {
                 for (String s : extractorParams.keySet())
                     if (!req.parameters.containsKey(s) ||
-                            (extractorParams.get(s).getParameterType() == ParameterType.ARRAY && !req.parameters.get(s).getValue().startsWith("[")) ||
-                            (extractorParams.get(s).getParameterType() == ParameterType.OBJECT && !req.parameters.get(s).getValue().startsWith("{"))
+                            (extractorParams.get(s).getParameterType() == ParameterType.ARRAY && !req.parameters.get(s).startsWith("[")) ||
+                            (extractorParams.get(s).getParameterType() == ParameterType.OBJECT && !req.parameters.get(s).startsWith("{"))
                             )
                         throw new IllegalArgumentException("Parameters are incorrect");
             } else
@@ -107,9 +107,9 @@ public class RequestHandler {
                     continue;
                 }
                 if (extractorParams.get(s).getParameterType() == ParameterType.NUMBER)
-                    parametersBuilder.addLong(s, Long.valueOf(req.parameters.get(s).getValue()));
+                    parametersBuilder.addLong(s, Long.valueOf(req.parameters.get(s)));
                 else
-                    parametersBuilder.addString(s, req.parameters.get(s).getValue());
+                    parametersBuilder.addString(s, req.parameters.get(s));
             }
 
             if (hiddenParameters.size() != 0)
@@ -119,10 +119,10 @@ public class RequestHandler {
 
             for (String s : hiddenParameters) {
                 if (extractorParams.get(s).getParameterType() == ParameterType.NUMBER)
-                    req.getJob().getExecutionContext().putLong(s, Long.valueOf(req.parameters.get(s).getValue()));
+                    req.getJob().getExecutionContext().putLong(s, Long.valueOf(req.parameters.get(s)));
                 else
-                    req.getJob().getExecutionContext().putString(s, req.parameters.get(s).getValue());
-                req.parameters.get(s).value = null;
+                    req.getJob().getExecutionContext().putString(s, req.parameters.get(s));
+                req.parameters.remove(s);
             }
 //            req.getJob().getExecutionContext().putString("password", req.password);
 //            req.unsetPassword();
