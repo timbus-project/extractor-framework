@@ -2,7 +2,9 @@ package net.timbusproject.extractors.pojo;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.AutoRetryHttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.osgi.service.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -59,7 +61,9 @@ public class CallBack {
                     String uri = a;
                     if (!uri.startsWith("http://"))
                         uri = "http://" + uri;
-                    HttpResponse response = new AutoRetryHttpClient().execute(new HttpGet(uri));
+                    DefaultHttpClient httpClient = new DefaultHttpClient();
+                    httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0,false));
+                    HttpResponse response = httpClient.execute(new HttpGet(uri));
                     System.out.println("Sent GET request to " + uri);
                     System.out.println("Endpoint " + a + " says: " + response.getStatusLine());
                 }
