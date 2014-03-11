@@ -13,10 +13,10 @@ This project cannot be used as a standalone.
 ## Requirements
 
 - to use
-	- [Java Runtime Environment][req-java] (>=6) _[how to install][osp-install-java]_
+	- [Java Runtime Environment][req-java] (>= 1.6) _[how to install][osp-install-java]_
 - to compile
-	- [Java Development Kit][req-java] (>=6) _[how to install][osp-install-java]_
-	- [Maven][req-maven]
+	- [Java Development Kit][req-java] (>= 1.6) _[how to install][osp-install-java]_
+	- [Maven][req-maven] (>= 2)
 	- [_core_ and _osgi_ parents][req-parents]
 	- Internet access **or** manually download and install [OSGi 4.3 core companion code](http://www.osgi.org/Download) to Maven local repository
 
