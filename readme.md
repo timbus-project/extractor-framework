@@ -36,8 +36,8 @@ In order to be able to develop new extractors or compile extraction-related proj
 ##Author
 
 - Luís Duarte
-- Jorge Simões <<jorge.simoes@caixamagica.pt>>
-- Miguel Nunes <<miguel.nunes@caixamagica.pt>>
+- Jorge Simões (<jorge.simoes@caixamagica.pt>)
+- Miguel Nunes (<miguel.nunes@caixamagica.pt>)
 
 
 ##License
