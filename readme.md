@@ -1,4 +1,4 @@
-# Extractors Manager
+# Extractors API
 
 This API is responsible for all external access and internal management of given requests. It shall start a process for each request and return corresponding result.
 
@@ -7,7 +7,7 @@ This project cannot be used as a standalone.
 
 ## How to get the code
 
-	$ git clone https://opensourceprojects.eu/git/p/timbus/context-population/extraction-manager
+	$ git clone https://opensourceprojects.eu/git/p/timbus/context-population/extraction-manager extractors-api
 
 
 ## Requirements
