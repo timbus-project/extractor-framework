@@ -23,11 +23,11 @@ import net.timbusproject.extractors.osgi.OSGiClient;
 import net.timbusproject.extractors.pojo.RequestExtraction;
 import net.timbusproject.extractors.pojo.RequestExtractionList;
 import net.timbusproject.extractors.pojo.ResponseJob;
-import net.timbusproject.extractors.pojo.ResponseJobsList;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.osgi.service.log.LogService;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -39,16 +39,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -147,7 +146,16 @@ public class JerseyApiController {
 
     @POST
     @Path("/extract")
-    public Response extract(RequestExtractionList extractionsList) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
+    public Response extract(RequestExtractionList extractionsList, @Context HttpServletRequest req) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
+
+        if(extractionsList.getCallbackInfo().endpointPath!= null && extractionsList.getCallbackInfo().endpointPort != null){
+            String endpoint = req.getRemoteAddr() + ":" + extractionsList.getCallbackInfo().endpointPort;
+            if(extractionsList.getCallbackInfo().endpointPath.startsWith("/"))
+                endpoint += extractionsList.getCallbackInfo().endpointPath;
+            else
+                endpoint += "/" + extractionsList.getCallbackInfo().endpointPath;
+            extractionsList.callback.setOriginEndpoint(endpoint);
+        }
         log.log(LogService.LOG_INFO, extractionsList.toString());
         long key = requestHandler.requestExtraction(extractionsList);
         return Response.status(Response.Status.ACCEPTED)

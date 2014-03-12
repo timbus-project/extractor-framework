@@ -20,6 +20,12 @@ public class CallBackInfo {
     public String requestType;*/
     @XmlElement
     public String[] endpoint;
+    @XmlElement
+    public Integer endpointPort;
+    @XmlElement
+    public String endpointPath;
+
+    private String originEndpoint;
 
 
     public String[] getMails(){
@@ -30,4 +36,11 @@ public class CallBackInfo {
         return endpoint;
     }
 
+    public void setOriginEndpoint(String originEndpoint){
+        this.originEndpoint = originEndpoint;
+    }
+
+    public String getOriginEndpoint() {
+        return originEndpoint;
+    }
 }

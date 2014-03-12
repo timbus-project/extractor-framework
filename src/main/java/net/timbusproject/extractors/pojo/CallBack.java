@@ -67,8 +67,12 @@ public class CallBack {
                     System.out.println("Sent GET request to " + uri);
                     System.out.println("Endpoint " + a + " says: " + response.getStatusLine());
                 }
-            } else
-                System.out.println("No endpoints provided");
+            }
+            if(info.getOriginEndpoint() != null){
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0,false));
+                HttpResponse response = httpClient.execute(new HttpGet("http://" + info.getOriginEndpoint()));
+            }
         }
     }
 
