@@ -81,9 +81,8 @@ public class RequestHandler {
             HashMap<String, Parameter> extractorParams = extractor.getParameters();
             if (req.parameters != null) {
                 for (String s : extractorParams.keySet())
-                    if (!req.parameters.containsKey(s) ||
-                            (extractorParams.get(s).getParameterType() == ParameterType.ARRAY && !req.parameters.get(s).startsWith("[")) ||
-                            (extractorParams.get(s).getParameterType() == ParameterType.OBJECT && !req.parameters.get(s).startsWith("{"))
+                    if ((extractorParams.containsKey(s) && extractorParams.get(s).getParameterType() == ParameterType.ARRAY && !req.parameters.get(s).startsWith("[")) ||
+                            (extractorParams.containsKey(s) && extractorParams.get(s).getParameterType() == ParameterType.OBJECT && !req.parameters.get(s).startsWith("{"))
                             )
                         throw new IllegalArgumentException("Parameters are incorrect");
             } else
@@ -102,11 +101,11 @@ public class RequestHandler {
 
             ArrayList<String> hiddenParameters = new ArrayList<>();
             for (String s : req.parameters.keySet()) {
-                if (extractorParams.get(s).isHidden()) {
+                if (extractorParams.containsKey(s) && extractorParams.get(s).isHidden()) {
                     hiddenParameters.add(s);
                     continue;
                 }
-                if (extractorParams.get(s).getParameterType() == ParameterType.NUMBER)
+                if (extractorParams.containsKey(s) && extractorParams.get(s).getParameterType() == ParameterType.NUMBER)
                     parametersBuilder.addLong(s, Long.valueOf(req.parameters.get(s)));
                 else
                     parametersBuilder.addString(s, req.parameters.get(s));
