@@ -68,6 +68,19 @@ Note: This is an example of a package, in other extraction this may vary due to 
 
 &nbsp;
 
+##Generated Concepts and Properties
+
+This output has a main purpose to be converted to an OWL Ontology through [debian-software-converter](https://opensourceprojects.eu/p/timbus/context-model/converters/json-xml/deb-converter/).
+
+##TIMBUS Use Cases
+
+This extractor is relevant to all use cases concerning linux enviroments:
+- OpenSource Workflows
+- RCAAP DSpace - *Open Source Digital Repositories*
+- Phaidra - Permanent Hosting. Archiving and Indexing of Digital Resources and Assets
+- e-Health - Medical digital information
+
+
 ##Author
 
 Luís Marques <luis.marques@caixamagica.pt>
