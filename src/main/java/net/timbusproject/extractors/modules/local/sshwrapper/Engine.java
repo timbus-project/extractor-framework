@@ -30,7 +30,7 @@ public class Engine {
         String command;
         path.trim();
         if (path.endsWith(".jar"))
-            command = "Test -jar " + path;
+            command = "java -jar " + path;
         else if (path.endsWith(".pl"))
             command = "perl " + path;
         else if (path.endsWith(".py"))

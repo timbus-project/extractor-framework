@@ -18,10 +18,9 @@
 
 package net.timbusproject.extractors.modules.local.sshwrapper;
 
-import net.timbusproject.extractors.core.Endpoint;
-import net.timbusproject.extractors.core.IExtractor;
-import net.timbusproject.extractors.core.OperatingSystem;
+import net.timbusproject.extractors.core.*;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
@@ -29,6 +28,7 @@ import org.osgi.service.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 
 /**
  * Created by miguel on 16-01-2014.
@@ -57,7 +57,19 @@ public class SSHExtractor implements IExtractor {
 
     @Override
     public EnumSet<OperatingSystem> getSupportedOperatingSystems() {
-        return EnumSet.of(OperatingSystem.LINUX);
+        return EnumSet.of(OperatingSystem.WINDOWS);
+    }
+
+    @Override
+    public HashMap<String, Parameter> getParameters() {
+        HashMap<String, Parameter> parameters = new HashMap<>();
+        parameters.put("user", new Parameter(false));
+        parameters.put("password", new Parameter(true));
+        parameters.put("port", new Parameter(false, ParameterType.NUMBER));
+        parameters.put("fqdn", new Parameter(false));
+//        parameters.put("paths", new Parameter(false, ParameterType.ARRAY));
+        parameters.put("commands", new Parameter(false, ParameterType.ARRAY));
+        return parameters;
     }
 
     @Override
@@ -68,20 +80,24 @@ public class SSHExtractor implements IExtractor {
         SSHManager instance = new SSHManager(
                 endpoint.getProperty("user"),
                 endpoint.getProperty("password"),
-                endpoint.getFQDN(),
+                endpoint.getProperty("fqdn"),
                 endpoint.getProperty("knownHosts"),
                 endpoint.hasProperty("port") ? Integer.parseInt(endpoint.getProperty("port")) : Endpoint.DEFAULT_SSH_PORT,
                 endpoint.getProperty("privateKey")
         );
 
-        JSONObject jsonObject = new JSONObject(endpoint.getProperty("wrapper"));
+        JSONArray commandsJsonObject = null;
+        try{
+            commandsJsonObject = new JSONArray(endpoint.getProperty("commands"));
+        }catch(JSONException e ){
+            System.out.println("Commands JSON List sent is not valid");
+        }
 
-        if (jsonObject.has("commands")) {
-            JSONArray receivedCommandsArray = jsonObject.getJSONArray("commands");
-            if (receivedCommandsArray.length() != 0)
-                for (int i = 0; i < receivedCommandsArray.length(); i++) {
-                    JSONObject toPut = engine.run(instance, (String) receivedCommandsArray.get(i));
-                    System.out.println("OUTPUT: " + engine.run(instance, (String) receivedCommandsArray.get(i)));
+        if (commandsJsonObject != null) {
+            if (commandsJsonObject.length() != 0)
+                for (int i = 0; i < commandsJsonObject.length(); i++) {
+                    JSONObject toPut = engine.run(instance, (String) commandsJsonObject.getString(i));
+                    System.out.println("OUTPUT: " + engine.run(instance, (String) commandsJsonObject.getString(i)));
                     responseArray.put(toPut);
                 }
         }

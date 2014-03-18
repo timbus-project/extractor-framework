@@ -24,7 +24,7 @@
         <dependency>
             <groupId>net.timbusproject.extractors</groupId>
             <artifactId>extractors-core</artifactId>
-            <version>0.0.2-RELEASE</version>
+            <version>0.0.3-RELEASE</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
