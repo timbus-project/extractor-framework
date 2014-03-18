@@ -17,7 +17,6 @@ SSH Wrapper Extractor is a tool that is able to send any list of commands to a r
 
 ##Requirements for the extraction target
 
-1. [Debian based distro](http://en.wikipedia.org/wiki/list_of_Linux_distributions#Debian-based)
 2. [SSH server running with authenticated user](http://www.cyberciti.biz/faq/how-to-installing-and-using-ssh-client-server-in-linux/)
 
 &nbsp;
@@ -36,7 +35,8 @@ Dpkg is a package manager for Debian Linux wich is used to install/manage indivi
 
 Expected output
 	 
-	As the Extractor Wrapper is aimed to capture the output of any local extractor or remote file containing a previously performed extraction, it does not expect any specific output. From version  
+	As the Extractor Wrapper is aimed to capture the output of any local extractor or remote file containing a previously performed extraction, it does not expect any specific output. In this moment, it is designed to perform punctual remote-to-local extractions.
+	Version 0.0.3 of Extractors API will include a functionality in which it expects each extraction's output to contain a header which explicitly declares the format of the output. With regard to the wrapper, it will be able to truly represent any extractor.   
 
 &nbsp;
 
@@ -55,7 +55,7 @@ This extractor is relevant to all use cases concerning linux enviroments:
 
 ##Author
 
-Luís Marques <luis.marques@caixamagica.pt>
+Miguel Gama Nunes <miguel.nunes@caixamagica.pt>
 
 &nbsp;
 

@@ -57,7 +57,7 @@ public class SSHExtractor implements IExtractor {
 
     @Override
     public EnumSet<OperatingSystem> getSupportedOperatingSystems() {
-        return EnumSet.of(OperatingSystem.WINDOWS);
+        return EnumSet.allOf(OperatingSystem.class);
     }
 
     @Override
