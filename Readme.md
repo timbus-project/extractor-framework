@@ -1,4 +1,4 @@
-#Debian Software Extractor
+#SSH Wrapper Extractor
 
 SSH Wrapper Extractor is a tool that is able to send any list of commands to a remote machine and capture its output.
 
@@ -17,41 +17,36 @@ SSH Wrapper Extractor is a tool that is able to send any list of commands to a r
 
 ##Requirements for the extraction target
 
-2. [SSH server running with authenticated user](http://www.cyberciti.biz/faq/how-to-installing-and-using-ssh-client-server-in-linux/)
+1. Any operating system with [authenticated user running SSH server](http://www.cyberciti.biz/faq/how-to-installing-and-using-ssh-client-server-in-linux/)
 
 &nbsp;
 
 ##Collected Information
 
-Dpkg is a package manager for Debian Linux wich is used to install/manage individual packages, the extractor converts the information provided by this package manager in JSON format for easier parsing and for a converter to be able to parse it.
+SSH, standing for Secure Shell, is part of the TCP/IP protocol suite and offers a nearly unanimous safe way to administrate UNIX remote machines.
+It can also be used in other operating systems such as Windows by using proper emulators.
+Example: [PuTTY](http://en.wikipedia.org/wiki/PuTTY)
 
 &nbsp;
 
-##How to execute
+##Relevant parameters
 
-	#!bash
-	java -jar debian-software-extractor.jar user@targetHostAddress 
+1. Typical SSH authentication parameters: User, Password
+2. Computer fqdn and port (defaults to 22)
+3. List of commands to be performed in machine 
+
 &nbsp;
 
-Expected output
+##Expected output
 	 
-	As the Extractor Wrapper is aimed to capture the output of any local extractor or remote file containing a previously performed extraction, it does not expect any specific output. In this moment, it is designed to perform punctual remote-to-local extractions.
-	Version 0.0.3 of Extractors API will include a functionality in which it expects each extraction's output to contain a header which explicitly declares the format of the output. With regard to the wrapper, it will be able to truly represent any extractor.   
+As the Extractor Wrapper is aimed to capture the output of any local extractor or remote file containing a previously performed extraction, it does not expect any specific output. In this moment, it is designed to perform punctual remote-to-local extractions.
+Version 0.0.3 of Extractors API will include a functionality in which it expects each extraction's output to contain a header which explicitly declares the format of the output.   
 
 &nbsp;
-
-##Generated Concepts and Properties
-
-This output has a main purpose to be converted to an OWL Ontology through [debian-software-converter](https://opensourceprojects.eu/p/timbus/context-model/converters/json-xml/deb-converter/).
 
 ##TIMBUS Use Cases
 
-This extractor is relevant to all use cases concerning linux enviroments:
-- OpenSource Workflows
-- RCAAP DSpace - *Open Source Digital Repositories*
-- Phaidra - Permanent Hosting. Archiving and Indexing of Digital Resources and Assets
-- e-Health - Medical digital information
-
+This extractor is possibly relevant to all use cases which might contain sensitive data.
 
 ##Author
 
