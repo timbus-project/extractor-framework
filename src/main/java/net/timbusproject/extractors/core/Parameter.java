@@ -18,21 +18,40 @@ public class Parameter{
     public boolean hidden;
     @XmlElement
     public ParameterType parameterType;
+    @XmlElement
+    public boolean mandatory;
 
     public Parameter(){
         this.hidden = false;
+        this.mandatory = true;
         this.parameterType = ParameterType.STRING;
     }
 
     public Parameter(boolean hidden){
         this.hidden = hidden;
+        this.mandatory = true;
+        this.parameterType = ParameterType.STRING;
+    }
+
+    public Parameter(boolean hidden, boolean mandatory){
+        this.hidden = hidden;
+        this.mandatory = mandatory;
         this.parameterType = ParameterType.STRING;
     }
 
     public Parameter(boolean hidden, ParameterType parameterType){
         this.hidden = hidden;
+        this.mandatory = true;
         this.parameterType = parameterType;
     }
+
+    public Parameter(boolean hidden, boolean mandatory, ParameterType parameterType){
+        this.hidden = hidden;
+        this.mandatory = mandatory;
+        this.parameterType = parameterType;
+    }
+
+
 
     public void setValue(String value){
         this.value = value;
@@ -59,8 +78,15 @@ public class Parameter{
         return hidden;
     }
 
+    public boolean isMandatory(){
+        return mandatory;
+    }
+
     public ParameterType getParameterType(){
         return parameterType;
     }
 
+    public void setMandatory(boolean is){
+        mandatory = is;
+    }
 }
