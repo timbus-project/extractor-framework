@@ -72,7 +72,6 @@ public class RequestHandler {
             database.get(key).extractions[0].module = "Debian Software Extractor";
         }*/
 
-
         for (RequestExtraction req : extractionsList.extractions) {
             IExtractor extractor = client.getExtractorByName(req.module);
             if (extractor == null) {
@@ -80,11 +79,16 @@ public class RequestHandler {
             }
             HashMap<String, Parameter> extractorParams = extractor.getParameters();
             if (req.parameters != null) {
-                for (String s : extractorParams.keySet())
-                    if ((extractorParams.containsKey(s) && extractorParams.get(s).getParameterType() == ParameterType.ARRAY && !req.parameters.get(s).startsWith("[")) ||
-                            (extractorParams.containsKey(s) && extractorParams.get(s).getParameterType() == ParameterType.OBJECT && !req.parameters.get(s).startsWith("{"))
-                            )
-                        throw new IllegalArgumentException("Parameters are incorrect");
+                for (String s : extractorParams.keySet()) {
+                    if (extractorParams.get(s).isMandatory() && !req.parameters.containsKey(s))
+                        throw new IllegalArgumentException("The parameter " + s + " is mandatory");
+                    if(req.parameters.containsKey(s)){
+                        if (extractorParams.get(s).getParameterType() == ParameterType.ARRAY && !req.parameters.get(s).startsWith("["))
+                            throw new IllegalArgumentException("Parameters " + s + " is supposed to be a JSON Array");
+                        if (extractorParams.get(s).getParameterType() == ParameterType.OBJECT && !req.parameters.get(s).startsWith("{"))
+                            throw new IllegalArgumentException("Parameters " + s + " is supposed to be a JSON Object");
+                    }
+                }
             } else
                 throw new IllegalArgumentException("No parameters were sent");
             JobParametersBuilder parametersBuilder = new JobParametersBuilder()

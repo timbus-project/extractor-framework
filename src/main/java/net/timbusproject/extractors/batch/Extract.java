@@ -79,14 +79,8 @@ public class Extract implements Tasklet {
                     endpoint.setProperty(s, parameters.getString(s));
             }
         }
-        /*endpoint.setProperty("user", parameters.getString("user"));
-        endpoint.setProperty("knownHosts", parameters.getString("knownHosts"));
-        endpoint.setProperty("port", String.valueOf(parameters.getLong("port")));
-        endpoint.setProperty("privateKey", parameters.getString("privateKey"));*/
         if (parameters.getString("wrapper") != null)
             endpoint.setProperty("wrapper", parameters.getString("wrapper"));
-        //noinspection StatementWithEmptyBody
-        log.log(LogService.LOG_INFO, "job #" + jobId + ": " + endpoint.toString());
         if (chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("hiddenFields") != null) {
             JSONArray hiddenArray = new JSONArray(parameters.getString("hiddenFields"));
             for (int i = 0; i < hiddenArray.length(); i++)

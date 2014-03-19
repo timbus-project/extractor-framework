@@ -156,7 +156,6 @@ public class JerseyApiController {
                 endpoint += "/" + extractionsList.getCallbackInfo().endpointPath;
             extractionsList.callback.setOriginEndpoint(endpoint);
         }
-        log.log(LogService.LOG_INFO, extractionsList.toString());
         long key = requestHandler.requestExtraction(extractionsList);
         return Response.status(Response.Status.ACCEPTED)
                 .entity(responseConverter.getRequestInfo(key))
