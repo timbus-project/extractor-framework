@@ -24,9 +24,8 @@ Hardware Linux Extractor is a tool developed in Java and extracts hardware infor
 
 ##Collected Information
 
-This extractor gathers hardware information from a linux machine using the lshw cli tool. 
-This is helpful when the target is a remote machine
-and you dont have physical acess to the machine.
+This extractor gathers hardware information from a linux machine using the [lshw cli tool](http://ezix.org/project/wiki/HardwareLiSter). 
+This is helpful when the target is a remote machine and you dont have physical acess to the machine.
 
 &nbsp;
 
@@ -58,6 +57,19 @@ The output will be in JSON format for easier parsing to a converter or other too
 Note: It is recommend that you have sudo privilieges in the target machine, if you dont have the extractor will not provide information of the motherboard.
 
 &nbsp;
+
+##Generated Concepts and Properties
+
+All the components that are obtained by the extractor are related to a single machine. This allows to map all the inviduals pieces that constitute the target machine and converting to an ontology. 
+
+&nbsp;
+
+##TIMBUS Use Cases
+
+###Industrial Case Study: Civil Engineering Infrastructure
+
+This extractor is applied to an industrial use, namely infrastructure. In enviroments where the hardware runs Linux enviroment, e.g servers, datacenters and other backend hardware, it is critical to business processes to keep this information in cases of hardware failure.
+Each company, university or and institution run a different hardware enviroment according to its needs, this specificity needs to be stored and kept in order to maintain, repair or replacement of components.
 
 ##Author
 
