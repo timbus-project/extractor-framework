@@ -26,7 +26,7 @@ import java.io.IOException;
 
 public class Engine {
 
-    public JSONObject runWithPath(SSHManager instance, String path) {
+    /*public JSONObject runWithPath(SSHManager instance, String path) {
         String command;
         path.trim();
         if (path.endsWith(".jar"))
@@ -39,7 +39,7 @@ public class Engine {
             command = path;
         return run(instance, command);
     }
-
+*/
     public JSONObject run(SSHManager instance, String command) {
         try {
             instance.connect();

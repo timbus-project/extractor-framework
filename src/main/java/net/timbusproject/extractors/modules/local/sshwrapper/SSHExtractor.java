@@ -74,7 +74,6 @@ public class SSHExtractor implements IExtractor {
 
     @Override
     public String extract(Endpoint endpoint, boolean useCache) throws Exception {
-        JSONArray responseArray = new JSONArray();
         Engine engine = new Engine();
 
         SSHManager instance = new SSHManager(
@@ -87,20 +86,30 @@ public class SSHExtractor implements IExtractor {
         );
 
         JSONArray commandsJsonObject = null;
-        try{
+        try {
             commandsJsonObject = new JSONArray(endpoint.getProperty("commands"));
-        }catch(JSONException e ){
+        } catch (JSONException e) {
             System.out.println("Commands JSON List sent is not valid");
         }
 
         if (commandsJsonObject != null) {
-            if (commandsJsonObject.length() != 0)
-                for (int i = 0; i < commandsJsonObject.length(); i++) {
-                    JSONObject toPut = engine.run(instance, (String) commandsJsonObject.getString(i));
-                    System.out.println("OUTPUT: " + engine.run(instance, (String) commandsJsonObject.getString(i)));
-                    responseArray.put(toPut);
+            if (commandsJsonObject.length() != 0) {
+                if (commandsJsonObject.length() == 1) {
+                    JSONObject responseObject = engine.run(instance, (String) commandsJsonObject.getString(0));
+                    return new JSONObject().put("extractor", getName()).put("result", responseObject).toString();
+                } else {
+                    JSONArray responseArray = new JSONArray();
+                    for (int i = 0; i < commandsJsonObject.length(); i++) {
+                        JSONObject toPut = engine.run(instance, (String) commandsJsonObject.getString(i));
+                        responseArray.put(toPut);
+                    }
+                    return new JSONObject().put("extractor", getName()).put("result", responseArray).toString();
                 }
-        }
+            }
+            else
+                throw new IllegalArgumentException("No commands provided");
+        } else
+            throw new IllegalArgumentException("No commands provided");
 
         /*if (jsonObject.has("paths")) {
             JSONArray receivedPathsArray = new JSONArray(endpoint.getProperty("paths"));
@@ -111,6 +120,5 @@ public class SSHExtractor implements IExtractor {
             }
         }*/
 
-        return new JSONObject().put("extractor", getName()).put("result", responseArray).toString();
     }
 }
