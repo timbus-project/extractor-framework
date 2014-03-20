@@ -56,7 +56,7 @@ Pre-conditions:
 
 JSON Request:
 
-	!#json
+	#!json
 	{
     "extractions": [
         {
