@@ -9,7 +9,7 @@ SSH Wrapper Extractor is a tool that is able to send any list of commands to a r
 	git clone https://@opensourceprojects.eu/git/p/timbus/context-population/extractors/wrapper-ssh timbus-context-population-extractors-wrapper-ssh
  
 
-&nbsp;
+&nbsp;m
 
 ##Install Requirements
 
@@ -23,8 +23,7 @@ SSH Wrapper Extractor is a tool that is able to send any list of commands to a r
 
 ##Collected Information
 
-SSH, standing for Secure Shell, is part of the TCP/IP protocol suite and offers a nearly unanimous safe way to administrate UNIX remote machines.
-It can also be used in other operating systems such as Windows by using proper emulators.
+SSH, standing for Secure Shell, is part of the TCP/IP protocol suite and offers a nearly unanimous safe way to administrate UNIX remote machines. It can also be used in other operating systems such as Windows by using proper emulators.
 Example: [PuTTY](http://en.wikipedia.org/wiki/PuTTY)
 
 &nbsp;
@@ -47,6 +46,33 @@ Version 0.0.3 of Extractors API will include a functionality in which it expects
 ##TIMBUS Use Cases
 
 This extractor is possibly relevant to all use cases which might contain sensitive data.
+
+###Example usage 
+
+Pre-conditions:
+
+* The target machine has a .jar local extractor located in ~/Documents
+* The origin and remote machines are in the same network and the remote one has an open SSH port
+
+JSON Request:
+
+	!#json
+	{
+    "extractions": [
+        {
+            "module": "SSH Wrapper Extractor",
+            "parameters": {
+                "user": "timbususer",
+                "password": "securepassword",
+                "commands": "[\"java -jar ~/Documents/someLocalExtractor.jar\"]"
+            }
+        }
+    ]
+	}
+
+As you can see, the "commands" argument is actually a String representing an array, so it has to be escaped with the proper backslashes. In this case, it requests for only one extraction. If we had added more commands, the output would be an Array containing the output of each command.
+ 
+&nbsp;
 
 ##Author
 
