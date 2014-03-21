@@ -70,7 +70,7 @@ public class DebianSoftwareExtractor implements IExtractor {
         );
         Engine engine = new Engine();
         JSONArray jsonArray = engine.run(instance);
-        return new JSONObject().put("extractor", getName()).put("result", jsonArray).toString();
+        return new JSONObject().put("extractor", getName()).put("result", jsonArray).toString(2);
     }
 }
 

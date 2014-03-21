@@ -43,28 +43,24 @@ public class Engine {
         String dpkg = "dpkg -l | grep ^ii | awk '{print $2;}'";
         String dpkgStatus = "dpkg --status ";
 
-        // call sendCommand for each command and the output (without prompts) is returned
         instance.connect();
-//        log.log(LogService.LOG_INFO, "connection: " + instance.connect());
+        // call sendCommand for each command and the output (without prompts) is returned
         String pkgList = instance.sendCommand(dpkg);
         Scanner scanner = new Scanner(pkgList);
 
         JSONArray jsonArray = new JSONArray();
         while (scanner.hasNextLine()) {
-//            log.log(LogService.LOG_INFO, "extracting " + pkg);
             String pkg = scanner.nextLine();
             jsonArray.put(parser(instance.sendCommand(dpkgStatus + pkg)));
-//            jsonArray.put(parser(instance.sendCommand(dpkgStatus + "bash")));
+            //jsonArray.put(parser(instance.sendCommand(dpkgStatus + "chromium-browser")));
 
             // line for testing purposes. delete it to retrieve more packages
-//            break;
+            //break;
         }
 
         // close only after all commands are sent
         instance.close();
-        //put the date in JSOn array
 
-//        System.out.println(jsonArray.toString(2));
 //        writeToFile(jsonArray);
         return jsonArray;
     }
@@ -84,10 +80,9 @@ public class Engine {
                         StringBuilder stringBuilder = new StringBuilder();
                         while (scanner.hasNextLine() && !tmp.contains(key)) {
                             String str = scanner.nextLine();
-                            if (str.length() == 0)
-                                System.out.println(pkg);
-                            else
-                            if (!(Character.isUpperCase(str.charAt(0)) && str.contains(":"))) {
+                            if (str.length() == 0){
+                              // string is a blank line
+                            }else if (!(Character.isUpperCase(str.charAt(0)) && str.contains(":"))) {
                                 stringBuilder.append(str);
                             }
                         }
@@ -96,14 +91,16 @@ public class Engine {
                     case "conffiles":
                         getConffiles(scanner, jsonObject, tmp, key);
                         break;
-                    case "provides":
+                    // fields with |
                     case "pre-depends":
                     case "recommends":
                     case "suggests":
+                    case "depends":
+                    // fields without |
+                    case "provides":
                     case "conflicts":
                     case "replaces":
-                    case "depends":
-                         JSONArray jsonArrayAnd = getDepends(scanner);
+                        JSONArray jsonArrayAnd = getDepends(scanner);
                         jsonObject.put(key, jsonArrayAnd);
                         break;
                     default:
@@ -114,25 +111,35 @@ public class Engine {
         }
         return jsonObject;
     }
+
     private JSONArray getDepends(Scanner scanner) throws JSONException {
         String[] depends = scanner.nextLine().trim().split(",");
+        // main array
         JSONArray jsonArrayAnd = new JSONArray();
         for (String s : depends) {
             JSONArray jsonArrayOr = new JSONArray();
-            String[] temp = s.trim().split("\\|");
-            for (String pkgOr : temp) {
-                JSONObject jsonDependency = new JSONObject();
-                String[] split = pkgOr.trim().split(" ");
-                for (String string : split) {
-                    if (string.contains("(")) {
-                        jsonDependency.put("Comparator", string.replace("(", ""));
-                    } else if (string.contains(")")) {
-                        jsonDependency.put("Version", string.replace(")", ""));
-                    } else if (string.length() > 0) {
-                        jsonDependency.put("Package", string.trim());
+
+            if(s.contains("|")) {
+                JSONArray result = orDependency(s);
+                jsonArrayOr.put(result);
+//                System.out.println("Result " + result.toString());
+            }else {
+                String[] temp = s.trim().split(" ");
+                for (String pkgOr : temp) {
+                    JSONObject jsonDependency = new JSONObject();
+                    String[] split = pkgOr.trim().split(" ");
+                    for (String string : split) {
+                        if (string.contains("(")) {
+                            jsonDependency.put("Comparator", string.replace("(", ""));
+                        } else if (string.contains(")")) {
+                            jsonDependency.put("Version", string.replace(")", ""));
+                        } else if (string.length() > 0) {
+                            jsonDependency.put("Package", string.trim());
+                        }
+//                    System.out.println("STRING" + string);
                     }
+                    jsonArrayOr.put(jsonDependency);
                 }
-                jsonArrayOr.put(jsonDependency);
             }
             if (jsonArrayOr.length() == 1)
                 jsonArrayAnd.put(jsonArrayOr.get(0));
@@ -140,6 +147,30 @@ public class Engine {
                 jsonArrayOr.put(jsonArrayOr);
         }
         return jsonArrayAnd;
+    }
+
+    private JSONArray orDependency(String s) throws JSONException {
+        String[] temp = s.trim().split("\\|");
+        JSONArray orDependencies = new JSONArray();
+        for (String pkgOr : temp) {
+            JSONObject jsonDependency = new JSONObject();
+            String[] split = pkgOr.trim().split(" ");
+            for (String string : split) {
+                if (string.contains("(")) {
+                    jsonDependency.put("Comparator", string.replace("(", ""));
+                } else if (string.contains(")")) {
+                    jsonDependency.put("Version", string.replace(")", ""));
+                } else if (string.length() > 0) {
+                    jsonDependency.put("Package", string.trim());
+                }
+            }
+            orDependencies.put(jsonDependency);
+        }
+        return orDependencies;
+    }
+
+    private JSONArray andDependency(String s) {
+        return new JSONArray();
     }
 
 

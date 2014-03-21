@@ -29,9 +29,16 @@ Dpkg is a package manager for Debian Linux wich is used to install/manage indivi
 &nbsp;
 
 ##How to execute
+###For a local extraction
+	#!bash
+	java -jar debian-software-extractor.jar fileOutputName.txt
+
 
 	#!bash
-	java -jar debian-software-extractor.jar user@targetHostAddress 
+	java -jar debian-software-extractor.jar
+
+If no arguments are given then the output will be a default file "extraction.json"
+
 &nbsp;
 
 ##Expected output - an example package
@@ -74,11 +81,12 @@ This output has a main purpose to be converted to an OWL Ontology through [debia
 
 ##TIMBUS Use Cases
 
-This extractor is relevant to all use cases concerning linux enviroments:
+This extractor is relevant to all use cases concerning debian linux enviroments:
 - OpenSource Workflows
 - RCAAP DSpace - *Open Source Digital Repositories*
 - Phaidra - Permanent Hosting. Archiving and Indexing of Digital Resources and Assets
-- e-Health - Medical digital information
+
+Each of these use cases has a debian linux enviroment therefore it they have an unique configuration. In order to preserve information of the software installed in their enviroment it is necessary to retrieve it. Each software package and its dependencies metadata is extracted to be possible in the future to build the same system again.
 
 
 ##Author
