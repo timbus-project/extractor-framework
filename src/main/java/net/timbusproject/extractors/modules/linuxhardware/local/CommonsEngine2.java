@@ -1,8 +1,10 @@
 package net.timbusproject.extractors.modules.linuxhardware.local;
 
+import com.fasterxml.uuid.Generators;
 import com.jcraft.jsch.JSchException;
 import net.timbusproject.extractors.core.Endpoint;
 import net.timbusproject.extractors.modules.linuxhardware.absolute.Engine;
+import net.timbusproject.extractors.modules.linuxhardware.remote.LinuxHardwareExtractor;
 import net.timbusproject.extractors.modules.linuxhardware.remote.SSHManager;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -15,6 +17,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.osgi.framework.BundleContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.net.URL;
@@ -59,7 +63,10 @@ public class CommonsEngine2 {
     private void execute() throws IOException, JSONException, JSchException {
         String result = "";
         if (cmd.hasOption("l")) {
-            result = engine.run();
+            result = new JSONObject().put("extractor", "Linux Hardware Extractor")
+                    .put("format", new JSONObject().put("id", LinuxHardwareExtractor.formatUUID).put("multiple", false))
+                    .put("uuid", Generators.timeBasedGenerator().generate())
+                    .put("result", engine.run()).toString();
         }
         if (cmd.hasOption("j")) {
             StringBuilder request = new StringBuilder();
@@ -76,7 +83,10 @@ public class CommonsEngine2 {
                     jsonObject.optString("knownHosts"),
                     jsonObject.has("port") ? Integer.parseInt(jsonObject.getString("port")) : Endpoint.DEFAULT_SSH_PORT,
                     jsonObject.optString("privateKey"));
-            result = engine.run(manager, jsonObject.has("password") ? jsonObject.getString("password") : "").toString();
+            result = new JSONObject().put("extractor", "Linux Hardware Extractor")
+                    .put("format", new JSONObject().put("id", LinuxHardwareExtractor.formatUUID).put("multiple", false))
+                    .put("uuid", Generators.timeBasedGenerator().generate())
+                    .put("result", engine.run(manager, jsonObject.has("password") ? jsonObject.getString("password") : "")).toString();
         }
         if (cmd.hasOption("s"))
             if (result != "")
