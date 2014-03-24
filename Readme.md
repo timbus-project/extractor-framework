@@ -17,25 +17,24 @@ Debian Software Extractor is a tool that extracts information of installed packa
 ##Requirements for the extraction target
 
 1. [Debian based distro](http://en.wikipedia.org/wiki/list_of_Linux_distributions#Debian-based)
-2. [dpkg installed](https://wiki.debian.org/dpkg)
-3. [SSH server running with authenticated user](http://www.cyberciti.biz/faq/how-to-installing-and-using-ssh-client-server-in-linux/)
+2. [SSH server running with authenticated user](http://www.cyberciti.biz/faq/how-to-installing-and-using-ssh-client-server-in-linux/)
 
 &nbsp;
 
 ##Collected Information
 
-Dpkg is a package manager for Debian Linux wich is used to install/manage individual packages, the extractor converts the information provided by this package manager in JSON format for easier parsing and for a converter to be able to parse it.
+[Dpkg](http://en.wikipedia.org/wiki/Dpkg) is a package manager for Debian Linux wich is used to install/manage individual packages. The extractor uses *Dpkg* to gather all the metadata of the installed packages in JSON format for easier parsing and for a converter to transform the output to an ontology.
+
+The software responsible for the conversion from JSON to OWL(ontology) can be found [here](https://opensourceprojects.eu/p/timbus/context-model/converters/json-xml/deb-converter/).
 
 &nbsp;
 
 ##How to execute
 ###For a local extraction
 	#!bash
-	java -jar debian-software-extractor.jar fileOutputName.txt
+	java -jar debian-software-extractor.jar "fileOutputName.txt"
 
-
-	#!bash
-	java -jar debian-software-extractor.jar
+The output of the extraction will be put in file with the provided name.
 
 If no arguments are given then the output will be a default file "extraction.json"
 
