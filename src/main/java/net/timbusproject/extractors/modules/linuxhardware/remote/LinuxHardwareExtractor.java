@@ -15,12 +15,10 @@
  * License or out of the use or inability to use the Work.
  * See the License for the specific language governing permissions and limitation under the License.
  */
+package net.timbusproject.extractors.modules.linuxhardware.remote;
 
-package net.timbusproject.extractors.modules.linuxhardware;
-
-import net.timbusproject.extractors.core.Endpoint;
-import net.timbusproject.extractors.core.IExtractor;
-import net.timbusproject.extractors.core.OperatingSystem;
+import net.timbusproject.extractors.core.*;
+import net.timbusproject.extractors.modules.linuxhardware.absolute.Engine;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
@@ -29,6 +27,7 @@ import org.osgi.service.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 
 public class LinuxHardwareExtractor implements IExtractor {
     @Autowired
@@ -58,11 +57,21 @@ public class LinuxHardwareExtractor implements IExtractor {
     }
 
     @Override
-    public JSONObject extract(Endpoint endpoint, boolean b) throws Exception {
+    public HashMap<String, Parameter> getParameters() {
+        HashMap<String, Parameter> parameters = new HashMap<>();
+        parameters.put("user", new Parameter(false));
+        parameters.put("password", new Parameter(true));
+        parameters.put("port", new Parameter(false, ParameterType.NUMBER));
+        parameters.put("fqdn", new Parameter(false));
+        return parameters;
+    }
+
+    @Override
+    public String extract(Endpoint endpoint, boolean b) throws Exception {
         SSHManager instance = new SSHManager(
                 endpoint.getProperty("user"),
                 endpoint.getProperty("password"),
-                endpoint.getFQDN(),
+                endpoint.getProperty("fqdn"),
                 endpoint.getProperty("knownHosts"),
                 endpoint.hasProperty("port") ? Integer.parseInt(endpoint.getProperty("port")) : Endpoint.DEFAULT_SSH_PORT,
                 endpoint.getProperty("privateKey")
@@ -70,8 +79,8 @@ public class LinuxHardwareExtractor implements IExtractor {
 
         Engine engine = new Engine();
         JSONArray jsonArray = new JSONArray();
-        jsonArray.put(engine.run(instance,endpoint));
-        return new JSONObject().put("extractor", getName()).put("return", jsonArray);
+        jsonArray.put(engine.run(instance, endpoint));
+        return new JSONObject().put("extractor", getName()).put("return", jsonArray).toString();
     }
 
 
