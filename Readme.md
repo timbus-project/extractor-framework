@@ -88,6 +88,7 @@ This extractor is relevant to all use cases concerning debian linux enviroments:
 
 Each of these use cases has a debian linux enviroment therefore it they have an unique configuration. In order to preserve information of the software installed in their enviroment it is necessary to retrieve it. Each software package and its dependencies metadata is extracted to be possible in the future to build the same system again.
 
+&nbsp;
 
 ##Author
 
