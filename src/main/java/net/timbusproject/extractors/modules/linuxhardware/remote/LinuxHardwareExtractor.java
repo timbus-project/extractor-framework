@@ -17,6 +17,7 @@
  */
 package net.timbusproject.extractors.modules.linuxhardware.remote;
 
+import com.fasterxml.uuid.Generators;
 import net.timbusproject.extractors.core.*;
 import net.timbusproject.extractors.modules.linuxhardware.absolute.Engine;
 import org.codehaus.jettison.json.JSONArray;
@@ -35,6 +36,8 @@ public class LinuxHardwareExtractor implements IExtractor {
 
     @Autowired
     private LogService log;
+
+    public static final String formatUUID = "ffd20389-64ac-5564-a4d7-21281c1daa39";
 
     @Override
     public String getName() {
@@ -80,7 +83,10 @@ public class LinuxHardwareExtractor implements IExtractor {
         Engine engine = new Engine();
         JSONArray jsonArray = new JSONArray();
         jsonArray.put(engine.run(instance, endpoint));
-        return new JSONObject().put("extractor", getName()).put("return", jsonArray).toString();
+        return new JSONObject().put("extractor", getName())
+                .put("format", new JSONObject().put("id", formatUUID).put("multiple", false))
+                .put("uuid", Generators.timeBasedGenerator().generate())
+                .put("result", engine.run(instance, endpoint)).toString();
     }
 
 
