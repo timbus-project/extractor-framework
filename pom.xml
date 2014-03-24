@@ -17,15 +17,22 @@
         <osgi.version>4.3.1</osgi.version>
         <jsch.version>0.1.41</jsch.version>
         <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
+        <java-uuid.version>3.1.3</java-uuid.version>
         <bundle.embedded.dependencies/>
     </properties>
 
     <dependencies>
         <dependency>
+            <groupId>com.fasterxml.uuid</groupId>
+            <artifactId>java-uuid-generator</artifactId>
+            <version>${java-uuid.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>net.timbusproject.extractors</groupId>
             <artifactId>extractors-core</artifactId>
             <version>0.0.3-RELEASE</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <!--
@@ -36,37 +43,37 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${springframework.version}</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>${osgi.version}</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
             <version>${osgi.version}</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
             <version>${jettison.version}</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.jcraft.jsch</groupId>
             <artifactId>com.springsource.com.jcraft.jsch</artifactId>
             <version>${jsch.version}</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-bundle</artifactId>
             <version>1.17.1</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

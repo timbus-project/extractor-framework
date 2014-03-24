@@ -18,6 +18,7 @@
 
 package net.timbusproject.extractors.modules.local.sshwrapper;
 
+import com.fasterxml.uuid.Generators;
 import net.timbusproject.extractors.core.*;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -103,7 +104,10 @@ public class SSHExtractor implements IExtractor {
                         JSONObject toPut = engine.run(instance, (String) commandsJsonObject.getString(i));
                         responseArray.put(toPut);
                     }
-                    return new JSONObject().put("extractor", getName()).put("result", responseArray).toString();
+                    return new JSONObject().put("extractor", getName())
+                            .put("format", new JSONObject().put("multiple", true))
+                            .put("result", responseArray)
+                            .put("uuid", Generators.timeBasedGenerator().generate()).toString();
                 }
             }
             else
