@@ -35,6 +35,8 @@ import java.util.HashMap;
  * Created by miguel on 16-01-2014.
  */
 public class SSHExtractor implements IExtractor {
+
+
     @Autowired
     private BundleContext bundleContext;
 
@@ -95,23 +97,18 @@ public class SSHExtractor implements IExtractor {
 
         if (commandsJsonObject != null) {
             if (commandsJsonObject.length() != 0) {
-                if (commandsJsonObject.length() == 1) {
-                    JSONObject responseObject = engine.run(instance, (String) commandsJsonObject.getString(0));
-                    return new JSONObject().put("extractor", getName()).put("result", responseObject).toString();
-                } else {
-                    JSONArray responseArray = new JSONArray();
-                    for (int i = 0; i < commandsJsonObject.length(); i++) {
-                        JSONObject toPut = engine.run(instance, (String) commandsJsonObject.getString(i));
-                        responseArray.put(toPut);
-                    }
-                    return new JSONObject().put("extractor", getName())
-                            .put("format", new JSONObject().put("multiple", true))
-                            .put("result", responseArray)
-                            .put("uuid", Generators.timeBasedGenerator().generate()).toString();
+                JSONArray responseArray = new JSONArray();
+                for (int i = 0; i < commandsJsonObject.length(); i++) {
+                    JSONObject toPut = engine.run(instance, (String) commandsJsonObject.getString(i));
+                    responseArray.put(toPut);
                 }
-            }
-            else
+                return new JSONObject().put("extractor", getName())
+                        .put("format", new JSONObject().put("multiple", true))
+                        .put("result", responseArray)
+                        .put("uuid", Generators.timeBasedGenerator().generate()).toString();
+            } else
                 throw new IllegalArgumentException("No commands provided");
+
         } else
             throw new IllegalArgumentException("No commands provided");
 
