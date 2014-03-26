@@ -15,30 +15,40 @@
  * License or out of the use or inability to use the Work.
  * See the License for the specific language governing permissions and limitation under the License.
  */
-
-package net.timbusproject.extractors.modules.linuxhardware;
+package net.timbusproject.extractors.modules.linuxhardware.absolute;
 
 import com.jcraft.jsch.JSchException;
 import net.timbusproject.extractors.core.Endpoint;
+import net.timbusproject.extractors.modules.linuxhardware.local.CommandManager;
+import net.timbusproject.extractors.modules.linuxhardware.remote.SSHManager;
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 public class Engine {
 
-    public String run(SSHManager instance, Endpoint endpoint) throws JSchException, IOException, JSONException {
+    public JSONObject run(SSHManager instance, String password) throws JSchException, IOException, JSONException {
         instance.connect();
-        String output = instance.sendCommandSudo("lshw -json",endpoint.getProperty("password"));
-        writeToFile(output);
+        JSONObject output = new JSONObject(instance.sendCommandSudo("lshw -json", password));
+//        writeToFile(output);
         instance.close();
         return output;
     }
 
-    private void writeToFile(String output) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
-        PrintWriter writer = new PrintWriter("output_2.json", "UTF-8");
+    public JSONObject run(SSHManager instance, Endpoint endpoint) throws JSchException, IOException, JSONException {
+        return run(instance, endpoint.getProperty("password"));
+    }
+
+    public String run() throws IOException {
+        String result;
+        CommandManager manager = new CommandManager();
+        result = manager.doCommand(null);
+        return result;
+    }
+
+    public void writeToFile(String fileName, String output) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
+        PrintWriter writer = new PrintWriter(fileName, "UTF-8");
         writer.write(output);
         writer.close();
     }
