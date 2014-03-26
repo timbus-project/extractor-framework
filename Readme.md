@@ -62,6 +62,8 @@ JSON Request:
         {
             "module": "SSH Wrapper Extractor",
             "parameters": {
+                "fqdn": "localhost",
+                "port":"22"
                 "user": "timbususer",
                 "password": "securepassword",
                 "commands": "[\"java -jar ~/Documents/someLocalExtractor.jar\"]"
