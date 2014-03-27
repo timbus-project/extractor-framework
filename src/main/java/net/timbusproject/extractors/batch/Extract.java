@@ -90,6 +90,7 @@ public class Extract implements Tasklet {
         log.log(LogService.LOG_INFO, "extracted result: " + result);
         chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("result", result);
 
+
         return RepeatStatus.FINISHED;
     }
 }

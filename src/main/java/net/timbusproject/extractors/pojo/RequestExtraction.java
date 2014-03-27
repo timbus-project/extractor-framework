@@ -56,8 +56,6 @@ public class RequestExtraction {
 //    @XmlAnyAttribute
     @XmlElement
     public HashMap<String, String> parameters;
-    @XmlElement
-    public RequestWrapper wrap;
 
     private JobExecution job;
 

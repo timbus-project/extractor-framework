@@ -38,7 +38,7 @@ public class CallBack {
 
     public CallBack() {}
 
-    public synchronized void doCallBack(RequestExtractionList extractionList) throws URISyntaxException, IOException {
+    public synchronized void doCallBack(RequestExtractionList extractionList, boolean success) throws URISyntaxException, IOException {
         CallBackInfo info = extractionList.getCallbackInfo();
         if (info == null)
             System.out.println("No callback information provided");

@@ -147,7 +147,7 @@ public class RequestHandler {
 
     /*method invoked by Spring batch job listener's "afterStep" method. Whenever a job finishes, this method checks
     wether the request is also finished in order to perform callback*/
-    public void finish(long key) {
+    public void finish(long key, boolean success) {
         if (database.get(key).getSemaphoreAvailablePermits() > 1)
             try {
                 database.get(key).acquireSemaphore();
@@ -155,7 +155,7 @@ public class RequestHandler {
             }
         else {
             try {
-                new CallBack().doCallBack(database.get(key));
+                new CallBack().doCallBack(database.get(key), success);
             } catch (URISyntaxException e) {
             } catch (IOException e) {
             }
