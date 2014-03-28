@@ -92,7 +92,6 @@ public class RequestHandler {
             } else
                 throw new IllegalArgumentException("No parameters were sent");
             JobParametersBuilder parametersBuilder = new JobParametersBuilder()
-                    .addString("wrapper", req.wrap != null ? req.wrap.toString() : null)
                     .addString("module", req.module) // selectedModule.name
                     .addLong("timestamp", System.currentTimeMillis())
                     .addLong("requestId", key);
