@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and limitation under the License.
  */
 
-package net.timbusproject.extractors.modules.debiansoftwareextractor;
+package net.timbusproject.extractors.modules.debiansoftwareextractor.absolute;
 
 import com.jcraft.jsch.JSchException;
 import org.codehaus.jettison.json.JSONArray;
@@ -25,13 +25,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.osgi.service.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Scanner;
 
 public class Engine {
@@ -63,6 +58,64 @@ public class Engine {
 
 //        writeToFile(jsonArray);
         return jsonArray;
+    }
+
+    public JSONArray run(boolean show) throws IOException, JSONException, ParseException {
+        String dpkg ="dpkg -l | grep ^ii | awk '{print $2;}'";
+        String dpkgStatus = "dpkg --status ";
+
+        boolean test = false;
+//        Uncomment this for testing
+//        test = true;
+        // call sendCommand for each command and the output (without prompts) is returned
+//        log.log(LogService.LOG_INFO, "connection: " + instance.connect());
+        String pkgList = doLocalCommand(dpkg);
+        Scanner scanner = new Scanner(pkgList);
+
+        JSONArray jsonArray = new JSONArray();
+        int i = 0;
+        while (scanner.hasNextLine()) {
+//            log.log(LogService.LOG_INFO, "extracting " + pkg);
+            String pkg = scanner.nextLine();
+            JSONObject jsonObject = parser(doLocalCommand(dpkgStatus + pkg));
+            if(show)
+                System.out.println(jsonObject.toString());
+            jsonArray.put(jsonObject);
+            if(test){
+                i++;
+                if (i > 5)
+                    break;
+            }
+        }
+        return jsonArray;
+    }
+
+    public String doLocalCommand(String command) throws IOException {
+        StringBuilder outputBuffer = new StringBuilder();
+        InputStream commandOutput;
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
+        Process p = processBuilder.start();
+        try {
+            p.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        commandOutput = p.getInputStream();
+
+        int readByte = commandOutput.read();
+        while (readByte != 0xffffffff) {
+            outputBuffer.append((char) readByte);
+            readByte = commandOutput.read();
+        }
+        commandOutput.close();
+        p.destroy();
+        return outputBuffer.toString();
+    }
+
+    public void writeToFile(String fileName, String output) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
+        PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+        writer.write(output);
+        writer.close();
     }
 
     public JSONObject parser(String pkg) throws JSONException {
