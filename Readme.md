@@ -87,6 +87,40 @@ This extractor is relevant to all use cases concerning debian linux enviroments:
 
 Each of these use cases has a debian linux enviroment therefore it they have an unique configuration. In order to preserve information of the software installed in their enviroment it is necessary to retrieve it. Each software package and its dependencies metadata is extracted to be possible in the future to build the same system again.
 
+Example case:
+The extraction reveals the following installed package:
+
+{
+    "Package": "gnome-shell-extension-weather",
+    "Status": "install ok installed",
+    "Priority": "extra",
+    "Section": "gnome",
+    "Installed-Size": "444",
+    "Maintainer": "Christian METZLER <neroth@xeked.com>",
+    "Architecture": "all",
+    "Version": "0.2-0+20130514~raring1xcm1",
+    "Depends": [
+      [
+        {"Package": "dconf-gsettings-backend"},
+        {"Package": "gsettings-backend"}
+      ],
+      {"Package": "gnome-shell"},
+      {"Package": "seed"}
+    ],
+    "Description": " extension for GNOME Shell A simple extension for displaying weather informations from several cities in GNOME Shell"
+  }
+
+Has shown in the JSON above, the package "gnome-shell-extension-weather", has the following the dependencies: "dconf-gsetting-backend", "gesettings-backend", "gnome-shell", "seed".
+
+This package and its dependencies will be mapped in the ontology in the following way ![image](http://imgur.com/PM322BN). 
+
+The main package is identified with its name and version. Each dependency is identified with the id of the main package plus its name and version. This is due to the ontology restriction that each relationship must be unique in order to reduce conflicts between the entities envolved.
+
+This is very useful to preserve the installed software in a production enviroment, not only storing its information but also the dependencies and relationships that come with it.
+
+
+ 
+
 &nbsp;
 
 ##Author
