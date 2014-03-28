@@ -69,6 +69,7 @@ If no arguments are given then the output will be a default file "extraction.jso
 	    ],
             "Description": " comparison utilities The diffutils package provides the diff, diff3, sdiff, and cmp programs. . `diff' shows differences between two files, or each corresponding file in two directories.  `cmp' shows the offsets and line numbers where two files differ.  `cmp' can also show all the characters that differ between the two files, side by side.  `diff3' shows differences among three files.  `sdiff' merges two files interactively. . The set of differences produced by `diff' can be used to distribute updates to text files (such as program source code) to other people. This method is especially useful when the differences are small compared to the complete files.  Given `diff' output, the `patch' program can update, or \"patch\", a copy of the file."
            }
+
 .... 
 Note: This is an example of a package, in other extraction this may vary due to the installed packages present in a extraction target.
 
