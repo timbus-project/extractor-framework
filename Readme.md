@@ -90,7 +90,6 @@ Each of these use cases has a debian linux enviroment therefore it they have an 
 
 Example case:
 The extraction reveals the following installed package:
-	#!json
 	{
 	    "Package": "gnome-shell-extension-weather",
 	    "Status": "install ok installed",
