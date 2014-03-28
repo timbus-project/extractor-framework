@@ -36,13 +36,12 @@ The software responsible for the conversion from JSON to OWL (ontology) can be f
 
 The output of the extraction will be put in file with the provided name.
 
-If no arguments are given then the output will be a default file "extraction.json"
+If no arguments are given then the output will be a default file "extraction.json".
 
 &nbsp;
 
 ##Expected output - an example package
 
-	#!json
 	{
   	  "Package": "diffutils",
  	  "Essential": "yes",
@@ -67,10 +66,9 @@ If no arguments are given then the output will be a default file "extraction.jso
 	      {"Package": "diffutils-doc"},
 	      {"Package": "wdiff"}
 	    ],
-            "Description": " comparison utilities The diffutils package provides the diff, diff3, sdiff, and cmp programs. . `diff' shows differences between two files, or each corresponding file in two directories.  `cmp' shows the offsets and line numbers where two files differ.  `cmp' can also show all the characters that differ between the two files, side by side.  `diff3' shows differences among three files.  `sdiff' merges two files interactively. . The set of differences produced by `diff' can be used to distribute updates to text files (such as program source code) to other people. This method is especially useful when the differences are small compared to the complete files.  Given `diff' output, the `patch' program can update, or \"patch\", a copy of the file."
+            "Description": " comparison utilities The diffutils package provides the diff, diff3, sdiff, and cmp programs. . `diff' shows differences between two files, or each corresponding file in two directories.  `cmp' shows the offsets and line numbers where two files differ.  `cmp' can also show all the characters that differ between the two files, side by side.  `diff3' shows differences among three files.  `sdiff' merges two files interactively. . The set of differences produced by `diff' can be used to distribute updates to text files (such as program source code) to other people. This method is especially useful when the differences are small compared to the complete files.  Given `diff' output, the `patch' program can update, or patch, a copy of the file."
            }
 
-.... 
 Note: This is an example of a package, in other extraction this may vary due to the installed packages present in a extraction target.
 
 &nbsp;
@@ -112,7 +110,8 @@ The extraction reveals the following installed package:
 
 Has shown in the JSON above, the package *gnome-shell-extension-weather*, has the following the dependencies: *dconf-gsetting-backend*, *gesettings-backend*, *gnome-shell*, *seed*.
 
-This package and its dependencies will be mapped in the ontology in the following way [image](http://imgur.com/PM322BN). 
+This package and its dependencies will be mapped in the ontology in the following way [image](http://imgur.com/PM322BN)
+ 
 The main package is identified with its name and version. Each dependency is identified with the id of the main package plus its name and version. This is due to the ontology restriction that each relationship must be unique in order to reduce conflicts between the entities envolved.
 
  
