@@ -25,7 +25,7 @@ Debian Software Extractor is a tool that extracts information of installed packa
 
 [Dpkg](http://en.wikipedia.org/wiki/Dpkg) is a package manager for Debian Linux wich is used to install/manage individual packages. The extractor uses *Dpkg* to gather all the metadata of the installed packages in JSON format for easier parsing and for a converter to transform the output to an ontology.
 
-The software responsible for the conversion from JSON to OWL(ontology) can be found [here](https://opensourceprojects.eu/p/timbus/context-model/converters/json-xml/deb-converter/).
+The software responsible for the conversion from JSON to OWL (ontology) can be found [here](https://opensourceprojects.eu/p/timbus/context-model/converters/json-xml/deb-converter/).
 
 &nbsp;
 
