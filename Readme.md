@@ -113,10 +113,7 @@ The extraction reveals the following installed package:
 Has shown in the JSON above, the package "gnome-shell-extension-weather", has the following the dependencies: "dconf-gsetting-backend", "gesettings-backend", "gnome-shell", "seed".
 
 This package and its dependencies will be mapped in the ontology in the following way ![image](http://imgur.com/PM322BN). 
-
 The main package is identified with its name and version. Each dependency is identified with the id of the main package plus its name and version. This is due to the ontology restriction that each relationship must be unique in order to reduce conflicts between the entities envolved.
-
-This is very useful to preserve the installed software in a production enviroment, not only storing its information but also the dependencies and relationships that come with it.
 
 
  
