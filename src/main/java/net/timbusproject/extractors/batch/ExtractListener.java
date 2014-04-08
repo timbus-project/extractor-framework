@@ -28,7 +28,7 @@ public class ExtractListener implements StepExecutionListener {
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
         final long key = stepExecution.getJobParameters().getLong("requestId");
-        System.out.println("LISTENER: STATE OF EXTRACTION: " + stepExecution.getExitStatus().getExitCode());
+        System.out.println("LISTENER: State of extraction: " + stepExecution.getExitStatus().getExitCode());
         if (stepExecution.getExitStatus().getExitCode() == "COMPLETED")
             new Thread(){
                       public void run(){
