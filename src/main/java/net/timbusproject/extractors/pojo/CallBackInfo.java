@@ -21,11 +21,19 @@ public class CallBackInfo {
     @XmlElement
     public String[] endpoint;
     @XmlElement
+    public String requestType;
+
+    @XmlElement
     public Integer endpointPort;
     @XmlElement
     public String endpointPath;
+    @XmlElement
+    public String originRequestType;
 
     private String originEndpoint;
+    private String finalOriginRequestType;
+    private String finalRequestType;
+
 
 
     public String[] getMails(){
@@ -42,5 +50,21 @@ public class CallBackInfo {
 
     public String getOriginEndpoint() {
         return originEndpoint;
+    }
+
+    public String getFinalOriginRequestType() {
+        return finalOriginRequestType;
+    }
+
+    public void setFinalOriginRequestType(String finalOriginRequestType) {
+        this.finalOriginRequestType = finalOriginRequestType;
+    }
+
+    public String getFinalRequestType() {
+        return finalRequestType;
+    }
+
+    public void setFinalRequestType(String finalRequestType) {
+        this.finalRequestType = finalRequestType;
     }
 }

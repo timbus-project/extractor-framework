@@ -154,7 +154,7 @@ public class RequestHandler {
             }
         else {
             try {
-                new CallBack().doCallBack(database.get(key), success);
+                new CallBack().doCallBack(key, database.get(key), success);
             } catch (URISyntaxException e) {
             } catch (IOException e) {
             }

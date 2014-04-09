@@ -155,6 +155,18 @@ public class JerseyApiController {
             else
                 endpoint += "/" + extractionsList.getCallbackInfo().endpointPath;
             extractionsList.callback.setOriginEndpoint(endpoint);
+            if(extractionsList.getCallbackInfo().originRequestType != null){
+                if(extractionsList.getCallbackInfo().originRequestType.toLowerCase() == "post" || extractionsList.getCallbackInfo().originRequestType.toLowerCase() == "get")
+                    extractionsList.getCallbackInfo().setFinalOriginRequestType(extractionsList.getCallbackInfo().originRequestType.toLowerCase());
+                else{
+                    log.log(LogService.LOG_INFO, "Invalid HTTP Request type for callback. Defaulting to GET type");
+                    extractionsList.getCallbackInfo().setFinalOriginRequestType("get");
+                }
+            }
+            else {
+                log.log(LogService.LOG_INFO, "No HTTP Request type for callback provided. Defaulting to GET type");
+                extractionsList.getCallbackInfo().setFinalOriginRequestType("get");
+            }
         }
         long key = requestHandler.requestExtraction(extractionsList);
         return Response.status(Response.Status.ACCEPTED)

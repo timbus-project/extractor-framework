@@ -2,9 +2,14 @@ package net.timbusproject.extractors.pojo;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.osgi.service.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,7 +28,7 @@ import java.util.Scanner;
  * Date: 22-11-2013
  * Time: 17:09
  * To change this template use File | Settings | File Templates.
- */                                                                           pul
+ */
 public class CallBack {
 
     @Autowired
@@ -36,9 +41,10 @@ public class CallBack {
     private String socketFactoryClass;
     private String mailAuth;
 
-    public CallBack() {}
+    public CallBack() {
+    }
 
-    public synchronized void doCallBack(RequestExtractionList extractionList, boolean success) throws URISyntaxException, IOException {
+    public synchronized void doCallBack(long key, RequestExtractionList extractionList, boolean success) throws URISyntaxException, IOException {
         CallBackInfo info = extractionList.getCallbackInfo();
         if (info == null)
             System.out.println("No callback information provided");
@@ -57,21 +63,67 @@ public class CallBack {
                 System.out.println("No e-mail adress(es) provided");
             if (info.getEndPoints() != null) {
                 for (String a : info.getEndPoints()) {
-                    System.out.println("Sending GET request to: " + a);
-                    String uri = a;
-                    if (!uri.startsWith("http://"))
-                        uri = "http://" + uri;
-                    DefaultHttpClient httpClient = new DefaultHttpClient();
-                    httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0,false));
-                    HttpResponse response = httpClient.execute(new HttpGet(uri));
-                    System.out.println("Sent GET request to " + uri);
-                    System.out.println("Endpoint " + a + " says: " + response.getStatusLine());
+                    HttpResponse response;
+                    if (info.requestType != null && info.requestType.toLowerCase() == "post") {
+                        try {
+                            JSONObject jsonResult = new JSONObject().put("id", key);
+                            if (success)
+                                jsonResult.put("result", "completed");
+                            else
+                                jsonResult.put("result", "failed");
+                            DefaultHttpClient httpClient = new DefaultHttpClient();
+                            HttpPost postRequest = new HttpPost(a);
+                            postRequest.setEntity(new StringEntity(jsonResult.toString(), ContentType.create("application/json")));
+                            response = httpClient.execute(postRequest);
+                            System.out.println("Sent POST request to " + a);
+                            System.out.println("Endpoint " + a + " says: " + response.getStatusLine());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        System.out.println("Sending GET request to: " + a);
+                        String uri = a;
+                        if (!uri.startsWith("http://"))
+                            uri = "http://" + uri;
+                        DefaultHttpClient httpClient = new DefaultHttpClient();
+                        httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0, false));
+                        response = httpClient.execute(new HttpGet(uri));
+                        System.out.println("Sent GET request to " + uri);
+                        System.out.println("Endpoint " + a + " says: " + response.getStatusLine());
+                    }
                 }
             }
-            if(info.getOriginEndpoint() != null){
-                DefaultHttpClient httpClient = new DefaultHttpClient();
-                httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0,false));
-                HttpResponse response = httpClient.execute(new HttpGet("http://" + info.getOriginEndpoint()));
+            else{
+                System.out.println("No foreign endpoints for callback provided");
+            }
+            if (info.getOriginEndpoint() != null) {
+                HttpResponse response;
+                if (info.getFinalOriginRequestType() == "post") {
+                    System.out.println("Preparing POST request for endpoint " + "http://" + info.getOriginEndpoint());
+                    try {
+                        JSONObject jsonResult = new JSONObject().put("id", key);
+                        if (success)
+                            jsonResult.put("result", "completed");
+                        else
+                            jsonResult.put("result", "failed");
+                        DefaultHttpClient httpClient = new DefaultHttpClient();
+                        HttpPost postRequest = new HttpPost("http://" + info.getOriginEndpoint());
+                        postRequest.setEntity(new StringEntity(jsonResult.toString(), ContentType.create("application/json")));
+                        response = httpClient.execute(postRequest);
+                        System.out.println("Sent POST request to " + "http://" + info.getOriginEndpoint());
+                        System.out.println("Endpoint " + "http://" + info.getOriginEndpoint() + " says: " + response.getStatusLine());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.out.println("Preparing GET request for endpoint " + "http://" + info.getOriginEndpoint());
+                    DefaultHttpClient httpClient = new DefaultHttpClient();
+                    httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0, false));
+                    response = httpClient.execute(new HttpGet("http://" + info.getOriginEndpoint()));
+                }
+            }
+            else{
+                System.out.println("No port or path provided for origin endpoint callback");
             }
         }
     }
