@@ -46,6 +46,7 @@ public class CallBack {
 
     public synchronized void doCallBack(long key, RequestExtractionList extractionList, boolean success) throws URISyntaxException, IOException {
         CallBackInfo info = extractionList.getCallbackInfo();
+        System.out.println("IN CALLBACK. REQUEST TYPE: " + info.getFinalOriginRequestType());
         if (info == null)
             System.out.println("No callback information provided");
         else {
@@ -64,7 +65,7 @@ public class CallBack {
             if (info.getEndPoints() != null) {
                 for (String a : info.getEndPoints()) {
                     HttpResponse response;
-                    if (info.requestType != null && info.requestType.toLowerCase() == "post") {
+                    if (info.requestType != null && info.requestType.toLowerCase().equals("post")) {
                         try {
                             JSONObject jsonResult = new JSONObject().put("id", key);
                             if (success)
@@ -98,7 +99,7 @@ public class CallBack {
             }
             if (info.getOriginEndpoint() != null) {
                 HttpResponse response;
-                if (info.getFinalOriginRequestType() == "post") {
+                if (info.getFinalOriginRequestType().equals("post")) {
                     System.out.println("Preparing POST request for endpoint " + "http://" + info.getOriginEndpoint());
                     try {
                         JSONObject jsonResult = new JSONObject().put("id", key);
