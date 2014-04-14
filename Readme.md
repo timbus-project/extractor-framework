@@ -70,7 +70,7 @@ This output has a main purpose to be converted to an OWL Ontology through [debia
 
 ##TIMBUS Use Cases
 
-This extractor is relevant to all use cases concerning debian linux enviroments:
+A tree of packages installed in the system is extracted from the system and stored in the context model. The dependencies between the packages are maintained in a tree/hierarchy. Ideally the tool is run from a command line in the system in which the capture takes place and does not need to modify the existing system by installation of additional software. This extractor is relevant to all use cases concerning debian linux enviroments:
 
 - OpenSource Workflows
 - RCAAP DSpace *Open Source Digital Repositories*
