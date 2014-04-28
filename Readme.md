@@ -81,29 +81,218 @@ Each of these use cases has a debian linux enviroment therefore it they have an 
 Example case:
 The extraction reveals the following installed package:
 
-	{
-	    "Package": "gnome-shell-extension-weather",
-	    "Status": "install ok installed",
-	    "Priority": "extra",
-	    "Section": "gnome",
-	    "Installed-Size": "444",
-	    "Maintainer": "Christian METZLER <neroth@xeked.com>",
-	    "Architecture": "all",
-	    "Version": "0.2-0+20130514~raring1xcm1",
-	    "Depends": [
-	      [
-		{"Package": "dconf-gsettings-backend"},
-		{"Package": "gsettings-backend"}
-	      ],
-	      {"Package": "gnome-shell"},
-	      {"Package": "seed"}
+	[{
+	  "Package": "chromium-browser",
+	  "Status": "install ok installed",
+	  "Priority": "optional",
+	  "Section": "web",
+	  "Installed-Size": "107253",
+	  "Maintainer": "Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>",
+	  "Architecture": "amd64",
+	  "Version": "28.0.1500.52-0xcm1.13.04.3",
+	  "Replaces": [{"Package": "chromium-browser-inspector"}],
+	  "Provides": [
+	    {"Package": "chromium-browser-inspector"},
+	    {"Package": "www-browser"}
+	  ],
+	  "Depends": [
+	    {"Package": "gconf-service"},
+	    {
+	      "Package": "libasound2",
+	      "Comparator": ">=",
+	      "Version": "1.0.16"
+	    },
+	    {
+	      "Package": "libatk1.0-0",
+	      "Comparator": ">=",
+	      "Version": "1.12.4"
+	    },
+	    {
+	      "Package": "libc6",
+	      "Comparator": ">=",
+	      "Version": "2.15"
+	    },
+	    {
+	      "Package": "libcairo2",
+	      "Comparator": ">=",
+	      "Version": "1.6.0"
+	    },
+	    {
+	      "Package": "libcups2",
+	      "Comparator": ">=",
+	      "Version": "1.4.0"
+	    },
+	    {
+	      "Package": "libdbus-1-3",
+	      "Comparator": ">=",
+	      "Version": "1.2.14"
+	    },
+	    {
+	      "Package": "libexpat1",
+	      "Comparator": ">=",
+	      "Version": "2.0.1"
+	    },
+	    {
+	      "Package": "libfontconfig1",
+	      "Comparator": ">=",
+	      "Version": "2.9.0"
+	    },
+	    {
+	      "Package": "libfreetype6",
+	      "Comparator": ">=",
+	      "Version": "2.3.9"
+	    },
+	    {
+	      "Package": "libgcc1",
+	      "Comparator": ">=",
+	      "Version": "1:4.1.1"
+	    },
+	    {
+	      "Package": "libgconf-2-4",
+	      "Comparator": ">=",
+	      "Version": "2.31.1"
+	    },
+	    {
+	      "Package": "libgcrypt11",
+	      "Comparator": ">=",
+	      "Version": "1.4.5"
+	    },
+	    {
+	      "Package": "libgdk-pixbuf2.0-0",
+	      "Comparator": ">=",
+	      "Version": "2.22.0"
+	    },
+	    {
+	      "Package": "libglib2.0-0",
+	      "Comparator": ">=",
+	      "Version": "2.35.9"
+	    },
+	    {
+	      "Package": "libgnome-keyring0",
+	      "Comparator": ">=",
+	      "Version": "2.22.2"
+	    },
+	    {
+	      "Package": "libgtk2.0-0",
+	      "Comparator": ">=",
+	      "Version": "2.24.0"
+	    },
+	    [
+	      {
+		"Package": "libnspr4",
+		"Comparator": ">=",
+		"Version": "2:4.9-2~"
+	      },
+	      {
+		"Package": "libnspr4-0d",
+		"Comparator": ">=",
+		"Version": "1.8.0.10"
+	      }
 	    ],
-	    "Description": " extension for GNOME Shell A simple extension for displaying weather informations from several cities in GNOME Shell"
-	  }
+	    [
+	      {
+		"Package": "libnss3",
+		"Comparator": ">=",
+		"Version": "2:3.13.4-2~"
+	      },
+	      {
+		"Package": "libnss3-1d",
+		"Comparator": ">=",
+		"Version": "3.12.6"
+	      }
+	    ],
+	    {
+	      "Package": "libpango1.0-0",
+	      "Comparator": ">=",
+	      "Version": "1.22.0"
+	    },
+	    {
+	      "Package": "libstdc++6",
+	      "Comparator": ">=",
+	      "Version": "4.6"
+	    },
+	    {
+	      "Package": "libudev1",
+	      "Comparator": ">=",
+	      "Version": "183"
+	    },
+	    {
+	      "Package": "libx11-6",
+	      "Comparator": ">=",
+	      "Version": "2:1.4.99.1"
+	    },
+	    {
+	      "Package": "libxcomposite1",
+	      "Comparator": ">=",
+	      "Version": "1:0.3-1"
+	    },
+	    {
+	      "Package": "libxdamage1",
+	      "Comparator": ">=",
+	      "Version": "1:1.1"
+	    },
+	    {"Package": "libxext6"},
+	    {"Package": "libxfixes3"},
+	    {
+	      "Package": "libxrandr2",
+	      "Comparator": ">=",
+	      "Version": "2:1.2.0"
+	    },
+	    {"Package": "libxrender1"},
+	    {"Package": "libxss1"},
+	    {
+	      "Package": "libnss3-1d",
+	      "Comparator": ">=",
+	      "Version": "3.12.3"
+	    },
+	    {"Package": "xdg-utils"},
+	    [
+	      {
+		"Package": "chromium-codecs-ffmpeg-extra",
+		"Comparator": ">=",
+		"Version": "0.6"
+	      },
+	      {
+		"Package": "chromium-codecs-ffmpeg",
+		"Comparator": ">=",
+		"Version": "0.6"
+	      }
+	    ]
+	  ],
+	  "Pre-Depends": [{
+	    "Package": "dpkg",
+	    "Comparator": ">=",
+	    "Version": "1.15.6"
+	  }],
+	  "Recommends": [{"Package": "chromium-browser-l10n"}],
+	  "Suggests": [
+	    {"Package": "webaccounts-chromium-extension"},
+	    {"Package": "unity-chromium-extension"}
+	  ],
+	  "Conflicts": [{"Package": "chromium-browser-inspector"}],
+	  "Conffiles": [{
+	    "file": "\/etc\/chromium-browser\/default",
+	    "hash": "00f6b60b3a6a0b3ec9816ac3bae285eb"
+	  }],
+	  "Description": " browser Chromium is an open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web. . Chromium serves as a base for Google Chrome, which is Chromium rebranded (name and logo) with very few additions such as usage tracking and an auto-updater system. . This package contains the Chromium browser"
+	}]
 
-Has shown in the JSON above, the package "gnome-shell-extension-weather", has the following the dependencies: "dconf-gsetting-backend", "gesettings-backend", "gnome-shell", "seed".
+Has shown in the JSON above, the package "chromium-browser" has several dependencies, some may have version and other do not. That depends on the information present in the extraction.
 
-This package and its dependencies will be mapped in the ontology in the following way [image](http://imgur.com/PM322BN). The main package is identified with its name and version. Each dependency is identified with the id of the main package plus its name and version. This is due to the ontology restriction that each relationship must be unique in order to reduce conflicts between the entities envolved.
+This package and its dependencies will be mapped in the ontology in the following way [image](http://imgur.com/ah1u7YG). The main package is identified with its name and version. Each dependency is identified with the id of the main package plus its name and version.
+
+For example the dependency  
+
+		{
+		"Package": "chromium-codecs-ffmpeg",
+		"Comparator": ">=",
+		"Version": "0.6"
+	        }
+
+In the ontology will be refered as chromium-browser28.0.1500.52-0xcm1.13.04.3chromium-codecs-ffmpeg. 
+First comes the package "chromium-browser" then its version "28.0.1500.52-0xcm1.13.04.3" and finally the dependency itself "chromium-codecs-ffmpeg".
+
+This is due to the ontology restriction that each relationship must be unique in order to reduce conflicts between the entities envolved.
 
 ---
 
