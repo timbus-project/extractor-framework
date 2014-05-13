@@ -65,98 +65,46 @@ The output will be in JSON format for easier parsing to a converter or other too
 ##Example output:
 	#!json
 	{
-              "id" : "usb:7",
-              "class" : "bus",
-              "claimed" : true,
-              "handle" : "PCI:0000:00:1d.7",
-              "description" : "USB controller",
-              "product" : "82801I (ICH9 Family) USB2 EHCI Controller #1",
-              "vendor" : "Intel Corporation",
-              "physid" : "1d.7",
-              "businfo" : "pci@0000:00:1d.7",
-              "version" : "03",
-              "width" : 32,
-              "clock" : 33000000,
-              "configuration" : {
-                "driver" : "ehci-pci",
-                "latency" : "0"
-              },
-              "capabilities" : {
-                "pm" : "Power Management",
-                "debug" : "Debug port",
-                "ehci" : "Enhanced Host Controller Interface (USB2)",
-                "bus_master" : "bus mastering",
-                "cap_list" : "PCI capabilities listing"
-              }
-            },
-            {
-              "id" : "pci:6",
-              "class" : "bridge",
-              "claimed" : true,
-              "handle" : "PCIBUS:0000:08",
-              "description" : "PCI bridge",
-              "product" : "82801 Mobile PCI Bridge",
-              "vendor" : "Intel Corporation",
-              "physid" : "1e",
-              "businfo" : "pci@0000:00:1e.0",
-              "version" : "93",
-              "width" : 32,
-              "clock" : 33000000,
-              "capabilities" : {
-                "pci" : true,
-                "subtractive_decode" : true,
-                "bus_master" : "bus mastering",
-                "cap_list" : "PCI capabilities listing"
-              }
-            },
-            {
-              "id" : "isa",
-              "class" : "bridge",
-              "claimed" : true,
-              "handle" : "PCI:0000:00:1f.0",
-              "description" : "ISA bridge",
-              "product" : "ICH9M LPC Interface Controller",
-              "vendor" : "Intel Corporation",
-              "physid" : "1f",
-              "businfo" : "pci@0000:00:1f.0",
-              "version" : "03",
-              "width" : 32,
-              "clock" : 33000000,
-              "configuration" : {
-                "driver" : "lpc_ich",
-                "latency" : "0"
-              },
-              "capabilities" : {
-                "isa" : true,
-                "bus_master" : "bus mastering",
-                "cap_list" : "PCI capabilities listing"
-              }
-            },
-            {
-              "id" : "ide:0",
-              "class" : "storage",
-              "claimed" : true,
-              "handle" : "PCI:0000:00:1f.2",
-              "description" : "IDE interface",
-              "product" : "82801IBM/IEM (ICH9M/ICH9M-E) 2 port SATA Controller [IDE mode]",
-              "vendor" : "Intel Corporation",
-              "physid" : "1f.2",
-              "businfo" : "pci@0000:00:1f.2",
-              "version" : "03",
-              "width" : 32,
-              "clock" : 66000000,
-              "configuration" : {
-                "driver" : "ata_piix",
-                "latency" : "0"
-              },
-              "capabilities" : {
-                "ide" : true,
-                "pm" : "Power Management",
-                "bus_master" : "bus mastering",
-                "cap_list" : "PCI capabilities listing"
-              }
-
-
+	  "id" : "#####",
+	  "class" : "system",
+	  "claimed" : true,
+	  "description" : "Computer",
+	  "width" : 64,
+	  "capabilities" : {
+	    "vsyscall32" : "processos 32-bits"
+	  },
+	  "children" : [
+	    {
+	      "id" : "core",
+	      "class" : "bus",
+	      "claimed" : true,
+	      "description" : "Motherboard",
+	      "physid" : "0",
+	      "children" : [
+		{
+		  "id" : "memory",
+		  "class" : "memory",
+		  "claimed" : true,
+		  "description" : "MemÃ³ria do sistema",
+		  "physid" : "0",
+		  "units" : "bytes",
+		  "size" : 4110196736
+		},
+		 {
+		  "id" : "cpu",
+		  "class" : "processor",
+		  "claimed" : true,
+		  "product" : "Pentium(R) Dual-Core CPU       T4200  @ 2.00GHz",
+		  "vendor" : "Intel Corp.",
+		  "physid" : "1",
+		  "businfo" : "cpu@0",
+		  "units" : "Hz",
+		  "size" : 1200000000,
+		  "capacity" : 1200000000,
+		  "width" : 64
+		}
+	]
+}
 ##Generated Concepts and Properties
 
 All the components that are obtained by the extractor are related to a single machine. This allows to map all the inviduals pieces that constitute the target machine and converting to an ontology. 
@@ -169,6 +117,9 @@ All the components that are obtained by the extractor are related to a single ma
 
 This extractor is applied to an industrial use, namely infrastructure. In enviroments where the hardware runs Linux enviroment, e.g servers, datacenters and other backend hardware, it is critical to business processes to keep this information in cases of hardware failure.
 Each company, university or and institution run a different hardware enviroment according to its needs, this specificity needs to be stored and kept in order to maintain, repair or replacement of components.
+
+
+
 
 ##Author
 

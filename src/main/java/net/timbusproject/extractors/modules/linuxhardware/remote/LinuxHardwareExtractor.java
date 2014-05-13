@@ -41,7 +41,7 @@ public class LinuxHardwareExtractor implements IExtractor {
 
     @Override
     public String getName() {
-        return bundleContext.getBundle().getHeaders().get("Bundle-Name");
+        return bundleContext != null ? bundleContext.getBundle().getHeaders().get("Bundle-Name") : getClass().getSimpleName();
     }
 
     @Override
@@ -74,15 +74,15 @@ public class LinuxHardwareExtractor implements IExtractor {
         SSHManager instance = new SSHManager(
                 endpoint.getProperty("user"),
                 endpoint.getProperty("password"),
-                endpoint.getProperty("fqdn"),
+                endpoint.getFQDN(),
                 endpoint.getProperty("knownHosts"),
                 endpoint.hasProperty("port") ? Integer.parseInt(endpoint.getProperty("port")) : Endpoint.DEFAULT_SSH_PORT,
                 endpoint.getProperty("privateKey")
         );
 
         Engine engine = new Engine();
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.put(engine.run(instance, endpoint));
+//        JSONArray jsonArray = new JSONArray();
+//        jsonArray.put(engine.run(instance, endpoint));
         return new JSONObject().put("extractor", getName())
                 .put("format", new JSONObject().put("id", formatUUID).put("multiple", false))
                 .put("uuid", Generators.timeBasedGenerator().generate())
