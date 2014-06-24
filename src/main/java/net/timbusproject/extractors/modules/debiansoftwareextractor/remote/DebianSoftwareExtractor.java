@@ -18,8 +18,13 @@
 
 package net.timbusproject.extractors.modules.debiansoftwareextractor.remote;
 
+import net.timbusproject.extractors.core.Endpoint;
+import net.timbusproject.extractors.core.IExtractor;
+import net.timbusproject.extractors.core.OperatingSystem;
+import net.timbusproject.extractors.core.Parameter;
+import com.fasterxml.uuid.Generators;
 import net.timbusproject.extractors.core.*;
-import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.Engine;
+import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.Engine2;
 import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.SSHManager;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
@@ -33,6 +38,7 @@ import java.util.HashMap;
 
 public class DebianSoftwareExtractor implements IExtractor {
 
+    private static final String formatUUID = "d17250e8-af6e-5b84-8fab-404d5ecee47f";
     @Autowired
     private BundleContext bundleContext;
 
@@ -41,7 +47,10 @@ public class DebianSoftwareExtractor implements IExtractor {
 
     @Override
     public String getName() {
+        if(bundleContext != null)
         return bundleContext.getBundle().getHeaders().get("Bundle-Name");
+
+        return String.valueOf("");
     }
 
     @Override
@@ -60,7 +69,18 @@ public class DebianSoftwareExtractor implements IExtractor {
     }
 
     @Override
+    public HashMap<String, Parameter> getParameters() {
+        HashMap<String, Parameter> parameters = new HashMap<>();
+        parameters.put("user", new Parameter(false));
+        parameters.put("password", new Parameter(true));
+        parameters.put("port", new Parameter(false, ParameterType.NUMBER));
+        parameters.put("fqdn", new Parameter(false));
+        return parameters;
+    }
+
+    @Override
     public String extract(Endpoint endpoint, boolean b) throws Exception {
+
         SSHManager instance = new SSHManager(
                 endpoint.getProperty("user"),
                 endpoint.getProperty("password"),
@@ -69,9 +89,12 @@ public class DebianSoftwareExtractor implements IExtractor {
                 endpoint.hasProperty("port") ? Integer.parseInt(endpoint.getProperty("port")) : Endpoint.DEFAULT_SSH_PORT,
                 endpoint.getProperty("privateKey")
         );
-        Engine engine = new Engine();
-        JSONArray jsonArray = engine.run(instance);
-        return new JSONObject().put("extractor", getName()).put("result", jsonArray).toString(2);
+        Engine2 engine2 = new Engine2();
+        JSONArray jsonArray = engine2.run(instance);
+        return new JSONObject().put("extractor", getName())
+                .put("format", new JSONObject().put("id", formatUUID).put("multiple", false))
+                .put("uuid", Generators.timeBasedGenerator().generate())
+                .put("result", jsonArray).toString(2);
     }
 }
 

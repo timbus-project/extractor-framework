@@ -15,7 +15,7 @@
  * License or out of the use or inability to use the Work.
  * See the License for the specific language governing permissions and limitation under the License.
  */
-package net.timbusproject.extractors.modules.debiansoftwareextractor;
+package net.timbusproject.extractors.modules.debiansoftwareextractor.absolute;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;

@@ -1,14 +1,12 @@
-package net.timbusproject.extractors.modules.debiansoftwareextractor;
+package net.timbusproject.extractors.modules.debiansoftwareextractor.absolute;
 
 import com.jcraft.jsch.JSchException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -16,8 +14,12 @@ public class Engine2 {
 
     public JSONArray run(SSHManager instance) throws JSchException, IOException, JSONException {
         String dpkgStatus = "less /var/lib/dpkg/status";
-        instance.connect();
-        String result = instance.sendCommand(dpkgStatus);
+        String result;
+        if (instance != null) {
+            instance.connect();
+            result = instance.sendCommand(dpkgStatus);
+        } else
+            result = doLocalCommand(dpkgStatus);
 
         StringBuilder stringBuilder = new StringBuilder(result);
         Scanner scanner = new Scanner(stringBuilder.toString());
@@ -26,11 +28,34 @@ public class Engine2 {
 
         // printList(packgeList);
 
-        // writeToFile(array.toString(2));
+        writeToFile(array.toString(2));
+        if (instance != null)
+            instance.close();
 
-        instance.close();
         return array;
     }
+
+    public JSONArray run() throws ParseException, JSchException, JSONException, IOException {
+        return run(null);
+    }
+
+    public String doLocalCommand(String command) throws IOException {
+        StringBuilder outputBuffer = new StringBuilder();
+        InputStream commandOutput;
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
+        Process p = processBuilder.start();
+        commandOutput = p.getInputStream();
+
+        int readByte = commandOutput.read();
+        while (readByte != 0xffffffff) {
+            outputBuffer.append((char) readByte);
+            readByte = commandOutput.read();
+        }
+        commandOutput.close();
+        p.destroy();
+        return outputBuffer.toString();
+    }
+
 
     private void printList(LinkedList<String> packgeList) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
@@ -51,7 +76,7 @@ public class Engine2 {
     }
 
     private void writeToFile(String result) throws IOException {
-        File file = new File("output_local_extraction.json");
+        File file = new File("intel-extraction.json");
         if (file.exists())
             file.createNewFile();
 
@@ -94,18 +119,10 @@ public class Engine2 {
             }
 
             switch (key.toLowerCase()) {
-                    case "description":
-                        String line = "";
-                        while(scanner.hasNext()){
-
-                            line  = scanner.next();
-                            System.out.println(line);
-                        }
-
-                        break;
                     case "conffiles":
                         getConffiles(scanner, jsonObject, tmp, key);
                         break;
+
                 // fields with |
                 case "pre-depends":
                 case "recommends":
@@ -115,8 +132,8 @@ public class Engine2 {
                 case "provides":
                 case "conflicts":
                 case "replaces":
-                        JSONArray jsonArrayAnd = getDepends(scanner);
-                        jsonObject.put(key, jsonArrayAnd);
+                    JSONArray jsonArrayAnd = getDepends(scanner);
+                    jsonObject.put(key, jsonArrayAnd);
                     break;
                 default:
                     if (scanner.hasNextLine())
@@ -204,44 +221,4 @@ public class Engine2 {
             }
         }
     }
-
-    //    public JSONObject parserTwo(String pkg) throws JSONException {
-//        Scanner scanner = new Scanner(pkg);
-//        JSONObject jsonObject = new JSONObject();
-//        String key = "";
-//        while (scanner.hasNextLine()) {
-//            String tmp = scanner.next();
-//            if (tmp.endsWith(":")) {
-//                key = tmp.replace(':', ' ').trim();
-//            }
-//
-//            switch (key.toLowerCase()) {
-//                case "description":
-//                    StringBuilder stringBuilder = new StringBuilder();
-//                    while (scanner.hasNextLine() && !tmp.contains(key)) {
-//                        String str = scanner.nextLine();
-//                        if (str.length() == 0) {
-//                            // string is a blank line
-//                        } else if (!(Character.isUpperCase(str.charAt(0)) && str.contains(":"))) {
-//                            stringBuilder.append(str);
-//                        }
-//                    }
-//                    jsonObject.put(key, stringBuilder);
-//                    break;
-//                case "depends":
-//                    JSONArray jsonArrayAnd = getDepends(scanner);
-//                    jsonObject.put(key, jsonArrayAnd);
-//                    break;
-//                case "package":
-//                    jsonObject.put(key, scanner.nextLine().trim());
-//                    break;
-//                default:
-//                    if (scanner.hasNext())
-////                    jsonObject.put(key, scanner.nextLine().trim());
-//                        break;
-//            }
-//        }
-//        return jsonObject;
-//    }
-
 }

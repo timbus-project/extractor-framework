@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and limitation under the License.
  */
 
-package net.timbusproject.extractors.modules.debiansoftwareextractor;
+package net.timbusproject.extractors.modules.debiansoftwareextractor.local;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;

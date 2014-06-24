@@ -18,23 +18,28 @@
 
 package net.timbusproject.extractors.modules.debiansoftwareextractor;
 
+import com.fasterxml.uuid.Generators;
 import com.jcraft.jsch.JSchException;
+import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.Engine2;
+import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.SSHManager;
 import org.apache.commons.cli.*;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
-import java.io.Console;
-import java.io.IOException;
-import java.util.Scanner;
+import java.io.*;
 
 public class CLI {
+    private static final String formatUUID = "d17250e8-af6e-5b84-8fab-404d5ecee47f";
+
     public static void main(String... args) throws ParseException, IOException, JSONException, JSchException, java.text.ParseException {
         final Options options = new Options();
         final CommandLineParser parser = new PosixParser();
         //Available options
-        options.addOption("e", "extract", true, "[user@]hostname]");
+        options.addOption("e", "Extract remotely", true, "[user@]hostname]");
+        options.addOption("l", "Extract locally", false, "Extract dependencies locally. Prints to screen by default");
+        options.addOption("f", "Write output on file", true, "[filename]");
         options.addOption("h", "help", false, "Prints this help message");
-
         final CommandLine line = parser.parse(options, args);
 
         //Print help if there are no arguments
@@ -42,34 +47,56 @@ public class CLI {
 
         if (line.hasOption("h")) {
             printHelp(options);
+            System.exit(0);
         }
 
-        String extract = getOption("e", line);
-        if (extract.isEmpty()) {
-            System.exit(0);
-        } else {
-            String[] split = extract.split("@");
-            String user;
-            String fqdn;
-            //user@hostname
-            if (split.length == 2) {
-                user = split[0];
-                fqdn = split[1];
-//                Scanner scanner = new Scanner(System.in);
-//                System.out.println("Please write your pass: ");
-//                String pass = scanner.nextLine();
-                Console console = System.console();
-                System.out.println("Please enter your password");
-                char [] password  = console.readPassword();
-                String pass = new String(password);
-                SSHManager manager = new SSHManager(user, pass, fqdn, "", "");
+        JSONObject finalResult;
+        JSONArray result = null;
+        Engine2 engine = new Engine2();
+        String user;
+        String fqdn;
+        if (line.hasOption("e")) {
+            String extract = getOption("e", line);
+            if (extract.isEmpty()) {
+                System.exit(0);
+            } else {
+                String[] split = extract.split("@");
+                //user@hostname
+                if (split.length == 2) {
+                    user = split[0];
+                    fqdn = split[1];
+                    //                Scanner scanner = new Scanner(System.in);
+                    //                System.out.println("Please write your pass: ");
+                    //                String pass = scanner.nextLine();
+                    Console console = System.console();
+                    System.out.println("Please enter your password");
+                    char[] password = console.readPassword();
+                    String pass = new String(password);
+                    SSHManager manager = new SSHManager(user, pass, fqdn, "", "");
 
-                Engine engine = new Engine();
-                JSONArray jsonArray = engine.run(manager);
-                System.out.println("Extracting...");
-//                System.out.print(jsonArray.toString(2)); //TODO save to file
+                    result = engine.run(manager);
+                    System.out.println("Extracting...");
+                    //    System.out.print(jsonArray.toString(2)); //TODO save to file
+                }
             }
-            System.exit(0);
+        } else if (line.hasOption("l")) {
+            result = engine.run();
+        }
+        finalResult = new JSONObject().put("extractor", "debian-software-extractor")
+                .put("format", new JSONObject().put("id", formatUUID).put("multiple", false))
+                .put("uuid", Generators.timeBasedGenerator().generate())
+                .put("result", result);
+        if (line.hasOption("f")) {
+            String fileName = getOption("f", line);
+            if (result != null) {
+                if (!fileName.isEmpty())
+                    writeToFile(fileName, finalResult.toString());
+                else
+                    writeToFile("output_local_extraction.json", finalResult.toString());
+            }
+        } else {
+            if (result != null)
+                System.out.println(finalResult.toString());
         }
     }
 
@@ -93,4 +120,11 @@ public class CLI {
         formatter.printHelp("launch", options);
         System.exit(0);
     }
+
+    public static void writeToFile(String fileName, String output) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
+        PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+        writer.write(output);
+        writer.close();
+    }
+
 }
