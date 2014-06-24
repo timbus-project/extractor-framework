@@ -24,7 +24,6 @@ import org.codehaus.jettison.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.Scanner;
 
@@ -34,41 +33,53 @@ import java.util.Scanner;
 public class CommandManager {
 
 
-    public String run(String command) throws IOException, JSONException, ParseException {
-        return doCommand(command);
+    public JSONArray run(boolean test) throws IOException, JSONException, ParseException {
+        String dpkg ="dpkg -l | grep ^ii | awk '{print $2;}'";
+        String dpkgStatus = "dpkg --status ";
+
+        // To test
+//        test = true;
+
+        // call sendCommand for each command and the output (without prompts) is returned
+//        log.log(LogService.LOG_INFO, "connection: " + instance.connect());
+        String pkgList = doCommand(dpkg);
+        Scanner scanner = new Scanner(pkgList);
+
+        JSONArray jsonArray = new JSONArray();
+        int i = 0;
+        while (scanner.hasNextLine()) {
+//            log.log(LogService.LOG_INFO, "extracting " + pkg);
+            String pkg = scanner.nextLine();
+            JSONObject jsonObject = parser(doCommand(dpkgStatus + pkg));
+//            System.out.println(jsonObject.toString());
+            jsonArray.put(jsonObject);
+            if(test){
+            i++;
+                if (i > 5)
+                    break;
+            }
+        }
+        return jsonArray;
     }
 
     public String doCommand(String command) throws IOException {
         StringBuilder outputBuffer = new StringBuilder();
         InputStream commandOutput;
-        OutputStream commandInput;
-        ProcessBuilder processBuilder;
-        if (command == null)
-            processBuilder = new ProcessBuilder("/usr/bin/lshw", "-json");
-        else
-            processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
-
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
         Process p = processBuilder.start();
-        commandInput = p.getOutputStream();
-//        BufferedWriter buffered = new BufferedWriter(new OutputStreamWriter(commandInput));
-//        buffered.write(pass);
-        commandOutput = p.getInputStream();
-
-        int readByte = commandOutput.read();
-        String line;
-        while (readByte != 0xffffffff) {
-            outputBuffer.append((char) readByte);
-            readByte = commandOutput.read();
-        }
-        commandOutput.close();
-        commandInput.close();
-
         try {
             p.waitFor();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        commandOutput = p.getInputStream();
 
+        int readByte = commandOutput.read();
+        while (readByte != 0xffffffff) {
+            outputBuffer.append((char) readByte);
+            readByte = commandOutput.read();
+        }
+        commandOutput.close();
         p.destroy();
         return outputBuffer.toString();
     }
@@ -110,7 +121,6 @@ public class CommandManager {
         }
         return jsonObject;
     }
-
     private JSONArray getDepends(Scanner scanner) throws JSONException {
         String[] depends = scanner.nextLine().trim().split(",");
         JSONArray jsonArrayAnd = new JSONArray();

@@ -25,7 +25,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.osgi.service.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Scanner;
 
@@ -38,15 +39,22 @@ public class Engine {
         String dpkg = "dpkg -l | grep ^ii | awk '{print $2;}'";
         String dpkgStatus = "dpkg --status ";
 
-        instance.connect();
-        // call sendCommand for each command and the output (without prompts) is returned
-        String pkgList = instance.sendCommand(dpkg);
-        Scanner scanner = new Scanner(pkgList);
+        String pkgList;
+        if (instance != null) {
+            instance.connect();
+            // call sendCommand for each command and the output (without prompts) is returned
+            pkgList = instance.sendCommand(dpkg);
+        } else
+            pkgList = doLocalCommand(dpkg);
 
+        Scanner scanner = new Scanner(pkgList);
         JSONArray jsonArray = new JSONArray();
         while (scanner.hasNextLine()) {
             String pkg = scanner.nextLine();
-            jsonArray.put(parser(instance.sendCommand(dpkgStatus + pkg)));
+            if (instance != null)
+                jsonArray.put(parser(instance.sendCommand(dpkgStatus + pkg)));
+            else
+                jsonArray.put(parser(doLocalCommand(dpkgStatus + pkg)));
             //jsonArray.put(parser(instance.sendCommand(dpkgStatus + "chromium-browser")));
 
             // line for testing purposes. delete it to retrieve more packages
@@ -54,40 +62,15 @@ public class Engine {
         }
 
         // close only after all commands are sent
-        instance.close();
+        if (instance != null)
+            instance.close();
 
 //        writeToFile(jsonArray);
         return jsonArray;
     }
 
-    public JSONArray run(boolean show) throws IOException, JSONException, ParseException {
-        String dpkg ="dpkg -l | grep ^ii | awk '{print $2;}'";
-        String dpkgStatus = "dpkg --status ";
-
-        boolean test = false;
-//        Uncomment this for testing
-//        test = true;
-        // call sendCommand for each command and the output (without prompts) is returned
-//        log.log(LogService.LOG_INFO, "connection: " + instance.connect());
-        String pkgList = doLocalCommand(dpkg);
-        Scanner scanner = new Scanner(pkgList);
-
-        JSONArray jsonArray = new JSONArray();
-        int i = 0;
-        while (scanner.hasNextLine()) {
-//            log.log(LogService.LOG_INFO, "extracting " + pkg);
-            String pkg = scanner.nextLine();
-            JSONObject jsonObject = parser(doLocalCommand(dpkgStatus + pkg));
-            if(show)
-                System.out.println(jsonObject.toString());
-            jsonArray.put(jsonObject);
-            if(test){
-                i++;
-                if (i > 5)
-                    break;
-            }
-        }
-        return jsonArray;
+    public JSONArray run() throws ParseException, JSchException, JSONException, IOException {
+        return run(null);
     }
 
     public String doLocalCommand(String command) throws IOException {
@@ -112,12 +95,6 @@ public class Engine {
         return outputBuffer.toString();
     }
 
-    public void writeToFile(String fileName, String output) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
-        PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-        writer.write(output);
-        writer.close();
-    }
-
     public JSONObject parser(String pkg) throws JSONException {
         Scanner scanner = new Scanner(pkg);
         JSONObject jsonObject = new JSONObject();
@@ -133,9 +110,9 @@ public class Engine {
                         StringBuilder stringBuilder = new StringBuilder();
                         while (scanner.hasNextLine() && !tmp.contains(key)) {
                             String str = scanner.nextLine();
-                            if (str.length() == 0){
-                              // string is a blank line
-                            }else if (!(Character.isUpperCase(str.charAt(0)) && str.contains(":"))) {
+                            if (str.length() == 0) {
+                                // string is a blank line
+                            } else if (!(Character.isUpperCase(str.charAt(0)) && str.contains(":"))) {
                                 stringBuilder.append(str);
                             }
                         }
@@ -149,7 +126,7 @@ public class Engine {
                     case "recommends":
                     case "suggests":
                     case "depends":
-                    // fields without |
+                        // fields without |
                     case "provides":
                     case "conflicts":
                     case "replaces":
@@ -172,11 +149,11 @@ public class Engine {
         for (String s : depends) {
             JSONArray jsonArrayOr = new JSONArray();
 
-            if(s.contains("|")) {
+            if (s.contains("|")) {
                 JSONArray result = orDependency(s);
                 jsonArrayOr.put(result);
 //                System.out.println("Result " + result.toString());
-            }else {
+            } else {
                 String[] temp = s.trim().split(" ");
                 for (String pkgOr : temp) {
                     JSONObject jsonDependency = new JSONObject();

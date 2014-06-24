@@ -12,5 +12,7 @@
 
     <bean name="extractor" class="net.timbusproject.extractors.modules.debiansoftwareextractor.remote.DebianSoftwareExtractor"/>
 
+    <!-- Enable @AutoWire -->
     <context:annotation-config/>
+
 </beans>
