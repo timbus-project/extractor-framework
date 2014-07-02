@@ -16,12 +16,13 @@
  * See the License for the specific language governing permissions and limitation under the License.
  */
 
-package net.timbusproject.extractors.modules.debiansoftwareextractor;
+package net.timbusproject.extractors.debiansoftwareextractor;
 
+import ch.qos.logback.classic.joran.JoranConfigurator;
 import com.fasterxml.uuid.Generators;
 import com.jcraft.jsch.JSchException;
-import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.Engine2;
-import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.SSHManager;
+import net.timbusproject.extractors.debiansoftwareextractor.Engine;
+import net.timbusproject.extractors.debiansoftwareextractor.SSHManager;
 import org.apache.commons.cli.*;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -30,15 +31,17 @@ import org.codehaus.jettison.json.JSONObject;
 import java.io.*;
 
 public class CLI {
+
     private static final String formatUUID = "d17250e8-af6e-5b84-8fab-404d5ecee47f";
 
-    public static void main(String... args) throws ParseException, IOException, JSONException, JSchException, java.text.ParseException {
+    public static void main(String... args) throws ParseException, IOException, JSONException, JSchException, java.text.ParseException, InterruptedException {
+        new JoranConfigurator();
         final Options options = new Options();
         final CommandLineParser parser = new PosixParser();
         //Available options
-        options.addOption("e", "Extract remotely", true, "[user@]hostname]");
-        options.addOption("l", "Extract locally", false, "Extract dependencies locally. Prints to screen by default");
-        options.addOption("f", "Write output on file", true, "[filename]");
+        options.addOption("r", "remote", true, "[user@]hostname]");
+        options.addOption("l", "local", false, "Extract locally. Prints to screen by default");
+        options.addOption("f", "output-file", true, "[filename]");
         options.addOption("h", "help", false, "Prints this help message");
         final CommandLine line = parser.parse(options, args);
 
@@ -52,11 +55,10 @@ public class CLI {
 
         JSONObject finalResult;
         JSONArray result = null;
-        Engine2 engine = new Engine2();
         String user;
         String fqdn;
-        if (line.hasOption("e")) {
-            String extract = getOption("e", line);
+        if (line.hasOption("r")) {
+            String extract = getOption("r", line);
             if (extract.isEmpty()) {
                 System.exit(0);
             } else {
@@ -65,22 +67,17 @@ public class CLI {
                 if (split.length == 2) {
                     user = split[0];
                     fqdn = split[1];
-                    //                Scanner scanner = new Scanner(System.in);
-                    //                System.out.println("Please write your pass: ");
-                    //                String pass = scanner.nextLine();
-                    Console console = System.console();
-                    System.out.println("Please enter your password");
-                    char[] password = console.readPassword();
-                    String pass = new String(password);
-                    SSHManager manager = new SSHManager(user, pass, fqdn, "", "");
+                    SSHManager manager = new SSHManager(user, fqdn);
+                    System.out.print("Enter password: ");
+                    manager.setPassword(new String(System.console().readPassword()));
 
-                    result = engine.run(manager);
-                    System.out.println("Extracting...");
+                    result = new Engine(manager).run();
+//                    System.out.println("Extracting...");
                     //    System.out.print(jsonArray.toString(2)); //TODO save to file
                 }
             }
         } else if (line.hasOption("l")) {
-            result = engine.run();
+            result = new Engine().run();
         }
         finalResult = new JSONObject().put("extractor", "debian-software-extractor")
                 .put("format", new JSONObject().put("id", formatUUID).put("multiple", false))
@@ -90,9 +87,9 @@ public class CLI {
             String fileName = getOption("f", line);
             if (result != null) {
                 if (!fileName.isEmpty())
-                    writeToFile(fileName, finalResult.toString());
+                    writeToFile(fileName, finalResult);
                 else
-                    writeToFile("output_local_extraction.json", finalResult.toString());
+                    writeToFile("output_local_extraction.json", finalResult);
             }
         } else {
             if (result != null)
@@ -121,9 +118,9 @@ public class CLI {
         System.exit(0);
     }
 
-    public static void writeToFile(String fileName, String output) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
+    public static void writeToFile(String fileName, JSONObject output) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
         PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-        writer.write(output);
+        writer.write(output.toString(2));
         writer.close();
     }
 
