@@ -1,6 +1,5 @@
 package net.timbusproject.extractors.debiansoftwareextractor;
 
-import net.timbusproject.extractors.debiansoftwareextractor.DebianSoftwareExtractor;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,7 +1,6 @@
 package net.timbusproject.extractors.debiansoftwareextractor;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.joran.JoranConfigurator;
 import com.jcraft.jsch.JSchException;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -10,8 +9,11 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +32,12 @@ public class Engine {
         sshManager = ssh;
         commands.setProperty("is-command-available", "command -v %s");
         commands.setProperty("dpkg-status", "cat /var/lib/dpkg/status");
+//        commands.setProperty("dpkg-status", "dpkg --status firefox dpkg google-chrome-stable");
+        commands.setProperty("dpkg-packages", "dpkg -l | sed 1,5d | awk '{print $2;}'");
+        commands.setProperty("dpkg-packages-versions", "dpkg -l | sed 1,5d | awk '{print $2\"=\"$3;}'");
         commands.setProperty("licensecheck", "licensecheck -r -copyright %s 2>/dev/null");
+        commands.setProperty("ppa", "apt-cache madison %s | grep ' Packages$' | awk '{print $1,$3,$5;}' | uniq");
+        commands.setProperty("filename", "apt-cache show %s | grep -E '^((Package|Version|Filename): |$)'");
     }
 
     public JSONArray run() throws JSchException, IOException, InterruptedException, JSONException {
@@ -49,10 +56,14 @@ public class Engine {
         Hashtable<String, JSONObject> table = extractPackages();
         log.info("Extracting licenses...");
         extractLicenses(table);
+        log.info("Extracting installers...");
+        extractInstallers(table);
 
         log.info("Extraction finished.");
-        log.info("Closing connection...");
-        if (isSsh()) sshManager.disconnect();
+        if (isSsh()) {
+            log.info("Closing connection...");
+            sshManager.disconnect();
+        }
 
         return new JSONArray(table.values());
     }
@@ -131,6 +142,32 @@ public class Engine {
                 continue;
             packages.get(matcher.group(1)).put("License", license);
         }
+    }
+
+    private void extractInstallers(Hashtable<String, JSONObject> packages) throws InterruptedException, JSchException, IOException, JSONException {
+        if (!isCommandAvailable("apt-cache")) { log.info("Installers could not be extracted."); return; }
+        final Pattern ppaPattern = Pattern.compile("(\\S+) (\\S+) (.+)");
+        final Pattern filenamePattern = Pattern.compile("([^:]+): (.+)");
+        String packagesCommand = "$(echo $(" + commands.getProperty("dpkg-packages") + "))";
+        Hashtable<String, Properties> map = new Hashtable<String, Properties>();
+        for (String pkg : doCommand(String.format(commands.getProperty("filename"), packagesCommand)).getProperty("stdout").split("\\n\\n")) {
+            Properties properties = new Properties();
+            for (String field : pkg.split("\\n")) {
+                Matcher matcher = filenamePattern.matcher(field);
+                matcher.find();
+                properties.setProperty(matcher.group(1), matcher.group(2));
+            }
+            map.put(properties.getProperty("Package"), properties);
+        }
+        for (String line : doCommand(String.format(commands.getProperty("ppa"), packagesCommand)).getProperty("stdout").split("\\n")) {
+            Matcher matcher = ppaPattern.matcher(line);
+            matcher.find();
+            if (map.containsKey(matcher.group(1)) && map.get(matcher.group(1)).getProperty("Version").equals(matcher.group(2)) && !map.get(matcher.group(1)).containsKey("ppa"))
+                map.get(matcher.group(1)).setProperty("ppa", matcher.group(3));
+        }
+        for (Map.Entry<String, Properties> entry : map.entrySet())
+            if (packages.containsKey(entry.getKey()) && entry.getValue().containsKey("Filename") && entry.getValue().containsKey("ppa"))
+                packages.get(entry.getKey()).put("Installer", entry.getValue().getProperty("ppa") + entry.getValue().getProperty("Filename"));
     }
 
     private Properties doCommand(String command) throws IOException, JSchException, InterruptedException {

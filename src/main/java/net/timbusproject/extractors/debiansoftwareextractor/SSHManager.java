@@ -21,7 +21,9 @@ package net.timbusproject.extractors.debiansoftwareextractor;
 import com.jcraft.jsch.*;
 import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Properties;
 
 public class SSHManager {

@@ -21,14 +21,15 @@ package net.timbusproject.extractors.debiansoftwareextractor;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import com.fasterxml.uuid.Generators;
 import com.jcraft.jsch.JSchException;
-import net.timbusproject.extractors.debiansoftwareextractor.Engine;
-import net.timbusproject.extractors.debiansoftwareextractor.SSHManager;
 import org.apache.commons.cli.*;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 public class CLI {
 
