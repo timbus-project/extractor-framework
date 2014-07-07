@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013, Caixa Magica Software Lda (CMS).
+ * Copyright (c) 2014, Caixa Magica Software Lda (CMS).
  * The work has been developed in the TIMBUS Project and the above-mentioned are Members of the TIMBUS Consortium.
  * TIMBUS is supported by the European Union under the 7th Framework Programme for research and technological
  * development and demonstration activities (FP7/2007-2013) under grant agreement no. 269940.
@@ -15,7 +15,6 @@
  * License or out of the use or inability to use the Work.
  * See the License for the specific language governing permissions and limitation under the License.
  */
-
 package net.timbusproject.extractors.debiansoftwareextractor;
 
 import com.jcraft.jsch.*;
@@ -45,10 +44,12 @@ public class SSHManager {
         if (privateKey != null && !privateKey.isEmpty()) jSch.addIdentity(privateKey);
         if (knownHosts != null) jSch.setKnownHosts(knownHosts);
         session = jSch.getSession(username, fqdn, port);
-        // UNCOMMENT THIS FOR TESTING PURPOSES, BUT DO NOT USE IN PRODUCTION
+        // TODO: comment for production use
         session.setConfig("StrictHostKeyChecking", "no");
     }
 
+    String getHost() { return session.getHost(); }
+    int getPort() { return session.getPort(); }
     public void setPassword(String password) { session.setPassword(password); }
 
     public void connect() throws JSchException { connect(60 * 1000); }
