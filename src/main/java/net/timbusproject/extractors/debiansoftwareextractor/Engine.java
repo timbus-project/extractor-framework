@@ -23,12 +23,12 @@ public class Engine {
     private final Properties commands = new Properties();
     private final SSHManager sshManager;
 
-    public Engine() throws IOException { this((SSHManager) null); }
-    public Engine(SSHManager ssh) throws IOException { this(ssh, Level.INFO); }
-    public Engine(Level logLevel) throws IOException { this(null, logLevel); }
-    public Engine(SSHManager ssh, Level logLevel) throws IOException {
+    public Engine() { this((SSHManager) null); }
+    public Engine(SSHManager ssh) { this(ssh, Level.INFO); }
+    public Engine(Level logLevel) { this(null, logLevel); }
+    public Engine(SSHManager ssh, Level logLevel) {
         ((ch.qos.logback.classic.Logger) log).setLevel(logLevel);
-        log.info("Initializing engine...");
+        log.debug("Initializing...");
         sshManager = ssh;
         commands.setProperty("is-command-available", "command -v %s");
         commands.setProperty("dpkg-status", "cat /var/lib/dpkg/status");
@@ -40,40 +40,41 @@ public class Engine {
         commands.setProperty("filename", "apt-cache show %s | grep -E '^((Package|Version|Filename): |$)'");
     }
 
-    public JSONArray run() throws JSchException, IOException, InterruptedException, JSONException {
+    public JSONArray run() throws JSchException, InterruptedException, JSONException, IOException {
         if (isSsh()) {
-            log.info("Connecting...");
+            log.info("Connecting to " + sshManager.getHost() + ":" + sshManager.getPort() + "...");
             try {
                 sshManager.connect();
             } catch (JSchException e) {
-                log.info("Connection failed.");
+                log.error("Connection failed.");
                 throw e;
             }
         }
         log.info("Starting extraction...");
 
-        log.info("Extracting installed packages...");
+        if (((ch.qos.logback.classic.Logger) log).getLevel().equals(Level.INFO))
+            log.info("Extracting...");
+        log.debug("Extracting installed packages...");
         Hashtable<String, JSONObject> table = extractPackages();
-        log.info("Extracting licenses...");
+        log.debug("Extracting licenses...");
         extractLicenses(table);
-        log.info("Extracting installers...");
+        log.debug("Extracting installers...");
         extractInstallers(table);
 
         log.info("Extraction finished.");
         if (isSsh()) {
-            log.info("Closing connection...");
+            log.info("Closing connection from " + sshManager.getHost() + ":" + sshManager.getPort() + "...");
             sshManager.disconnect();
         }
 
         return new JSONArray(table.values());
     }
 
-    private Hashtable<String, JSONObject> extractPackages() throws JSONException, InterruptedException, JSchException, IOException {
+    private Hashtable<String, JSONObject> extractPackages() throws InterruptedException, JSchException, IOException, JSONException {
         String dpkg = doCommand(commands.getProperty("dpkg-status")).getProperty("stdout");
         Hashtable<String, JSONObject> table = new Hashtable<String, JSONObject>();
         for (String control : dpkg.split("\\n\\n")) {
             JSONObject object = extractPackage(control);
-            log.debug("Extracted package: " + object.getString("Package"));
             table.put(object.getString("Package"), object);
         }
         return table;
@@ -129,7 +130,7 @@ public class Engine {
     }
 
     private void extractLicenses(Hashtable<String, JSONObject> packages) throws InterruptedException, JSchException, IOException, JSONException {
-        if (!isCommandAvailable("licensecheck")) { log.info("Licenses could not be extracted."); return; }
+        if (!isCommandAvailable("licensecheck")) { log.warn("Licenses could not be extracted."); return; }
         final String path = "/usr/share/doc/";
         final Pattern licensePattern = Pattern.compile("([^/]+)[^:]+: (.+)");
         for (String line : doCommand(String.format(commands.getProperty("licensecheck"), path)).getProperty("stdout").split("\\n")) {
@@ -145,7 +146,7 @@ public class Engine {
     }
 
     private void extractInstallers(Hashtable<String, JSONObject> packages) throws InterruptedException, JSchException, IOException, JSONException {
-        if (!isCommandAvailable("apt-cache")) { log.info("Installers could not be extracted."); return; }
+        if (!isCommandAvailable("apt-cache")) { log.warn("Installers could not be extracted."); return; }
         final Pattern ppaPattern = Pattern.compile("(\\S+) (\\S+) (.+)");
         final Pattern filenamePattern = Pattern.compile("([^:]+): (.+)");
         String packagesCommand = "$(echo $(" + commands.getProperty("dpkg-packages") + "))";
@@ -170,7 +171,7 @@ public class Engine {
                 packages.get(entry.getKey()).put("Installer", entry.getValue().getProperty("ppa") + entry.getValue().getProperty("Filename"));
     }
 
-    private Properties doCommand(String command) throws IOException, JSchException, InterruptedException {
+    private Properties doCommand(String command) throws InterruptedException, JSchException, IOException {
         if (isSsh())
             return sshManager.sendCommand(command);
         Properties properties = new Properties();
@@ -188,7 +189,7 @@ public class Engine {
     }
 
     private boolean isCommandAvailable(String command) throws InterruptedException, JSchException, IOException {
-        log.debug("Testing command: " + command);
+        log.trace("Testing command: " + command);
         Properties commandProperties = doCommand(String.format(commands.getProperty("is-command-available"), command));
         return Integer.parseInt(commandProperties.getProperty("exit-value")) == 0;
     }
