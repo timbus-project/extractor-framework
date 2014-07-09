@@ -122,11 +122,6 @@
 
     <repositories>
         <repository>
-            <id>local.repos</id>
-            <name>Maven local repo</name>
-            <url>http://maven.testbed/</url>
-        </repository>
-        <repository>
             <id>com.springsource.repository.bundles.external</id>
             <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
             <url>http://repository.springsource.com/maven/bundles/external</url>
