@@ -182,8 +182,8 @@
             </snapshots>
         </repository>
         <repository>
-            <id>local.repo</id>
-            <url>http://maven.testbed/</url>
+            <id>timbus.repository</id>
+            <url>http://timbus.teco.edu/maven</url>
         </repository>
     </repositories>
 </project>
