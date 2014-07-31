@@ -13,7 +13,6 @@
     <packaging>bundle</packaging>
     <name>Linux Hardware Extractor</name>
 
-
     <properties>
         <project.mainClass>net.timbusproject.extractors.modules.linuxhardware.local.LocalLinuxHardwareExtractor
         </project.mainClass>
@@ -68,7 +67,6 @@
             <version>1.2</version>
             <!--<scope>provided</scope>-->
         </dependency>
-
     </dependencies>
 
     <build>
@@ -109,15 +107,12 @@
                 </configuration>
             </plugin>
         </plugins>
-
     </build>
 
     <repositories>
         <repository>
-            <id>local.repo</id>
-            <url>http://maven.testbed/</url>
+            <id>timbus.repository</id>
+            <url>http://timbus.teco.edu/maven</url>
         </repository>
     </repositories>
-
-
 </project>
