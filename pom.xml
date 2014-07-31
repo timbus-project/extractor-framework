@@ -129,6 +129,9 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>timbus.repository</id>
+            <url>http://timbus.teco.edu/maven</url>
+        </repository>
     </repositories>
-
 </project>
