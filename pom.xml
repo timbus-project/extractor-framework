@@ -62,4 +62,17 @@
         </resources>
     </build>
 
+    <repositories>
+        <repository>
+            <id>timbus.repository</id>
+            <url>http://timbus.teco.edu/maven</url>
+        </repository>
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

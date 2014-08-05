@@ -12,7 +12,7 @@
 
     <bean name="extractor" class="net.timbusproject.extractors.debiansoftwareextractor.Bundle"/>
 
-    <!-- Enable @Autowired -->
+    <!-- enables @Autowired -->
     <context:annotation-config/>
 
 </beans>
