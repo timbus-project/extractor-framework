@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.timbusproject.extractors</groupId>
+	<artifactId>helpers</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<description>Helper applications for context extractors</description>
+	<url>http://timbusproject.net/</url>
+	<name>extractors-helpers</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<owlapi.version>3.4.5</owlapi.version>
+	</properties>
+	<organization>
+		<url>http://timbusproject.net/</url>
+	</organization>
+	<dependencies>
+		<dependency>
+			<groupId>net.sourceforge.owlapi</groupId>
+			<artifactId>owlapi-api</artifactId>
+			<version>${owlapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.owlapi</groupId>
+			<artifactId>owlapi-apibinding</artifactId>
+			<version>${owlapi.version}</version>
+		</dependency>
+	</dependencies>
+</project>
