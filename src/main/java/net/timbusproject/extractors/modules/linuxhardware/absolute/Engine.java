@@ -30,8 +30,13 @@ public class Engine {
 
     public JSONObject run(SSHManager instance, String password) throws JSchException, IOException, JSONException {
         instance.connect();
-        JSONObject output = new JSONObject(instance.sendCommandSudo("lshw -json", password));
+//        JSONObject output = new JSONObject(instance.sendCommandSudo("lshw -json", password));
+        instance.sendINexFile();
+        JSONObject output = new JSONObject();
+        output.put("lshw", new JSONObject(instance.sendCommand("/usr/sbin/lshw -json -quiet")));
+        output.put("inex", new JSONObject(instance.sendCommand("cd ~/ && ./i-nex-cpuid")));
 //        writeToFile(output);
+        instance.deleteInexFile();
         instance.close();
         return output;
     }

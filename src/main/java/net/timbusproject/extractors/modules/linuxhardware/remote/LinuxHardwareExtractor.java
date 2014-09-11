@@ -19,6 +19,7 @@ package net.timbusproject.extractors.modules.linuxhardware.remote;
 
 import com.fasterxml.uuid.Generators;
 import net.timbusproject.extractors.core.*;
+import net.timbusproject.extractors.helpers.MachineID;
 import net.timbusproject.extractors.modules.linuxhardware.absolute.Engine;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
@@ -74,7 +75,7 @@ public class LinuxHardwareExtractor implements IExtractor {
         SSHManager instance = new SSHManager(
                 endpoint.getProperty("user"),
                 endpoint.getProperty("password"),
-                endpoint.getFQDN(),
+                endpoint.getProperty("fqdn"),
                 endpoint.getProperty("knownHosts"),
                 endpoint.hasProperty("port") ? Integer.parseInt(endpoint.getProperty("port")) : Endpoint.DEFAULT_SSH_PORT,
                 endpoint.getProperty("privateKey")

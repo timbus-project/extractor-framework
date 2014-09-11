@@ -24,6 +24,7 @@ import org.codehaus.jettison.json.JSONArray;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Properties;
 
 public class SSHManager {
     private JSch jschSSHChannel;
@@ -97,9 +98,20 @@ public class SSHManager {
         return warnMessage;
     }
 
+    public void deleteInexFile() {
+        try {
+            sendCommand("cd ~/ && rm i-nex-cpuid");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSchException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String sendCommand(String command) throws IOException, JSchException {
         StringBuilder outputBuffer = new StringBuilder();
         try {
+
             Channel channel = sesConnection.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
             channel.connect();
@@ -116,7 +128,30 @@ public class SSHManager {
             logWarning(ioX.getMessage());
             return null;
         }
+        System.out.println(outputBuffer.toString());
         return outputBuffer.toString();
+    }
+
+    public void sendINexFile() throws IOException, JSchException {
+
+        InputStream stream = this.getClass().getResourceAsStream("/i-nex-cpuid");
+        writeFileToLinux("i-nex-cpuid", stream);
+        sendCommand("chmod u+x ~/i-nex-cpuid");
+
+    }
+
+    public void writeFileToLinux(String fileName, InputStream stream) {
+        try {
+            Channel obj_Channel = sesConnection.openChannel("sftp");
+            obj_Channel.connect();
+            ChannelSftp obj_SFTPChannel = (ChannelSftp) obj_Channel;
+            obj_SFTPChannel.put(stream, fileName, ChannelSftp.OVERWRITE);
+            obj_SFTPChannel.exit();
+            stream.close();
+            obj_Channel.disconnect();
+        } catch (Exception ex) {
+            System.out.println("Problem occurred with remote sftp. No information from i-nex module will be available");
+        }
     }
 
     public String sendCommandSudo(String command, String sudoPass) throws IOException,JSchException{
@@ -160,5 +195,6 @@ public class SSHManager {
     public void close() {
         sesConnection.disconnect();
     }
+
 
 }
