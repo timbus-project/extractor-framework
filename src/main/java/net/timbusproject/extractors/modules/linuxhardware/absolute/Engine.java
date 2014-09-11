@@ -19,6 +19,7 @@ package net.timbusproject.extractors.modules.linuxhardware.absolute;
 
 import com.jcraft.jsch.JSchException;
 import net.timbusproject.extractors.core.Endpoint;
+import net.timbusproject.extractors.helpers.MachineID;
 import net.timbusproject.extractors.modules.linuxhardware.local.CommandManager;
 import net.timbusproject.extractors.modules.linuxhardware.remote.SSHManager;
 import org.codehaus.jettison.json.JSONException;
@@ -33,8 +34,10 @@ public class Engine {
 //        JSONObject output = new JSONObject(instance.sendCommandSudo("lshw -json", password));
         instance.sendINexFile();
         JSONObject output = new JSONObject();
-        output.put("lshw", new JSONObject(instance.sendCommand("/usr/sbin/lshw -json -quiet")));
-        output.put("inex", new JSONObject(instance.sendCommand("cd ~/ && ./i-nex-cpuid")));
+        output.put("machineId", new MachineID(instance.sendCommand("hostid"), instance.sendCommand("hostname")).getXRN());
+        output.put("data", new JSONObject());
+        output.getJSONObject("data").put("lshw", new JSONObject(instance.sendCommand("/usr/sbin/lshw -json -quiet")));
+        output.getJSONObject("data").put("inex", new JSONObject(instance.sendCommand("cd ~/ && ./i-nex-cpuid")));
 //        writeToFile(output);
         instance.deleteInexFile();
         instance.close();

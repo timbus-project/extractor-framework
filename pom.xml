@@ -67,7 +67,11 @@
             <version>1.2</version>
             <!--<scope>provided</scope>-->
         </dependency>
-
+        <dependency>
+            <groupId>net.timbusproject.extractors</groupId>
+            <artifactId>helpers</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
