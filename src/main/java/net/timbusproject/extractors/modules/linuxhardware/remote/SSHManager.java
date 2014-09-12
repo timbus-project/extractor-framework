@@ -186,7 +186,6 @@ public class SSHManager {
         }
 
         channel.disconnect();
-        close();
 //        System.out.println("STR " + stringBuilder.toString());
         return stringBuilder.toString();
     }
