@@ -86,7 +86,7 @@ public class DebianSoftwareExtractor implements IExtractor {
         );
         sshManager.setPassword(endpoint.getProperty("password"));
         Engine engine = new Engine(sshManager);
-        JSONObject extraction = engine.extractInstalledPackages();
+        JSONObject extraction = engine.run(Engine.Scope.INSTALLED_PACKAGES);
         return new JSONObject().put("extractor", getName())
                 .put("format", new JSONObject().put("id", formatUUID).put("multiple", false))
                 .put("uuid", Generators.timeBasedGenerator().generate())
