@@ -28,13 +28,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Engine {
+
+    enum Scope { INSTALLED_PACKAGES, UNIVERSE }
 
     private final Logger log = LoggerFactory.getLogger(Engine.class);
     private final Properties commands = new Properties();
@@ -48,6 +48,8 @@ public class Engine {
         log.debug("Initializing...");
         sshManager = ssh;
         commands.setProperty("is-command-available", "command -v %s");
+        commands.setProperty("apt-show", "apt-cache show %s");
+        commands.setProperty("apt-pkgnames", "apt-cache pkgnames");
         commands.setProperty("dpkg-status", "cat /var/lib/dpkg/status");
 //        commands.setProperty("dpkg-status", "dpkg --status firefox dpkg google-chrome-stable");
         commands.setProperty("dpkg-packages", "dpkg -l | sed 1,5d | awk '{print $2;}'");
@@ -57,7 +59,16 @@ public class Engine {
         commands.setProperty("filename", "apt-cache show %s | grep -E '^((Package|Version|Filename): |$)'");
     }
 
-    public JSONArray run() throws JSchException, InterruptedException, JSONException, IOException {
+
+    public JSONObject run(Scope scope) throws JSchException, InterruptedException, JSONException, IOException {
+        switch (scope) {
+            case INSTALLED_PACKAGES: return extractInstalledPackages();
+            case UNIVERSE: return extractUniverse();
+        }
+        return new JSONObject();
+    }
+
+    private JSONObject extractUniverse() throws JSchException, InterruptedException, JSONException, IOException {
         if (isSsh()) {
             log.info("Connecting to " + sshManager.getHost() + ":" + sshManager.getPort() + "...");
             try {
@@ -67,16 +78,10 @@ public class Engine {
                 throw e;
             }
         }
-        log.info("Starting extraction...");
+        log.info("Starting universe extraction...");
 
-        if (((ch.qos.logback.classic.Logger) log).getLevel().equals(Level.INFO))
-            log.info("Extracting...");
-        log.debug("Extracting installed packages...");
-        Hashtable<String, JSONObject> table = extractPackages();
-        log.debug("Extracting licenses...");
-        extractLicenses(table);
-        log.debug("Extracting installers...");
-        extractInstallers(table);
+        log.info("Extracting packages...");
+        JSONObject extraction = newExtraction(extractAllAptPackages(), true);
 
         log.info("Extraction finished.");
         if (isSsh()) {
@@ -84,10 +89,51 @@ public class Engine {
             sshManager.disconnect();
         }
 
-        return new JSONArray(table.values());
+        return extraction;
     }
 
-    private Hashtable<String, JSONObject> extractPackages() throws InterruptedException, JSchException, IOException, JSONException {
+    private JSONObject extractInstalledPackages() throws JSchException, InterruptedException, JSONException, IOException {
+        if (isSsh()) {
+            log.info("Connecting to " + sshManager.getHost() + ":" + sshManager.getPort() + "...");
+            try {
+                sshManager.connect();
+            } catch (JSchException e) {
+                log.error("Connection failed.");
+                throw e;
+            }
+        }
+        log.info("Starting installed packages extraction...");
+
+        if (((ch.qos.logback.classic.Logger) log).getLevel().equals(Level.INFO))
+            log.info("Extracting...");
+        log.debug("Extracting installed packages...");
+        Hashtable<String, JSONObject> table = extractAllDpkgPackages();
+        log.debug("Extracting licenses...");
+        extractLicenses(table);
+        log.debug("Extracting installers...");
+        extractInstallers(table);
+        JSONObject extraction = newExtraction(table.values());
+
+        log.info("Extraction finished.");
+        if (isSsh()) {
+            log.info("Closing connection from " + sshManager.getHost() + ":" + sshManager.getPort() + "...");
+            sshManager.disconnect();
+        }
+
+        return extraction;
+    }
+
+    private JSONObject newExtraction(Collection<JSONObject> data) throws InterruptedException, JSchException, IOException, JSONException {
+        return newExtraction(data, false);
+    }
+    private JSONObject newExtraction(Collection<JSONObject> data, boolean isUniverse) throws InterruptedException, JSchException, IOException, JSONException {
+        return new JSONObject()
+                .put("isUniverse", isUniverse)
+                .put("machineId", doCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").getProperty("stdout").trim())
+                .put("data", data);
+    }
+
+    private Hashtable<String, JSONObject> extractAllDpkgPackages() throws InterruptedException, JSchException, IOException, JSONException {
         String dpkg = doCommand(commands.getProperty("dpkg-status")).getProperty("stdout");
         Hashtable<String, JSONObject> table = new Hashtable<String, JSONObject>();
         for (String control : dpkg.split("\\n\\n")) {
@@ -97,19 +143,31 @@ public class Engine {
         return table;
     }
 
+    private Collection<JSONObject> extractAllAptPackages() throws InterruptedException, JSchException, IOException, JSONException {
+        String dpkg = doCommand(String.format(commands.getProperty("apt-show"), "$(" + commands.getProperty("apt-pkgnames") + ")")).getProperty("stdout");
+        Collection<JSONObject> collection = new ArrayList<JSONObject>();
+        for (String control : dpkg.split("\\n\\n"))
+            collection.add(extractPackage(control));
+        return collection;
+    }
+
     private JSONObject extractPackage(String control) throws JSONException {
         final Pattern fieldPattern = Pattern.compile("([^:]+):[ \\n](\\p{all}+)");
         JSONObject object = new JSONObject();
         for (String field : control.split("\\n(?=\\w)")) {
             Matcher matcher = fieldPattern.matcher(field);
             matcher.find();
-            if (matcher.group(1).matches("(?i)conffiles")) {
-                object.put(matcher.group(1), extractConffiles(matcher.group(2).trim()));
-            } else if (matcher.group(1).matches("(?i)breaks|conflicts|enhances|provides|replaces") // list fields
-                    || matcher.group(1).matches("(?i)depends|pre-depends|recommends|suggests")) { // formula fields
-                object.put(matcher.group(1), extractListOrFormulaField(matcher.group(2)));
-            } else
-                object.put(matcher.group(1), matcher.group(2));
+            try {
+                if (matcher.group(1).matches("(?i)conffiles")) {
+                    object.put(matcher.group(1), extractConffiles(matcher.group(2).trim()));
+                } else if (matcher.group(1).matches("(?i)breaks|conflicts|enhances|provides|replaces") // list fields
+                        || matcher.group(1).matches("(?i)depends|pre-depends|recommends|suggests")) { // formula fields
+                    object.put(matcher.group(1), extractListOrFormulaField(matcher.group(2)));
+                } else
+                    object.put(matcher.group(1), matcher.group(2));
+            } catch (IllegalStateException e) {
+                log.warn("\"" + field + "\" from package \"" + object.optString("Package", "") + "\" could not be extracted.");
+            }
         }
         return object;
     }

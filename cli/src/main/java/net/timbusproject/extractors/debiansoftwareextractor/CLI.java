@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
 
 public class CLI {
 
-    private static final String formatUUID = "d17250e8-af6e-5b84-8fab-404d5ecee47f";
     private static final Logger log = LoggerFactory.getLogger(CLI.class);
     private final Options options = new Options();
     private CommandLine cmd;
@@ -46,6 +45,7 @@ public class CLI {
                         OptionBuilder.withLongOpt("local").withDescription("Extracts locally").create('l'),
                         OptionBuilder.withLongOpt("remote").withDescription("Extracts remotely").hasArgs().withArgName("user@host:port").create('r')
                 ),
+                OptionBuilder.withLongOpt("universe").withDescription("Extracts universe").create('u'),
                 OptionBuilder.withLongOpt("output").withDescription("Outputs results to file").hasArg().withArgName("file").withType(File.class).create('o'),
                 OptionBuilder.withLongOpt("pretty").withDescription("Returns a formatted result").create('p'),
                 createOptionGroup(
@@ -90,9 +90,12 @@ public class CLI {
 
     public void process() throws InterruptedException, JSchException, JSONException, IOException, ParseException {
         Pattern remotePattern = Pattern.compile("(\\w[\\w\\-\\.]+\\$?){1,32}@([\\p{Alnum}\\.]+)(?::(22$|[0-9]{4,5}))?");
-        if (cmd.hasOption("debug")) ((ch.qos.logback.classic.Logger) log).setLevel(Level.DEBUG);
+        Level logLevel = cmd.hasOption("debug") ? Level.DEBUG : cmd.hasOption("quiet") ? Level.WARN : Level.INFO;
+        ((ch.qos.logback.classic.Logger) log).setLevel(logLevel);
+        if (cmd.hasOption("universe") && cmd.hasOption('p')) log.warn("Formatted output disabled on universe extraction.");
+        Engine.Scope scope = cmd.hasOption("universe") ? Engine.Scope.UNIVERSE : Engine.Scope.INSTALLED_PACKAGES;
         if (cmd.hasOption('l')) {
-            printResult(finalizeResult(new Engine(cmd.hasOption('q') ? Level.WARN : cmd.hasOption("--debug") ? Level.DEBUG : Level.INFO).run()));
+            printResult(finalizeResult(new Engine(logLevel).run(scope)));
         } else if (cmd.hasOption('r')) {
             boolean nl = false;
             for (String remote : cmd.getOptionValues('r')) {
@@ -112,10 +115,7 @@ public class CLI {
                 getLoggerStdOut().write(("Enter password for " + matcher.group(1) + "@" + matcher.group(2) + ": ").getBytes());
                 sshManager.setPassword(new String(System.console().readPassword()));
                 printResult(
-                        finalizeResult(new Engine(
-                                sshManager,
-                                cmd.hasOption('q') ? Level.WARN : cmd.hasOption("--debug") ? Level.DEBUG : Level.INFO
-                        ).run()),
+                        finalizeResult(new Engine(sshManager, logLevel).run(scope)),
                         cmd.getOptionValues('r').length > 1
                                 ? matcher.group(2) + (matcher.group(3) != null ? '-' + matcher.group(3) : "")
                                 : ""
@@ -129,8 +129,8 @@ public class CLI {
         printResult(result, null);
     }
     private void printResult(JSONObject result, String append) throws ParseException, IOException, JSONException {
-        if (cmd.hasOption('o')) {
-            File file = (File) cmd.getParsedOptionValue("o");
+        if (cmd.hasOption('o') || cmd.hasOption("universe")) {
+            File file = (File) (cmd.hasOption('o') ? cmd.getParsedOptionValue("o") : new File(result.optString("machineId", "extraction") + ".json"));
             if (append != null && !append.isEmpty())
                 file = new File(file.getName().contains(".") ? file.getAbsolutePath().replaceAll("(\\.[^\\.]+)$", '-' + append + "$1") : file.getAbsolutePath() + append);
             overwrite: if (file.exists()) {
@@ -139,15 +139,15 @@ public class CLI {
                 if (s.equalsIgnoreCase("y")) break overwrite;
                 return;
             }
-            FileWriter writer = new FileWriter(file);
-            if (cmd.hasOption('p')) writer.write(result.toString(2));
-            else writer.write(result.toString());
+            Writer writer = new BufferedWriter(new FileWriter(file));
+            if (!cmd.hasOption("universe") && cmd.hasOption('p')) writer.write(result.toString(2));
+            else result.write(writer);
             writer.flush();
             writer.close();
             log.info("Saved to file: " + file.getAbsolutePath());
         } else {
             if (cmd.hasOption('p')) getLoggerStdOut().write(result.toString(2).getBytes());
-            else getLoggerStdOut().write(result.toString().getBytes());
+            else result.write(new BufferedWriter(new OutputStreamWriter(getLoggerStdOut())));
             getLoggerStdOut().write('\n');
             getLoggerStdOut().flush();
         }
@@ -156,7 +156,7 @@ public class CLI {
     private JSONObject finalizeResult(Object result) throws JSONException {
         return new JSONObject()
                 .put("extractor", "Debian Software Extractor")
-                .put("format", new JSONObject().put("id", formatUUID).put("multiple", false))
+                .put("format", new JSONObject().put("id", DebianSoftwareExtractor.formatUUID).put("multiple", false))
                 .put("uuid", Generators.timeBasedGenerator().generate())
                 .put("result", result);
 
@@ -174,12 +174,6 @@ public class CLI {
         return ((OutputStreamAppender)
                 ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("root")).getAppender("STDERR")
         ).getOutputStream();
-    }
-
-    public static void writeToFile(String fileName, JSONObject output) throws FileNotFoundException, UnsupportedEncodingException, JSONException {
-        PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-        writer.write(output.toString(2));
-        writer.close();
     }
 
     public static void main(String[] args) {

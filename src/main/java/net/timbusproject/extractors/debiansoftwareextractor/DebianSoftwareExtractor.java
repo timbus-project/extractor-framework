@@ -19,21 +19,18 @@ package net.timbusproject.extractors.debiansoftwareextractor;
 
 import com.fasterxml.uuid.Generators;
 import net.timbusproject.extractors.core.*;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.EnumSet;
 import java.util.HashMap;
 
 public class DebianSoftwareExtractor implements IExtractor {
 
-    private static final String formatUUID = "d17250e8-af6e-5b84-8fab-404d5ecee47f";
+    static final String formatUUID = "d17250e8-af6e-5b84-8fab-404d5ecee47f";
 
     private BundleContext bundleContext;
     private final Logger log = LoggerFactory.getLogger(DebianSoftwareExtractor.class);
@@ -42,9 +39,7 @@ public class DebianSoftwareExtractor implements IExtractor {
 
     @Override
     public String getName() {
-        if(bundleContext != null)
-            return bundleContext.getBundle().getHeaders().get("Bundle-Name");
-        return String.valueOf("");
+        return bundleContext != null ? bundleContext.getBundle().getHeaders().get("Bundle-Name") : getClass().getSimpleName();
     }
 
     @Override
@@ -65,35 +60,37 @@ public class DebianSoftwareExtractor implements IExtractor {
     @Override
     public HashMap<String, Parameter> getParameters() {
         HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
-        parameters.put("user", new Parameter(false));
-        parameters.put("password", new Parameter(true));
+        parameters.put("fqdn", new Parameter(false, true));
         parameters.put("port", new Parameter(false, ParameterType.NUMBER));
-        parameters.put("fqdn", new Parameter(false));
+        parameters.put("user", new Parameter(false, true));
+        parameters.put("password", new Parameter(true));
+        parameters.put("private key", new Parameter());
         return parameters;
     }
 
     @Override
     public String extract(Endpoint endpoint, boolean b) throws Exception {
+/*
         FileInputStream knownHosts;
         try {
             knownHosts = endpoint.hasProperty("knownHosts") && endpoint.getProperty("knownHosts") != null
                     && !endpoint.getProperty("knownHosts").isEmpty()
                     ? new FileInputStream(endpoint.getProperty("knownHosts")) : null;
         } catch (FileNotFoundException e) { knownHosts = null; }
+*/
         SSHManager sshManager = new SSHManager(
                 endpoint.getProperty("user"),
                 endpoint.getProperty("fqdn"),
                 endpoint.hasProperty("port") ? Integer.parseInt(endpoint.getProperty("port")) : Endpoint.DEFAULT_SSH_PORT,
-                endpoint.getProperty("privateKey"),
-                knownHosts
+                endpoint.getProperty("privateKey")
         );
         sshManager.setPassword(endpoint.getProperty("password"));
         Engine engine = new Engine(sshManager);
-        JSONArray jsonArray = engine.run();
+        JSONObject extraction = engine.extractInstalledPackages();
         return new JSONObject().put("extractor", getName())
                 .put("format", new JSONObject().put("id", formatUUID).put("multiple", false))
                 .put("uuid", Generators.timeBasedGenerator().generate())
-                .put("result", jsonArray).toString(2);
+                .put("result", extraction).toString(2);
     }
 
 }
