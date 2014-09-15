@@ -22,9 +22,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.ParseException;
 import java.util.Scanner;
 
@@ -73,6 +71,22 @@ public class CommandManager {
         return outputBuffer.toString();
     }
 
+    public void putInexFile() throws IOException {
+        InputStream stream = this.getClass().getResourceAsStream("/i-nex-cpuid");
+        File file = new File(System.getProperty("user.home") + "/i-nex-cpuid");
+        file.createNewFile();
+        FileOutputStream fileStream = new FileOutputStream(file);
+        try {
+            int c;
+            while ((c = stream.read()) != -1)
+                fileStream.write(c);
+        } finally {
+            stream.close();
+            fileStream.close();
+        }
+
+    }
+
     public JSONObject parser(String pkg) throws JSONException {
         Scanner scanner = new Scanner(pkg);
         JSONObject jsonObject = new JSONObject();
@@ -111,6 +125,7 @@ public class CommandManager {
         return jsonObject;
     }
 
+
     private JSONArray getDepends(Scanner scanner) throws JSONException {
         String[] depends = scanner.nextLine().trim().split(",");
         JSONArray jsonArrayAnd = new JSONArray();
@@ -138,7 +153,6 @@ public class CommandManager {
         }
         return jsonArrayAnd;
     }
-
 
     private void getConffiles(Scanner scanner, JSONObject jsonObject, String tmp, String key) throws JSONException {
         JSONArray jsonArray = new JSONArray();

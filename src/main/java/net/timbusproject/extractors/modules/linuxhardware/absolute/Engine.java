@@ -47,10 +47,17 @@ public class Engine {
         return run(instance, endpoint.getProperty("password"));
     }
 
-    public String run() throws IOException {
-        String result;
+    public JSONObject run() throws IOException, JSONException {
+        JSONObject result = new JSONObject();
         CommandManager manager = new CommandManager();
-        result = manager.doCommand(null);
+        JSONObject data = new JSONObject();
+        data.put("lshw", new JSONObject(manager.doCommand(null)));
+        manager.putInexFile();
+        manager.doCommand("chmod u+x ~/i-nex-cpuid");
+        data.put("inex", new JSONObject(manager.doCommand("cd ~/ && ~/i-nex-cpuid")));
+        manager.doCommand("rm ~/i-nex-cpuid");
+        result.put("data", data);
+        result.put("machineId", manager.doCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").trim());
         return result;
     }
 
