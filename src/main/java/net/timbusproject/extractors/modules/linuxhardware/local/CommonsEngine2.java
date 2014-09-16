@@ -41,11 +41,11 @@ public class CommonsEngine2 {
     private final Log log;
     Engine engine = new Engine();
 
-    public CommonsEngine2(String... args) throws IOException, ParseException, JSONException, JSchException {
+    public CommonsEngine2(String... args) throws IOException, ParseException, JSONException, JSchException, InterruptedException {
         this(args, null);
     }
 
-    public CommonsEngine2(String[] args, OutputStream out) throws IOException, ParseException, JSONException, JSchException {
+    public CommonsEngine2(String[] args, OutputStream out) throws IOException, ParseException, JSONException, JSchException, InterruptedException {
         response = new JSONObject();
         setOptions();
         OutputStream o = null;
@@ -60,7 +60,7 @@ public class CommonsEngine2 {
         execute();
     }
 
-    private void execute() throws IOException, JSONException, JSchException {
+    private void execute() throws IOException, JSONException, JSchException, InterruptedException {
         String result = "";
         if (cmd.hasOption("l")) {
             result = new JSONObject().put("extractor", "Linux Hardware Extractor")

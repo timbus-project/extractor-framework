@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class LocalLinuxHardwareExtractor {
 
-    public static void main(String[] args) throws IOException, ParseException, JSONException, JSchException {
+    public static void main(String[] args) throws IOException, ParseException, JSONException, JSchException, InterruptedException {
         CommonsEngine2 engine = new CommonsEngine2(args, System.out);
     }
 

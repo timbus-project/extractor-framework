@@ -25,17 +25,25 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import java.io.*;
+import java.util.Properties;
 
 public class Engine {
 
-    public JSONObject run(SSHManager instance, String password) throws JSchException, IOException, JSONException {
+    public JSONObject run(SSHManager instance, String password) throws JSchException, IOException, JSONException, InterruptedException {
         instance.connect();
 //        JSONObject output = new JSONObject(instance.sendCommandSudo("lshw -json", password));
         instance.sendINexFile();
         JSONObject output = new JSONObject();
         output.put("machineId", instance.sendCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").trim().replace("\n", ""));
         output.put("data", new JSONObject());
-        output.getJSONObject("data").put("lshw", new JSONObject(instance.sendCommandSudo("/usr/sbin/lshw -json -quiet", password)));
+        String lshwResult;
+        Properties lshwOutput = instance.sendCommandSudo("lshw -json -quiet", password);
+        if (lshwOutput.getProperty("err") != null && lshwOutput.getProperty("err").trim().contains("you must have a tty to run sudo")) {
+            System.out.println("Could not run command with sudo. Running without sudo.....");
+            lshwResult = instance.sendCommand("lshw -json -quiet");
+        } else
+            lshwResult = lshwOutput.getProperty("result");
+        output.getJSONObject("data").put("lshw", new JSONObject(lshwResult));
         output.getJSONObject("data").put("inex", new JSONObject(instance.sendCommand("cd ~/ && ./i-nex-cpuid")));
 //        writeToFile(output);
         instance.deleteInexFile();
@@ -43,7 +51,7 @@ public class Engine {
         return output;
     }
 
-    public JSONObject run(SSHManager instance, Endpoint endpoint) throws JSchException, IOException, JSONException {
+    public JSONObject run(SSHManager instance, Endpoint endpoint) throws JSchException, IOException, JSONException, InterruptedException {
         return run(instance, endpoint.getProperty("password"));
     }
 

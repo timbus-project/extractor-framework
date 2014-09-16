@@ -19,11 +19,13 @@
 package net.timbusproject.extractors.modules.linuxhardware.remote;
 
 import com.jcraft.jsch.*;
+import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.Properties;
 
 public class SSHManager {
@@ -109,27 +111,65 @@ public class SSHManager {
     }
 
     public String sendCommand(String command) throws IOException, JSchException {
-        StringBuilder outputBuffer = new StringBuilder();
+        Channel channel = sesConnection.openChannel("exec");
+        ((ChannelExec) channel).setCommand(command);
+
+        InputStream normalInputStream = channel.getInputStream();
+        InputStream errInputStream = channel.getExtInputStream();
+
+        channel.connect();
+
+        Properties properties = new Properties();
+        StringWriter writer = new StringWriter();
+        IOUtils.copy(normalInputStream, writer);
+        properties.setProperty("result", writer.toString());
         try {
-
-            Channel channel = sesConnection.openChannel("exec");
-            ((ChannelExec) channel).setCommand(command);
-            channel.connect();
-            InputStream commandOutput = channel.getInputStream();
-            int readByte = commandOutput.read();
-
-            while (readByte != 0xffffffff) {
-                outputBuffer.append((char) readByte);
-                readByte = commandOutput.read();
-            }
-
-            channel.disconnect();
-        } catch (IOException ioX) {
-            logWarning(ioX.getMessage());
-            return null;
+            IOUtils.copy(errInputStream, writer);
+            properties.setProperty("err", writer.toString());
+        } catch (NullPointerException ignored) {
         }
-        System.out.println(outputBuffer.toString());
-        return outputBuffer.toString();
+        try {
+            new Thread(channel).join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        properties.setProperty("exit-value", String.valueOf(channel.getExitStatus()));
+
+
+        channel.disconnect();
+//        System.out.println("STR " + stringBuilder.toString());
+        return properties.getProperty("result");
+    }
+
+    public Properties sendCommandSudo(String command, String sudoPass) throws IOException, JSchException, InterruptedException {
+        Channel channel = sesConnection.openChannel("exec");
+        ((ChannelExec) channel).setCommand("sudo -S -p '' " + command);
+
+        InputStream normalInputStream = channel.getInputStream();
+        InputStream errInputStream = channel.getExtInputStream();
+        OutputStream out = channel.getOutputStream();
+
+        channel.connect();
+
+        out.write((sudoPass + "\n").getBytes());
+        out.flush();
+
+        Properties properties = new Properties();
+        StringWriter writer = new StringWriter();
+        IOUtils.copy(normalInputStream, writer);
+        properties.setProperty("result", writer.toString());
+        try {
+            IOUtils.copy(errInputStream, writer);
+            properties.setProperty("err", writer.toString());
+        } catch (NullPointerException ignored) {
+        }
+        new Thread(channel).join();
+        properties.setProperty("exit-value", String.valueOf(channel.getExitStatus()));
+
+
+        channel.disconnect();
+//        System.out.println("STR " + stringBuilder.toString());
+        return properties;
     }
 
     public void sendINexFile() throws IOException, JSchException {
@@ -152,42 +192,6 @@ public class SSHManager {
         } catch (Exception ex) {
             System.out.println("Problem occurred with remote sftp. No information from i-nex module will be available");
         }
-    }
-
-    public String sendCommandSudo(String command, String sudoPass) throws IOException,JSchException{
-        Channel channel = sesConnection.openChannel("exec");
-        ((ChannelExec)channel).setCommand("sudo -S -p '' "+command);
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        InputStream in=channel.getInputStream();
-        OutputStream out=channel.getOutputStream();
-        ((ChannelExec)channel).setErrStream(System.err);
-
-        channel.connect();
-
-        out.write((sudoPass + "\n").getBytes());
-        out.flush();
-
-        byte[] tmp = new byte[1024];
-        while(true){
-            while(in.available()>0){
-                int i=in.read(tmp, 0, 1024);
-                if(i<0)break;
-                String str = new String(tmp,0,i);
-                stringBuilder.append(str.trim());
-//                System.out.println(str);
-            }
-            if(channel.isClosed()){
-                System.out.println("exit-status: "+channel.getExitStatus());
-                break;
-            }
-            try{Thread.sleep(1000);}catch(Exception ee){}
-        }
-
-        channel.disconnect();
-//        System.out.println("STR " + stringBuilder.toString());
-        return stringBuilder.toString();
     }
 
 
