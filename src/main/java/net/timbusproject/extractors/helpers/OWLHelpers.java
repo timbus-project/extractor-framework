@@ -22,7 +22,7 @@ public class OWLHelpers {
 		OWLNamedIndividualImpl node = new OWLNamedIndividualImpl(nodeIRI);
 
 		// assign it to be of class Node
-		OWLClass nodeClass = dataFactory.getOWLClass(IRI.create("http://timbus.teco.edu/ontologies/DIO.owl", "Node"));
+		OWLClass nodeClass = dataFactory.getOWLClass(IRI.create("http://timbus.teco.edu/ontologies/DIO.owl#Node"));
 		OWLClassAssertionAxiom classAssertion = dataFactory.getOWLClassAssertionAxiom(nodeClass, node);
 		ontology.getOWLOntologyManager().addAxiom(ontology, classAssertion);
 
