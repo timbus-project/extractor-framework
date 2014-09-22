@@ -17,8 +17,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.osgi.framework.BundleContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.net.URL;
@@ -108,11 +106,11 @@ public class CommonsEngine2 {
     }
 
     public boolean confirmInput() throws IOException, ParseException {
-        Hashtable<String, List<Object>> table = new Hashtable<>();
+        Hashtable<String, List<Object>> table = new Hashtable<String, List<Object>>();
         for (Option option : cmd.getParsedOptions()) {
             String title = cmd.getOptionTitle(option);
             if (!table.containsKey(title))
-                table.put(title, new ArrayList<>());
+                table.put(title, new ArrayList<Object>());
             table.get(title).add(cmd.getParsedValue(option));
         }
 /*
@@ -120,20 +118,19 @@ public class CommonsEngine2 {
         Log.out(System.out, true, "Your input was:");
         Log.out(System.out, true, values);
 */
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<String>();
         list.add("Your input was:");
         for (Map.Entry<String, List<Object>> entry : table.entrySet()) {
             list.add(formatString(4, cmd.getOptionsTab(), ':', entry.getKey(), String.valueOf(entry.getValue()).replaceAll("\\[|\\]", "")));
         }
         Log.out(System.out, true, list.toArray(new String[list.size()]));
         Log.out(System.out, "Proceed using this information? [y/n] ");
-        switch (new Scanner(System.in).nextLine().trim().toLowerCase()) {
-            case "y":
-            case "":
-                list.add("");
-                log.out(true, list.toArray(new String[list.size()]));
-                Log.out(System.out, true, "");
-                return true;
+        String s = new Scanner(System.in).nextLine().trim().toLowerCase();
+        if (s.equals("y") || s.equals("")) {
+            list.add("");
+            log.out(true, list.toArray(new String[list.size()]));
+            Log.out(System.out, true, "");
+            return true;
         }
         return false;
     }
@@ -158,7 +155,7 @@ public class CommonsEngine2 {
             Scanner scanner = new Scanner((File) o);
             JSONObject jsonObject = new JSONObject();
             while (scanner.hasNextLine()) {
-                Map.Entry<String, String> entry = new AbstractMap.SimpleImmutableEntry<>(
+                Map.Entry<String, String> entry = new AbstractMap.SimpleImmutableEntry<String, String>(
                         scanner.findInLine(Pattern.compile("[\\p{L}|\\p{N}]+")),
                         scanner.nextLine().substring(1).trim()
                 );

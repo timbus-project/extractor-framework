@@ -88,11 +88,11 @@ class CLI {
     }
 
     Hashtable<String, List<Object>> getParsedValues() throws ParseException {
-        Hashtable<String, List<Object>> table = new Hashtable<>();
+        Hashtable<String, List<Object>> table = new Hashtable<String, List<Object>>();
         for (Option option : getParsedOptions()) {
             String title = getOptionTitle(option);
             if (!table.containsKey(title))
-                table.put(title, new ArrayList<>());
+                table.put(title, new ArrayList<Object>());
             table.get(title).add(getParsedValue(option));
         }
         return table;
@@ -103,7 +103,7 @@ class CLI {
     }
 
     Object[] getAllParsedValues(String opt) throws ParseException {
-        List<Object> list = new ArrayList<>();
+        List<Object> list = new ArrayList<Object>();
         for (Option option : getParsedOptions())
             if (option.getOpt().equals(opt) || option.getLongOpt().equals(opt))
                 list.add(TypeHandler.createValue(option.getValue(), option.getType()));

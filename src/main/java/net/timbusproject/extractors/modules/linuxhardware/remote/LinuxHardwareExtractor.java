@@ -61,7 +61,7 @@ public class LinuxHardwareExtractor implements IExtractor {
 
     @Override
     public HashMap<String, Parameter> getParameters() {
-        HashMap<String, Parameter> parameters = new HashMap<>();
+        HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
         parameters.put("user", new Parameter(false));
         parameters.put("password", new Parameter(true));
         parameters.put("port", new Parameter(false, ParameterType.NUMBER));

@@ -19,13 +19,17 @@ package net.timbusproject.extractors.modules.linuxhardware.absolute;
 
 import com.jcraft.jsch.JSchException;
 import net.timbusproject.extractors.core.Endpoint;
+import net.timbusproject.extractors.helpers.MachineID;
 import net.timbusproject.extractors.modules.linuxhardware.local.CommandManager;
 import net.timbusproject.extractors.modules.linuxhardware.remote.SSHManager;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Engine {
 
@@ -34,7 +38,8 @@ public class Engine {
 //        JSONObject output = new JSONObject(instance.sendCommandSudo("lshw -json", password));
         instance.sendINexFile();
         JSONObject output = new JSONObject();
-        output.put("machineId", instance.sendCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").trim().replace("\n", ""));
+        MachineID machineId = new MachineID(instance.sendCommand("hostid").trim(), instance.sendCommand("hostname"));
+        output.put("machineId", machineId.getXRN().trim());
         output.put("data", new JSONObject());
         String lshwResult;
         Properties lshwOutput = instance.sendCommandSudo("lshw -json -quiet", password);
@@ -45,6 +50,8 @@ public class Engine {
             lshwResult = lshwOutput.getProperty("result");
         output.getJSONObject("data").put("lshw", new JSONObject(lshwResult));
         output.getJSONObject("data").put("inex", new JSONObject(instance.sendCommand("cd ~/ && ./i-nex-cpuid")));
+        output.getJSONObject("data").put("lspci", parseLspci(instance.sendCommand("lspci -v")));
+
 //        writeToFile(output);
         instance.deleteInexFile();
         instance.close();
@@ -64,6 +71,7 @@ public class Engine {
         manager.doCommand("chmod u+x ~/i-nex-cpuid");
         data.put("inex", new JSONObject(manager.doCommand("cd ~/ && ~/i-nex-cpuid")));
         manager.doCommand("rm ~/i-nex-cpuid");
+        data.put("lspci", parseLspci(manager.doCommand("lspci -v")));
         result.put("data", data);
         result.put("machineId", manager.doCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").trim());
         return result;
@@ -74,6 +82,56 @@ public class Engine {
         writer.write(output);
         writer.close();
     }
+
+    private JSONObject parseLspci(String output) throws JSONException {
+        JSONObject json = new JSONObject();
+
+        if (output.indexOf("VGA compatible controller") != -1) {
+            String vgaPart = output.substring(output.indexOf("VGA compatible controller"));
+            vgaPart = vgaPart.substring(0, vgaPart.indexOf("\n\n"));
+            String[] splitVga = vgaPart.split(System.getProperty("line.separator"));
+            JSONObject vgaObject = new JSONObject();
+            vgaObject.put("name", splitVga[0].split("VGA compatible controller: ")[1]);
+            vgaObject.put("capacity", getCapacityOnController(vgaPart));
+            json.put("vga", vgaObject);
+        }
+
+        if (output.indexOf("VGA compatible controller") != -1) {
+            String displayController = output.substring(output.indexOf("Display controller"));
+            displayController = displayController.substring(0, displayController.indexOf("\n\n"));
+            String[] splitController = displayController.split(System.getProperty("line.separator"));
+            JSONObject controllerObject = new JSONObject();
+            controllerObject.put("name", splitController[0].split("Display controller: ")[1]);
+            controllerObject.put("capacity", getCapacityOnController(displayController));
+            json.put("controller", controllerObject);
+        }
+
+        return json;
+    }
+
+    private double getCapacityOnController(String controller) {
+        String regex = "\\[size=(\\d+\\p{Alpha}{1,2})\\]";
+        Pattern pattern = Pattern.compile(regex);
+        String[] splitController = controller.split(System.getProperty("line.separator"));
+        ArrayList<Double> capacities = new ArrayList<Double>();
+
+        for(String a : splitController)
+            if(a.trim().startsWith("Memory at")){
+                Matcher matcher = pattern.matcher(a.trim());
+                matcher.find();
+                String capacity = matcher.group(1);
+                if(capacity.endsWith("K"))
+                    capacities.add(Double.valueOf(capacity.substring(0, capacity.length() - 1))/1000);
+                else
+                    capacities.add(Double.valueOf(capacity.substring(0, capacity.length() - 1)));
+            }
+        double finalResult = 0;
+        for(double c : capacities)
+            finalResult += c;
+
+        return finalResult;
+    }
+
 
 }
 
