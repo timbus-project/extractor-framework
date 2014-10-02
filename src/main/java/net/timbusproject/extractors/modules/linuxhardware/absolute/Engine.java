@@ -96,7 +96,7 @@ public class Engine {
             json.put("vga", vgaObject);
         }
 
-        if (output.indexOf("VGA compatible controller") != -1) {
+        if (output.indexOf("Display controller") != -1) {
             String displayController = output.substring(output.indexOf("Display controller"));
             displayController = displayController.substring(0, displayController.indexOf("\n\n"));
             String[] splitController = displayController.split(System.getProperty("line.separator"));
