@@ -26,6 +26,8 @@ public class CallBackInfo {
     public String endpointPath;
 
     private String originEndpoint;
+    @XmlElement
+    public String originRequestType;
 
 
     public String[] getMails(){
