@@ -172,15 +172,17 @@ public class SSHManager {
         return properties;
     }
 
-    public void sendINexFile() throws IOException, JSchException {
+    public boolean sendINexFile() throws IOException, JSchException {
 
         InputStream stream = this.getClass().getResourceAsStream("/i-nex-cpuid");
-        writeFileToLinux("i-nex-cpuid", stream);
-        sendCommand("chmod u+x ~/i-nex-cpuid");
+        boolean success = writeFileToLinux("i-nex-cpuid", stream);
+        if (success)
+            sendCommand("chmod u+x ~/i-nex-cpuid");
+        return success;
 
     }
 
-    public void writeFileToLinux(String fileName, InputStream stream) {
+    public boolean writeFileToLinux(String fileName, InputStream stream) {
         try {
             Channel obj_Channel = sesConnection.openChannel("sftp");
             obj_Channel.connect();
@@ -189,8 +191,10 @@ public class SSHManager {
             obj_SFTPChannel.exit();
             stream.close();
             obj_Channel.disconnect();
+            return true;
         } catch (Exception ex) {
             System.out.println("Problem occurred with remote sftp. No information from i-nex module will be available");
+            return false;
         }
     }
 

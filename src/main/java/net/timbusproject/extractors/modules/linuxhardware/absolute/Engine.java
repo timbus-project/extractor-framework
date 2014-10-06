@@ -19,13 +19,15 @@ package net.timbusproject.extractors.modules.linuxhardware.absolute;
 
 import com.jcraft.jsch.JSchException;
 import net.timbusproject.extractors.core.Endpoint;
-import net.timbusproject.extractors.helpers.MachineID;
 import net.timbusproject.extractors.modules.linuxhardware.local.CommandManager;
 import net.timbusproject.extractors.modules.linuxhardware.remote.SSHManager;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -35,11 +37,11 @@ public class Engine {
 
     public JSONObject run(SSHManager instance, String password) throws JSchException, IOException, JSONException, InterruptedException {
         instance.connect();
-//        JSONObject output = new JSONObject(instance.sendCommandSudo("lshw -json", password));
-        instance.sendINexFile();
+        boolean inexsuccess = instance.sendINexFile();
         JSONObject output = new JSONObject();
-        MachineID machineId = new MachineID(instance.sendCommand("hostid").trim(), instance.sendCommand("hostname"));
-        output.put("machineId", machineId.getXRN().trim());
+        /*MachineID machineId = new MachineID(instance.sendCommand("hostid").trim(), instance.sendCommand("hostname"));
+        output.put("machineId", machineId.getXRN().trim());*/
+        output.put("machineId", instance.sendCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").trim());
         output.put("data", new JSONObject());
         String lshwResult;
         Properties lshwOutput = instance.sendCommandSudo("lshw -json -quiet", password);
@@ -49,11 +51,12 @@ public class Engine {
         } else
             lshwResult = lshwOutput.getProperty("result");
         output.getJSONObject("data").put("lshw", new JSONObject(lshwResult));
-        output.getJSONObject("data").put("inex", new JSONObject(instance.sendCommand("cd ~/ && ./i-nex-cpuid")));
+        if(inexsuccess)
+            output.getJSONObject("data").put("inex", new JSONObject(instance.sendCommand("cd ~/ && ./i-nex-cpuid")));
         output.getJSONObject("data").put("lspci", parseLspci(instance.sendCommand("lspci -v")));
 
 //        writeToFile(output);
-        instance.deleteInexFile();
+        if(inexsuccess) instance.deleteInexFile();
         instance.close();
         return output;
     }
