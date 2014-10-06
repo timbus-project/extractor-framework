@@ -112,7 +112,10 @@ public class CLI {
                     sshManager = new SSHManager(matcher.group(1), matcher.group(2), Integer.parseInt(matcher.group(3)));
                 else
                     sshManager = new SSHManager(matcher.group(1), matcher.group(2));
-                getLoggerStdOut().write(("Enter password for " + matcher.group(1) + "@" + matcher.group(2) + ": ").getBytes());
+                getLoggerStdOut().write((
+                        "Enter password for " + matcher.group(1) + "@" + matcher.group(2)
+                                + (matcher.group(3) != null ? ":" + matcher.group(3): "") + ": "
+                ).getBytes());
                 sshManager.setPassword(new String(System.console().readPassword()));
                 printResult(
                         finalizeResult(new Engine(sshManager, logLevel).run(scope)),

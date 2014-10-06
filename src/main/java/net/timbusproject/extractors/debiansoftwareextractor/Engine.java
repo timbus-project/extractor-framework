@@ -129,6 +129,10 @@ public class Engine {
     private JSONObject newExtraction(Collection<JSONObject> data, boolean isUniverse) throws InterruptedException, JSchException, IOException, JSONException {
         return new JSONObject()
                 .put("isUniverse", isUniverse)
+                .put("operatingSystem", isCommandAvailable("lsb_release")
+                        ? doCommand("echo $(lsb_release -ircs)").getProperty("stdout").replaceAll("\\n", " ").trim()
+                        : "SO could not be extracted")
+                .put("architecture", doCommand("uname -i").getProperty("stdout").trim())
                 .put("machineId", doCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").getProperty("stdout").trim())
                 .put("data", data);
     }
