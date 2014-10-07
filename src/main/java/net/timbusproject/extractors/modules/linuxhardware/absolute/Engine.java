@@ -19,6 +19,7 @@ package net.timbusproject.extractors.modules.linuxhardware.absolute;
 
 import com.jcraft.jsch.JSchException;
 import net.timbusproject.extractors.core.Endpoint;
+import net.timbusproject.extractors.helpers.MachineID;
 import net.timbusproject.extractors.modules.linuxhardware.local.CommandManager;
 import net.timbusproject.extractors.modules.linuxhardware.remote.SSHManager;
 import org.codehaus.jettison.json.JSONException;
@@ -39,9 +40,9 @@ public class Engine {
         instance.connect();
         boolean inexsuccess = instance.sendINexFile();
         JSONObject output = new JSONObject();
-        /*MachineID machineId = new MachineID(instance.sendCommand("hostid").trim(), instance.sendCommand("hostname"));
-        output.put("machineId", machineId.getXRN().trim());*/
-        output.put("machineId", instance.sendCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").trim());
+        MachineID machineId = new MachineID(instance.sendCommand("hostid").trim(), instance.sendCommand("hostname"));
+        output.put("machineId", machineId.getXRN().trim());
+//        output.put("machineId", instance.sendCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").trim());
         output.put("data", new JSONObject());
         String lshwResult;
         Properties lshwOutput = instance.sendCommandSudo("lshw -json -quiet", password);
@@ -51,8 +52,13 @@ public class Engine {
         } else
             lshwResult = lshwOutput.getProperty("result");
         output.getJSONObject("data").put("lshw", new JSONObject(lshwResult));
-        if(inexsuccess)
+        if(inexsuccess){
+            try{
             output.getJSONObject("data").put("inex", new JSONObject(instance.sendCommand("cd ~/ && ./i-nex-cpuid")));
+            }catch (JSONException e){
+                System.out.println("i-nex file corrupted");
+            }
+        }
         output.getJSONObject("data").put("lspci", parseLspci(instance.sendCommand("lspci -v")));
 
 //        writeToFile(output);
