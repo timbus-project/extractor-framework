@@ -125,8 +125,19 @@
                                 <exclude>**/remote/*</exclude>
                             </excludes>
                         </filter>
+
+                        <!--TO TEST-->
+                        <filter>
+                            <artifact>net.sourceforge.owlapi:*</artifact>
+                            <excludes><exclude>**</exclude></excludes>
+                        </filter>
+                        <filter>
+                            <artifact>org.apache.felix:*</artifact>
+                            <excludes><exclude>**</exclude></excludes>
+                        </filter>
                     </filters>
                 </configuration>
+
             </plugin>
         </plugins>
     </build>
