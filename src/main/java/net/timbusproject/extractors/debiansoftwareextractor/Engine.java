@@ -57,6 +57,7 @@ public class Engine {
         commands.setProperty("licensecheck", "licensecheck -r -copyright %s 2>/dev/null");
         commands.setProperty("ppa", "apt-cache madison %s | grep ' Packages$' | awk '{print $1,$3,$5;}' | uniq");
         commands.setProperty("filename", "apt-cache show %s | grep -E '^((Package|Version|Filename): |$)'");
+        commands.setProperty("os2json", "echo '{\"distribution\":\"'$(lsb_release -si)'\",\"release\":\"'$(lsb_release -sr)'\",\"codename\":\"'$(lsb_release -sc)'\",\"architecture\":\"'$(uname -i)'\"}'");
     }
 
 
@@ -127,14 +128,15 @@ public class Engine {
         return newExtraction(data, false);
     }
     private JSONObject newExtraction(Collection<JSONObject> data, boolean isUniverse) throws InterruptedException, JSchException, IOException, JSONException {
-        return new JSONObject()
+        JSONObject object = new JSONObject()
                 .put("isUniverse", isUniverse)
-                .put("operatingSystem", isCommandAvailable("lsb_release")
-                        ? doCommand("echo $(lsb_release -ircs)").getProperty("stdout").replaceAll("\\n", " ").trim()
-                        : "SO could not be extracted")
-                .put("architecture", doCommand("uname -i").getProperty("stdout").trim())
                 .put("machineId", doCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").getProperty("stdout").trim())
                 .put("data", data);
+        if (isCommandAvailable("lsb_release"))
+            object.put("operatingSystem", new JSONObject(doCommand(commands.getProperty("os2json")).getProperty("stdout").replaceAll("\\n", " ").trim()));
+        else
+            log.warn("Operating system could not be extracted.");
+        return object;
     }
 
     private Hashtable<String, JSONObject> extractAllDpkgPackages() throws InterruptedException, JSchException, IOException, JSONException {
