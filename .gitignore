@@ -1,0 +1,42 @@
+*.class
+
+javadoc/
+src/main/resources/default/
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Maven Directories
+target/
+
+# Ant Directories
+build/
+
+# Other Build Directories
+lib/
+bin/
+
+# VIM stuff
+*~
+
+# IntelliJ Stuff
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Spring Directories
+.springBeans
+
+# Eclipse Directories
+.project
+.classpath
+.settings/
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath
