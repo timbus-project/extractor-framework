@@ -1,10 +1,4 @@
 # Debian Software Extractor
-## Table of Contents
-[TOC]
-
----
-
-## About the extractor
 This tool allows extracting software packages metadata from [Debian-based Linux distributions][debian-based].
 
 It features two extracting methods:
