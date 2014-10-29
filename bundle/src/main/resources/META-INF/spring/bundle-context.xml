@@ -10,9 +10,9 @@
          configuration file so that this file can easily be used
          for integration testing outside of an OSGi environment -->
 
-    <bean name="extractor" class="net.timbusproject.extractors.modules.debiansoftwareextractor.remote.DebianSoftwareExtractor"/>
+    <bean name="extractor" class="net.timbusproject.extractors.debiansoftwareextractor.Bundle"/>
 
-    <!-- Enable @AutoWire -->
+    <!-- enables @Autowired -->
     <context:annotation-config/>
 
 </beans>

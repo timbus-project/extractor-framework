@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013, Caixa Magica Software Lda (CMS).
+ * Copyright (c) 2014, Caixa Magica Software Lda (CMS).
  * The work has been developed in the TIMBUS Project and the above-mentioned are Members of the TIMBUS Consortium.
  * TIMBUS is supported by the European Union under the 7th Framework Programme for research and technological
  * development and demonstration activities (FP7/2007-2013) under grant agreement no. 269940.
@@ -15,29 +15,23 @@
  * License or out of the use or inability to use the Work.
  * See the License for the specific language governing permissions and limitation under the License.
  */
-package net.timbusproject.extractors.modules.debiansoftwareextractor.absolute;
+package net.timbusproject.extractors.debiansoftwareextractor;
 
-import org.apache.commons.io.IOUtils;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
+import org.osgi.framework.BundleContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
+/**
+ * Created with IntelliJ IDEA.
+ * User: jorge
+ * Date: 6/30/14
+ * Time: 12:01 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class Bundle extends DebianSoftwareExtractor {
 
-public class ReadJSON {
-
-    private JSONArray jsonArray;
-
-    public ReadJSON(String path) throws IOException, JSONException {
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(new FileInputStream(new File(path)), writer);
-        this.jsonArray = new JSONArray(writer.toString());
-    }
-
-    public JSONArray getJsonArray() {
-        return jsonArray;
+    @Autowired
+    public Bundle(BundleContext bundleContext) {
+        super(bundleContext);
     }
 
 }

@@ -13,6 +13,4 @@
 
     <osgi:service interface="net.timbusproject.extractors.core.IExtractor" ref="extractor"/>
 
-    <osgi:reference id="log" interface="org.osgi.service.log.LogService"/>
-
 </beans>

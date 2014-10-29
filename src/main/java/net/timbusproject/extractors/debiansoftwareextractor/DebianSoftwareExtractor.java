@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013, Caixa Magica Software Lda (CMS).
+ * Copyright (c) 2014, Caixa Magica Software Lda (CMS).
  * The work has been developed in the TIMBUS Project and the above-mentioned are Members of the TIMBUS Consortium.
  * TIMBUS is supported by the European Union under the 7th Framework Programme for research and technological
  * development and demonstration activities (FP7/2007-2013) under grant agreement no. 269940.
@@ -15,52 +15,41 @@
  * License or out of the use or inability to use the Work.
  * See the License for the specific language governing permissions and limitation under the License.
  */
+package net.timbusproject.extractors.debiansoftwareextractor;
 
-package net.timbusproject.extractors.modules.debiansoftwareextractor.remote;
-
-import net.timbusproject.extractors.core.Endpoint;
-import net.timbusproject.extractors.core.IExtractor;
-import net.timbusproject.extractors.core.OperatingSystem;
-import net.timbusproject.extractors.core.Parameter;
 import com.fasterxml.uuid.Generators;
 import net.timbusproject.extractors.core.*;
-import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.Engine2;
-import net.timbusproject.extractors.modules.debiansoftwareextractor.absolute.SSHManager;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
-import org.osgi.service.log.LogService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.EnumSet;
 import java.util.HashMap;
 
 public class DebianSoftwareExtractor implements IExtractor {
 
-    private static final String formatUUID = "d17250e8-af6e-5b84-8fab-404d5ecee47f";
-    @Autowired
-    private BundleContext bundleContext;
+    static final String formatUUID = "d17250e8-af6e-5b84-8fab-404d5ecee47f";
 
-    @Autowired
-    private LogService log;
+    private BundleContext bundleContext;
+    private final Logger log = LoggerFactory.getLogger(DebianSoftwareExtractor.class);
+
+    public DebianSoftwareExtractor(BundleContext bundleContext) { this.bundleContext = bundleContext; }
 
     @Override
     public String getName() {
-        if(bundleContext != null)
-        return bundleContext.getBundle().getHeaders().get("Bundle-Name");
-
-        return String.valueOf("");
+        return bundleContext != null ? bundleContext.getBundle().getHeaders().get("Bundle-Name") : getClass().getSimpleName();
     }
 
     @Override
     public String getSymbolicName() {
-        return bundleContext.getBundle().getSymbolicName();
+        return bundleContext != null ? bundleContext.getBundle().getSymbolicName() : getClass().getCanonicalName();
     }
 
     @Override
     public Version getVersion() {
-        return bundleContext.getBundle().getVersion();
+        return bundleContext != null ? bundleContext.getBundle().getVersion() : Version.emptyVersion;
     }
 
     @Override
@@ -70,31 +59,38 @@ public class DebianSoftwareExtractor implements IExtractor {
 
     @Override
     public HashMap<String, Parameter> getParameters() {
-        HashMap<String, Parameter> parameters = new HashMap<>();
-        parameters.put("user", new Parameter(false));
+        HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
+        parameters.put("fqdn", new Parameter(false, true));
+        parameters.put("port", new Parameter(false, false, ParameterType.NUMBER));
+        parameters.put("user", new Parameter(false, true));
         parameters.put("password", new Parameter(true));
-        parameters.put("port", new Parameter(false, ParameterType.NUMBER));
-        parameters.put("fqdn", new Parameter(false));
         return parameters;
     }
 
     @Override
     public String extract(Endpoint endpoint, boolean b) throws Exception {
-
-        SSHManager instance = new SSHManager(
+/*
+        FileInputStream knownHosts;
+        try {
+            knownHosts = endpoint.hasProperty("knownHosts") && endpoint.getProperty("knownHosts") != null
+                    && !endpoint.getProperty("knownHosts").isEmpty()
+                    ? new FileInputStream(endpoint.getProperty("knownHosts")) : null;
+        } catch (FileNotFoundException e) { knownHosts = null; }
+*/
+        SSHManager sshManager = new SSHManager(
                 endpoint.getProperty("user"),
-                endpoint.getProperty("password"),
-                endpoint.getFQDN(),
-                endpoint.getProperty("knownHosts"),
+                endpoint.getProperty("fqdn"),
                 endpoint.hasProperty("port") ? Integer.parseInt(endpoint.getProperty("port")) : Endpoint.DEFAULT_SSH_PORT,
                 endpoint.getProperty("privateKey")
         );
-        Engine2 engine2 = new Engine2();
-        JSONArray jsonArray = engine2.run(instance);
+        sshManager.setPassword(endpoint.getProperty("password"));
+        Engine engine = new Engine(sshManager);
+        JSONObject extraction = engine.run(Engine.Scope.INSTALLED_PACKAGES);
         return new JSONObject().put("extractor", getName())
                 .put("format", new JSONObject().put("id", formatUUID).put("multiple", false))
                 .put("uuid", Generators.timeBasedGenerator().generate())
-                .put("result", jsonArray).toString(2);
+                .put("result", extraction).toString(2);
     }
+
 }
 
