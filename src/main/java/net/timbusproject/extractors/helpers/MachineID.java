@@ -36,7 +36,7 @@ public class MachineID {
 	}
 
 	public String getXRN() {
-		return "xrn://+machine?+hostid=" + hostid + "/+hostname=" + hostname;
+		return "xri://+machine?+hostid=" + hostid + "/+hostname=" + hostname;
 	}
 
 	public String toString() {
