@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.timbusproject.extractors</groupId>
     <artifactId>helpers</artifactId>
-    <version>0.1</version>
+    <version>0.1.1</version>
     <packaging>bundle</packaging>
     <description>Helper applications for context extractors</description>
     <url>http://timbusproject.net/</url>
