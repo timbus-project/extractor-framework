@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.timbusproject.extractors</groupId>
         <artifactId>debian-software-extractor</artifactId>
-        <version>0.4.1-SNAPSHOT</version>
+        <version>0.4.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,7 +13,7 @@
     <artifactId>debian-software-extractor-bundle</artifactId>
     <version>${project.parent.version}</version>
     <packaging>bundle</packaging>
-    <name>Debian Software Extractor - OSGi bundle</name>
+    <name>Debian Software Extractor</name>
 
     <properties>
         <!--<bundle.embedded.dependencies/>-->
