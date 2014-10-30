@@ -17,7 +17,6 @@
  */
 package net.timbusproject.extractors.rpmsoftwareextractor;
 
-import net.timbusproject.extractors.rpmsoftwareextractor.RPMSoftwareExtractor;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 

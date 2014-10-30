@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.timbusproject.extractors</groupId>
         <artifactId>rpm-software-extractor</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,7 +13,7 @@
     <artifactId>rpm-software-extractor-bundle</artifactId>
     <version>${project.parent.version}</version>
     <packaging>bundle</packaging>
-    <name>RPM Software Extractor - OSGi bundle</name>
+    <name>RPM Software Extractor</name>
 
     <properties>
         <!--<bundle.embedded.dependencies/>-->

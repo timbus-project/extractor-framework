@@ -19,6 +19,7 @@ package net.timbusproject.extractors.rpmsoftwareextractor;
 
 import ch.qos.logback.classic.Level;
 import com.jcraft.jsch.JSchException;
+import net.timbusproject.extractors.helpers.MachineID;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -28,7 +29,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +53,7 @@ public class Engine {
         commands.setProperty("is-command-available", "command -v %s");
         commands.setProperty("rpm-qa", "rpm -qa --qf 'Id: %{nvra}\\nPackage: %{name}\\nBasename: %|basenames?{%{basenames}}:{}|\\nVersion: %{evr}\\nInstalled-Size: %{size}\\nArchitecture: %|arch?{%{arch}}:{}|\\nLicense: %{license}\\nSection: %{group}\\nVendor: %|vendor?{%{vendor}}:{}|\\nMaintainer: %|packager?{%{packager}}:{}|\\nDepends: [%{requirename} (%{requireflags:depflags} %{requireversion}), ]\\nProvides: [%{providename} (%{provideflags:depflags} %{provideversion}), ]\\nConflicts: [%{conflictname} (%{conflictflags:depflags} %{conflictversion}), ]\\nConffiles:\\n[\\{%{fileflags:fflags}\\} %{filemd5s} %{filenames}\\n]\\n' | sed -r '/^(Depend|Provide|Conflict)s: /!b;s/, $| \\( \\)//g' | grep -vE '^[a-zA-Z0-9\\-]+: ?$'");
         commands.setProperty("installers", "repoquery -a --qf 'Id: %{name}-%{version}-%{release}.%{arch}\\nLocation: %{location}\\n'");
+        commands.setProperty("os2json", "echo '{\"distribution\":\"'$(lsb_release -si)'\",\"release\":\"'$(lsb_release -sr)'\",\"codename\":\"'$(lsb_release -sc)'\",\"architecture\":\"'$(uname -i)'\"}'");
     }
 
 
@@ -119,15 +123,25 @@ public class Engine {
     private JSONObject newExtraction(Collection<JSONObject> data) throws InterruptedException, JSchException, IOException, JSONException {
         return newExtraction(data, false);
     }
+
     private JSONObject newExtraction(Collection<JSONObject> data, boolean isUniverse) throws InterruptedException, JSchException, IOException, JSONException {
-        return new JSONObject()
+        JSONObject object = new JSONObject()
                 .put("isUniverse", isUniverse)
-                .put("operatingSystem", isCommandAvailable("lsb_release")
-                        ? doCommand("echo $(lsb_release -ircs)").getProperty("stdout").replaceAll("\\n", " ").trim()
-                        : "SO could not be extracted")
                 .put("architecture", doCommand("uname -i").getProperty("stdout").trim())
-                .put("machineId", doCommand("echo 'xri://+machine?+hostid='`hostid`'/+hostname='`hostname`").getProperty("stdout").trim())
-                .put("data", data);
+                .put("machineId", getMachineId());
+        if (isCommandAvailable("lsb_release"))
+            object.put("operatingSystem", new JSONObject(
+                    doCommand(commands.getProperty("os2json")).getProperty("stdout").replaceAll("\\n", " ").trim()
+            ));
+        else
+            log.warn("Operating system could not be extracted.");
+        return object.put("data", data);
+    }
+
+    public String getMachineId() throws InterruptedException, JSchException, IOException {
+        return new MachineID(
+                doCommand("hostid").getProperty("stdout").trim(), doCommand("hostname").getProperty("stdout").trim()
+        ).getXRN().trim();
     }
 
     private Hashtable<String, JSONObject> extractAllRpmPackages() throws InterruptedException, JSchException, IOException, JSONException {

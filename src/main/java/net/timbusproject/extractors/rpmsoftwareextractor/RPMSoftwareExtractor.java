@@ -61,10 +61,9 @@ public class RPMSoftwareExtractor implements IExtractor {
     public HashMap<String, Parameter> getParameters() {
         HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
         parameters.put("fqdn", new Parameter(false, true));
-        parameters.put("port", new Parameter(false, ParameterType.NUMBER));
+        parameters.put("port", new Parameter(false, false, ParameterType.NUMBER));
         parameters.put("user", new Parameter(false, true));
         parameters.put("password", new Parameter(true));
-//        parameters.put("private key", new Parameter());
         return parameters;
     }
 
