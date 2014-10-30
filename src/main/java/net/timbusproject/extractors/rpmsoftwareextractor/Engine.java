@@ -123,11 +123,9 @@ public class Engine {
     private JSONObject newExtraction(Collection<JSONObject> data) throws InterruptedException, JSchException, IOException, JSONException {
         return newExtraction(data, false);
     }
-
     private JSONObject newExtraction(Collection<JSONObject> data, boolean isUniverse) throws InterruptedException, JSchException, IOException, JSONException {
         JSONObject object = new JSONObject()
                 .put("isUniverse", isUniverse)
-                .put("architecture", doCommand("uname -i").getProperty("stdout").trim())
                 .put("machineId", getMachineId());
         if (isCommandAvailable("lsb_release"))
             object.put("operatingSystem", new JSONObject(
