@@ -19,6 +19,7 @@ package net.timbusproject.extractors.debiansoftwareextractor;
 
 import ch.qos.logback.classic.Level;
 import com.jcraft.jsch.JSchException;
+import net.timbusproject.extractors.helpers.MachineID;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -130,13 +131,20 @@ public class Engine {
     private JSONObject newExtraction(Collection<JSONObject> data, boolean isUniverse) throws InterruptedException, JSchException, IOException, JSONException {
         JSONObject object = new JSONObject()
                 .put("isUniverse", isUniverse)
-                .put("machineId", doCommand("echo 'xrn://+machine?+hostid='`hostid`'/+hostname='`hostname`").getProperty("stdout").trim())
-                .put("data", data);
+                .put("machineId", getMachineId());
         if (isCommandAvailable("lsb_release"))
-            object.put("operatingSystem", new JSONObject(doCommand(commands.getProperty("os2json")).getProperty("stdout").replaceAll("\\n", " ").trim()));
+            object.put("operatingSystem", new JSONObject(
+                    doCommand(commands.getProperty("os2json")).getProperty("stdout").replaceAll("\\n", " ").trim()
+            ));
         else
             log.warn("Operating system could not be extracted.");
-        return object;
+        return object.put("data", data);
+    }
+
+    public String getMachineId() throws InterruptedException, JSchException, IOException {
+        return new MachineID(
+                doCommand("hostid").getProperty("stdout").trim(), doCommand("hostname").getProperty("stdout").trim()
+        ).getXRN().trim();
     }
 
     private Hashtable<String, JSONObject> extractAllDpkgPackages() throws InterruptedException, JSchException, IOException, JSONException {
