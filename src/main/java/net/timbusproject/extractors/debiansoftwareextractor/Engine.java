@@ -49,15 +49,12 @@ public class Engine {
         log.debug("Initializing...");
         sshManager = ssh;
         commands.setProperty("is-command-available", "command -v %s");
-        commands.setProperty("apt-show", "apt-cache show %s");
-        commands.setProperty("apt-pkgnames", "apt-cache pkgnames");
         commands.setProperty("dpkg-status", "cat /var/lib/dpkg/status");
 //        commands.setProperty("dpkg-status", "dpkg --status firefox dpkg google-chrome-stable");
-        commands.setProperty("dpkg-packages", "dpkg -l | sed 1,5d | awk '{print $2;}'");
-        commands.setProperty("dpkg-packages-versions", "dpkg -l | sed 1,5d | awk '{print $2\"=\"$3;}'");
         commands.setProperty("licensecheck", "licensecheck -r -copyright %s 2>/dev/null");
-        commands.setProperty("ppa", "apt-cache madison %s | grep ' Packages$' | awk '{print $1,$3,$5;}' | uniq");
-        commands.setProperty("filename", "apt-cache show %s | grep -E '^((Package|Version|Filename): |$)'");
+        commands.setProperty("apt-show-installed", "apt-cache show $(dpkg-query -Wf='${package}=${version} ')");
+        commands.setProperty("ppa-installed", "apt-cache madison $(dpkg-query -Wf='${package} ') | grep ' Packages$' | awk '{print $1,$3,$5;}' | uniq");
+        commands.setProperty("apt-show-all", "apt-cache show $(apt-cache pkgnames)");
         commands.setProperty("os2json", "echo '{\"distribution\":\"'$(lsb_release -si)'\",\"release\":\"'$(lsb_release -sr)'\",\"codename\":\"'$(lsb_release -sc)'\",\"architecture\":\"'$(uname -i)'\"}'");
     }
 
@@ -158,7 +155,7 @@ public class Engine {
     }
 
     private Collection<JSONObject> extractAllAptPackages() throws InterruptedException, JSchException, IOException, JSONException {
-        String dpkg = doCommand(String.format(commands.getProperty("apt-show"), "$(" + commands.getProperty("apt-pkgnames") + ")")).getProperty("stdout");
+        String dpkg = doCommand(commands.getProperty("apt-show-all")).getProperty("stdout");
         Collection<JSONObject> collection = new ArrayList<JSONObject>();
         for (String control : dpkg.split("\\n\\n"))
             collection.add(extractPackage(control));
@@ -237,27 +234,21 @@ public class Engine {
     private void extractInstallers(Hashtable<String, JSONObject> packages) throws InterruptedException, JSchException, IOException, JSONException {
         if (!isCommandAvailable("apt-cache")) { log.warn("Installers could not be extracted."); return; }
         final Pattern ppaPattern = Pattern.compile("(\\S+) (\\S+) (.+)");
-        final Pattern filenamePattern = Pattern.compile("([^:]+): (.+)");
-        String packagesCommand = "$(echo $(" + commands.getProperty("dpkg-packages") + "))";
-        Hashtable<String, Properties> map = new Hashtable<String, Properties>();
-        for (String pkg : doCommand(String.format(commands.getProperty("filename"), packagesCommand)).getProperty("stdout").split("\\n\\n")) {
-            Properties properties = new Properties();
-            for (String field : pkg.split("\\n")) {
-                Matcher matcher = filenamePattern.matcher(field);
-                matcher.find();
-                properties.setProperty(matcher.group(1), matcher.group(2));
+        for (String control : doCommand(commands.getProperty("apt-show-installed")).getProperty("stdout").split("\\n\\n")) {
+            JSONObject object = extractPackage(control);
+            String pkgname = object.getString("Package");
+            for (int i = 0; i != object.names().length(); ++i) {
+                String property = object.names().getString(i);
+                if (packages.containsKey(pkgname) && !packages.get(pkgname).has(property))
+                    packages.get(pkgname).put(property.equals("Filename") ? "Installer" : property, object.getString(property));
             }
-            map.put(properties.getProperty("Package"), properties);
         }
-        for (String line : doCommand(String.format(commands.getProperty("ppa"), packagesCommand)).getProperty("stdout").split("\\n")) {
+        for (String line : doCommand(commands.getProperty("ppa-installed")).getProperty("stdout").split("\\n")) {
             Matcher matcher = ppaPattern.matcher(line);
             matcher.find();
-            if (map.containsKey(matcher.group(1)) && map.get(matcher.group(1)).getProperty("Version").equals(matcher.group(2)) && !map.get(matcher.group(1)).containsKey("ppa"))
-                map.get(matcher.group(1)).setProperty("ppa", matcher.group(3));
+            if (packages.containsKey(matcher.group(1)) && packages.get(matcher.group(1)).getString("Version").equals(matcher.group(2)) && packages.get(matcher.group(1)).has("Installer"))
+                packages.get(matcher.group(1)).put("Installer", matcher.group(3) + packages.get(matcher.group(1)).getString("Installer"));
         }
-        for (Map.Entry<String, Properties> entry : map.entrySet())
-            if (packages.containsKey(entry.getKey()) && entry.getValue().containsKey("Filename") && entry.getValue().containsKey("ppa"))
-                packages.get(entry.getKey()).put("Installer", entry.getValue().getProperty("ppa") + entry.getValue().getProperty("Filename"));
     }
 
     private Properties doCommand(String command) throws InterruptedException, JSchException, IOException {
