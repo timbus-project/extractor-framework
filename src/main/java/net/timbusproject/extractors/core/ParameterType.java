@@ -8,7 +8,8 @@ public enum ParameterType {
     STRING,
     NUMBER,
     ARRAY,
-    OBJECT
+    OBJECT,
+    FILE
 
 
 }
