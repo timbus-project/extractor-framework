@@ -52,6 +52,8 @@ public class Engine {
         sshManager = ssh;
         commands.setProperty("is-command-available", "command -v %s");
         commands.setProperty("rpm-qa", "rpm -qa --qf 'Id: %{nvra}\\nPackage: %{name}\\nBasename: %|basenames?{%{basenames}}:{}|\\nVersion: %{evr}\\nInstalled-Size: %{size}\\nArchitecture: %|arch?{%{arch}}:{}|\\nLicense: %{license}\\nSection: %{group}\\nVendor: %|vendor?{%{vendor}}:{}|\\nMaintainer: %|packager?{%{packager}}:{}|\\nDepends: [%{requirename} (%{requireflags:depflags} %{requireversion}), ]\\nProvides: [%{providename} (%{provideflags:depflags} %{provideversion}), ]\\nConflicts: [%{conflictname} (%{conflictflags:depflags} %{conflictversion}), ]\\nConffiles:\\n[\\{%{fileflags:fflags}\\} %{filemd5s} %{filenames}\\n]\\n' | sed -r '/^(Depend|Provide|Conflict)s: /!b;s/, $| \\( \\)//g' | grep -vE '^[a-zA-Z0-9\\-]+: ?$'");
+        commands.setProperty("rpmrc", "rpm -q --qf 'Id: %{nvra}\\nPackage: %{name}\\nBasename: %|basenames?{%{basenames}}:{}|\\nVersion: %{evr}\\nArchitecture: %|arch?{%{arch}}:{}|\\n' rpm-4.8.0-37.el6.x86_64 | sed -r 's/^(Id|Package): rpm/\\0rc/g'");
+        commands.setProperty("rpmrc-provides", "rpm --showrc | sed '1,/Features supported by rpmlib:/d' | sed '/^$/Q' | sed -r 's/^ +//' | sed -r 's/[<>=]+ [a-zA-Z0-9\\.\\-]+$/(\\0)/g' | sed -r ':a;N;$!ba;s/\\n/, /g'");
         commands.setProperty("installers", "repoquery -a --qf 'Id: %{name}-%{version}-%{release}.%{arch}\\nLocation: %{location}\\n'");
         commands.setProperty("os2json", "echo '{\"distribution\":\"'$(lsb_release -si)'\",\"release\":\"'$(lsb_release -sr)'\",\"codename\":\"'$(lsb_release -sc)'\",\"architecture\":\"'$(uname -i)'\"}'");
     }
@@ -150,7 +152,14 @@ public class Engine {
             if (!object.getString("Package").equals("gpg-pubkey") && !object.getString("License").equals("pubkey") && !object.getString("Section").equals("Public Keys"))
                 table.put(object.getString("Id"), object);
         }
+        JSONObject rpmrc = extractRpmrc();
+        table.put(rpmrc.getString("Package"), rpmrc);
         return table;
+    }
+
+    private JSONObject extractRpmrc() throws InterruptedException, JSchException, IOException, JSONException {
+        return extractPackage(doCommand(commands.getProperty("rpmrc")).getProperty("stdout")
+                + "Provides: " + doCommand(commands.getProperty("rpmrc-provides")).getProperty("stdout"));
     }
 
 /*
