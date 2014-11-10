@@ -9,12 +9,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>debian-software-extractor</artifactId>
-    <version>0.4.4-SNAPSHOT</version>
+    <version>0.4.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Debian Software Extractor</name>
 
     <properties>
-        <!--<dependency.timbus.extractors.version>0.0.3-RELEASE</dependency.timbus.extractors.version>-->
+        <dependency.timbus.extractors.version>0.0.4-RELEASE</dependency.timbus.extractors.version>
         <!--<bundle.embedded.dependencies/>-->
     </properties>
 
