@@ -22,13 +22,26 @@ public class ExtractListener implements StepExecutionListener {
     RequestHandler requestHandler;
 
     @Override
-    public void beforeStep(StepExecution stepExecution) {}
+    public void beforeStep(StepExecution stepExecution) {
+    }
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
-        long key = stepExecution.getJobParameters().getLong("requestId");
-        requestHandler.finish(key);
-        return ExitStatus.COMPLETED;
+        final long key = stepExecution.getJobParameters().getLong("requestId");
+        System.out.println("LISTENER: State of extraction: " + stepExecution.getExitStatus().getExitCode());
+        if (stepExecution.getExitStatus().getExitCode() == "COMPLETED")
+            new Thread(){
+                      public void run(){
+                          requestHandler.finish(key, true);
+                      }
+            }.start();
+        else
+            new Thread(){
+                public void run(){
+                    requestHandler.finish(key, false);
+                }
+            }.start();
+        return stepExecution.getExitStatus();
     }
 
 }
