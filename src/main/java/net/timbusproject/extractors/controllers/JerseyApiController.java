@@ -148,13 +148,36 @@ public class JerseyApiController {
     @Path("/extract")
     public Response extract(RequestExtractionList extractionsList, @Context HttpServletRequest req) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
 
-        if(extractionsList.getCallbackInfo().endpointPath!= null && extractionsList.getCallbackInfo().endpointPort != null){
+        System.out.println("REQUEST TYPE REQUESTED: " + extractionsList.getCallbackInfo().originRequestType);
+        if (extractionsList.getCallbackInfo().endpointPath != null && extractionsList.getCallbackInfo().endpointPort != null) {
             String endpoint = req.getRemoteAddr() + ":" + extractionsList.getCallbackInfo().endpointPort;
-            if(extractionsList.getCallbackInfo().endpointPath.startsWith("/"))
+            if (extractionsList.getCallbackInfo().endpointPath.startsWith("/"))
                 endpoint += extractionsList.getCallbackInfo().endpointPath;
             else
                 endpoint += "/" + extractionsList.getCallbackInfo().endpointPath;
             extractionsList.callback.setOriginEndpoint(endpoint);
+            if (extractionsList.getCallbackInfo().originRequestType != null) {
+                if (extractionsList.getCallbackInfo().originRequestType.trim().toLowerCase().equals("post")|| extractionsList.getCallbackInfo().originRequestType.trim().toLowerCase().equals("get")) {
+                    extractionsList.getCallbackInfo().setFinalOriginRequestType(extractionsList.getCallbackInfo().originRequestType.toLowerCase());
+                } else {
+                    log.log(LogService.LOG_INFO, "Invalid HTTP Request type for origin host callback. Defaulting to GET type");
+                    extractionsList.getCallbackInfo().setFinalOriginRequestType("get");
+                }
+            } else {
+                log.log(LogService.LOG_INFO, "No HTTP Request type for origin host callback provided. Defaulting to GET type");
+                extractionsList.getCallbackInfo().setFinalOriginRequestType("get");
+            }
+            if (extractionsList.getCallbackInfo().requestType != null) {
+                if (extractionsList.getCallbackInfo().requestType.trim().toLowerCase().equals("post")|| extractionsList.getCallbackInfo().requestType.trim().toLowerCase().equals("get")) {
+                    extractionsList.getCallbackInfo().setFinalRequestType(extractionsList.getCallbackInfo().requestType.toLowerCase());
+                } else {
+                    log.log(LogService.LOG_INFO, "Invalid HTTP Request type for callback. Defaulting to GET type");
+                    extractionsList.getCallbackInfo().setFinalRequestType("get");
+                }
+            } else {
+                log.log(LogService.LOG_INFO, "No HTTP Request type for callback provided. Defaulting to GET type");
+                extractionsList.getCallbackInfo().setFinalRequestType("get");
+            }
         }
         long key = requestHandler.requestExtraction(extractionsList);
         return Response.status(Response.Status.ACCEPTED)
