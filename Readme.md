@@ -44,12 +44,12 @@ Locally:
 	java -jar linux-hardware-extractor.jar
 
 Available options:
--f,--text-file load request from text file
--h,--help print help (no arguments)
--j,--json-file  load request from JSON file
--l,--local-extraction Do local extraction (no arguments)
--o,--out file to save output to
--s,--show-extraction Show extraction in stdout (no arguments)
+- -f,--text-file load request from text file
+- -h,--help print help (no arguments)
+- -j,--json-file  load request from JSON file
+- -l,--local-extraction Do local extraction (no arguments)
+- -o,--out file to save output to
+- -s,--show-extraction Show extraction in stdout (no arguments)
 &nbsp;
 Remotely:
 The [Context Population GUI](testbed.timbusproject.net:3001) was developed as an interface for the [Core Extraction Manager tool](https://opensourceprojects.eu/p/timbus/context-population/extraction-manager/). 
@@ -134,7 +134,7 @@ i-nex-cpuid Output Layout
 lspci output layout
 	
 	#!bash
-	
+
 	00:02.0 VGA compatible controller: Intel Corporation Mobile GM965/GL960 Integrated Graphics
 	Controller (primary) (rev 0c) (prog-if 00 [VGA controller])
 	Subsystem: Lenovo ThinkPad T61/R61
