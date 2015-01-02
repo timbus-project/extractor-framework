@@ -52,12 +52,24 @@ public class MachineID {
 		this.hostname = hostname;
 	}
 
+	public String getXRI() {
+		return "xri://" + getIDString();
+	}
+
 	public String getXRN() {
+<<<<<<< HEAD
 		return "xri://+machine?+hostid=" + hostid + "/+hostname=" + hostname;
+=======
+		return "xrn://" + getIDString();
+	}
+
+	private String getIDString() {
+		return "+machine?+hostid=" + hostid + "/+hostname=" + hostname;
+>>>>>>> e5ff5991246207cf000f2aee6a664db5d93bae81
 	}
 
 	public String toString() {
-		return getXRN();
+		return getXRI();
 	}
 
 	public String getUUID() {
