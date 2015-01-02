@@ -1,6 +1,11 @@
 #Hardware Linux Extractor
 
-Hardware Linux Extractor is a tool developed in Java and extracts hardware information of a linux machine.
+The Hardware Linux Extractor is a tool developed in Java and extracts hardware information of a Linux
+machine.
+Utilizing a set of external tools, this module extracts information from a target machine and structures it
+with the aim of subsequently populating an ontology with all the machine's hardware dependencies.
+The extractor is composed by two different tools: A bundle to be deployed in Virgo container and used
+through the framework and a local CLI tool to be used locally, through the Terminal
 
 &nbsp;
 
@@ -18,7 +23,9 @@ Hardware Linux Extractor is a tool developed in Java and extracts hardware infor
 
 1. [Linux installed](http://en.wikipedia.org/wiki/list_of_Linux_distributions)
 2. [lshw installed](http://ezix.org/project/wiki/HardwareLiSter)
-3. [SSH server running with authenticated user](http://www.cyberciti.biz/faq/how-to-installing-and-using-ssh-client-server-in-linux/)
+3. [lspci Installed](http://en.wikipedia.org/wiki/Lspci) - included in most linux distributions
+4. Running sftp server
+5. [SSH server running with authenticated user](http://www.cyberciti.biz/faq/how-to-installing-and-using-ssh-client-server-in-linux/)
 
 &nbsp;
 
@@ -30,81 +37,109 @@ This is helpful when the target is a remote machine and you dont have physical a
 &nbsp;
 
 ##How to execute
-
+Locally:
 	#!bash
 	java -jar linux-hardware-extractor.jar
+Available options:
+-f,--text-file load request from text file
+-h,--help print help (no arguments)
+-j,--json-file  load request from JSON file
+-l,--local-extraction Do local extraction (no arguments)
+-o,--out file to save output to
+-s,--show-extraction Show extraction in stdout (no arguments)
+&nbsp;
+Remotely:
+The [Context Population GUI](testbed.timbusproject.net:3001) was developed as an interface for the [Core Extraction Manager tool](https://opensourceprojects.eu/p/timbus/context-population/extraction-manager/). 
+ To perform an extraction on a remote machine through the GUI, all is needed is to access the GUI, select Linux HW module in the extractors selection box and provide the target machine's information.
+  Further information on how to install and use the Extractors Manager and Context Population GUI is available [here](http://timbusproject.net/portal).
 &nbsp;
 
-##lshw Output Layout
+##Collected information
+In order to collect all relevant information, the extractor goes through three phases to capture different
+pieces of data from the target machine:
+1. Through the lshw cli tool – This is used to gather the majority of the machine's hardware metadata.
+It produces a structured output of the most relevant hardware components – This includes
+processor information, RAM, Motherboard, audio and graphical controllers, etc.;
+2. The i-nex-cpuid tool (http://i-nex.linux.pl) – As this is an external tool (not included in any
+Linux distribution's base packages), the extractor needs to upload this binary file through sftp into
+the target machine (removing it after usage) and runs it remotely, capturing the output. This tool
+provides further detailed information about the machine's processor;
+3. The lspci tool – It provides information concerning various hardware components. For most of
+them, the aforementioned lshw tool provides more detailed information, however the machine's
+GPU is better described in this tool's output, particularly its memory capacity.
 
-	#!bash
-	system information
-        motherboard information
-        cpu information
-	cache, logical cpu
-        memory
-	capacity, total size, individual bank information
-        pci slot information
-        ide slot information
-	disk information
-	total size, partition,
-        usb slot information
-        network
-.... 
-
-
-
-Note: It is recommend that you have sudo privilieges in the target machine, if you dont have the extractor will not provide information of the motherboard.
-
-&nbsp;
-
-The output will be in JSON format for easier parsing to a converter or other tool that requires structured output.
-
-&nbsp;
-
-##Example output:
+lshw Output Layout
 	#!json
-	{
-	  "id" : "#####",
-	  "class" : "system",
-	  "claimed" : true,
-	  "description" : "Computer",
-	  "width" : 64,
-	  "capabilities" : {
-	    "vsyscall32" : "processos 32-bits"
-	  },
-	  "children" : [
-	    {
-	      "id" : "core",
-	      "class" : "bus",
-	      "claimed" : true,
-	      "description" : "Motherboard",
-	      "physid" : "0",
-	      "children" : [
+	"children" : [
 		{
-		  "id" : "memory",
-		  "class" : "memory",
-		  "claimed" : true,
-		  "description" : "MemÃ³ria do sistema",
-		  "physid" : "0",
-		  "units" : "bytes",
-		  "size" : 4110196736
+			"id" : "display:0",
+			"class" : "display",
+			"claimed" : true,
+			"handle" : "PCI:0000:00:02.0",
+			"description" : "VGA compatible controller",
+			"product" : "Mobile GM965/GL960 Integrated Graphics Controller (primary)",
+			"vendor" : "Intel Corporation",
+			"physid" : "2",
+			"businfo" : "pci@0000:00:02.0",
+			"version" : "0c",
+			"width" : 64,
+			"clock" : 33000000,
+			"configuration" : {
+			"driver" : "i915",
+			"latency" : "0"
 		},
-		 {
-		  "id" : "cpu",
-		  "class" : "processor",
-		  "claimed" : true,
-		  "product" : "Pentium(R) Dual-Core CPU       T4200  @ 2.00GHz",
-		  "vendor" : "Intel Corp.",
-		  "physid" : "1",
-		  "businfo" : "cpu@0",
-		  "units" : "Hz",
-		  "size" : 1200000000,
-		  "capacity" : 1200000000,
-		  "width" : 64
-		}
-	]
-}
+		"capabilities" : {
+			"vga_controller" : true,
+			"bus_master" : "bus mastering",
+			"cap_list" : "PCI capabilities listing",
+			"rom" : "extension ROM"
+			}
+		},
+ 
+i-nex-cpuid Output Layout 
+	#!json
+	"VENDOR_STR": "GenuineIntel",
+	"CPU_CODENAME": "Merom (Core 2 Duo) 2048K",
+	"BRAND_STR": "Intel(R) Core(TM)2 Duo CPU T7250 @ 2.00GHz",
+	"NUM_CORES": "2",
+	"NUM_LOGICAL_CPUS": "2",
+	"TOTAL_LOGICAL_CPUS": "2",
+	"FAMILY": "6",
+	"MODEL": "15",
+	"STEPPING": "13",
+	"EXT_FAMILY": "6",
+	"EXT_MODEL": "15",
+	"CPU_CLOCK": "2000",
+	"CPU_CLOCK_BY_OS": "2000",
+	"CPU_CLOCK_BY_IC": "-2",
+	"CPU_CLOCK_MEASURE": "1994",
+	"MARK_TSC": "2950",
+	"MARK_SYS_CLOCK": "1",
+	"Flags": {
+		"1": {
+			"VALUE": 0,
+			"NAME": "CPU_FEATURE_MMXEXT",
+			"FEATURE": "mmxext",
+			"WEBSITE": "http://en.wikipedia.org/wiki/MMX_(instruction_set)",
+			"HAVEWEBSITE": 1,
+			"DESC": "AMD MMX-extended instructions supported"
+		}, 
+lspci output layout
+	#!bash
+	00:02.0 VGA compatible controller: Intel Corporation Mobile GM965/GL960 Integrated Graphics
+	Controller (primary) (rev 0c) (prog-if 00 [VGA controller])
+	Subsystem: Lenovo ThinkPad T61/R61
+	Flags: bus master, fast devsel, latency 0, IRQ 47
+	Memory at f8100000 (64-bit, non-prefetchable) [size=1M]
+	Memory at e0000000 (64-bit, prefetchable) [size=256M]
+	I/O ports at 1800 [size=8]
+	Expansion ROM at <unassigned> [disabled]
+	Capabilities: <access denied>
+	Kernel driver in use: i915
+
+&nbsp;
+
+
 ##Generated Concepts and Properties
 
 All the components that are obtained by the extractor are related to a single machine. This allows to map all the inviduals pieces that constitute the target machine and converting to an ontology. 
@@ -121,9 +156,10 @@ Each company, university or and institution run a different hardware enviroment 
 
 
 
-##Author
+##Authors
 
 Luís Marques <luis.marques@caixamagica.pt>
+Miguel Gama Nunes <miguel.nunes@caixamagica.pt>
 
 &nbsp;
 
