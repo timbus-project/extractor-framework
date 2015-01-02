@@ -38,8 +38,11 @@ This is helpful when the target is a remote machine and you dont have physical a
 
 ##How to execute
 Locally:
+
 	#!bash
+
 	java -jar linux-hardware-extractor.jar
+
 Available options:
 -f,--text-file load request from text file
 -h,--help print help (no arguments)
@@ -69,7 +72,9 @@ them, the aforementioned lshw tool provides more detailed information, however t
 GPU is better described in this tool's output, particularly its memory capacity.
 
 lshw Output Layout
+	
 	#!JSON
+
 	"children" : [
 		{
 			"id" : "display:0",
@@ -99,6 +104,7 @@ lshw Output Layout
 i-nex-cpuid Output Layout 
 
 	#!JSON
+
 	"VENDOR_STR": "GenuineIntel",
 	"CPU_CODENAME": "Merom (Core 2 Duo) 2048K",
 	"BRAND_STR": "Intel(R) Core(TM)2 Duo CPU T7250 @ 2.00GHz",
@@ -128,6 +134,7 @@ i-nex-cpuid Output Layout
 lspci output layout
 	
 	#!bash
+	
 	00:02.0 VGA compatible controller: Intel Corporation Mobile GM965/GL960 Integrated Graphics
 	Controller (primary) (rev 0c) (prog-if 00 [VGA controller])
 	Subsystem: Lenovo ThinkPad T61/R61
