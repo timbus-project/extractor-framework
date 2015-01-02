@@ -17,7 +17,6 @@
  */
 package net.timbusproject.extractors.pojo;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
 
@@ -28,13 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: jorge
- * Date: 10/15/13
- * Time: 3:08 PM
- * To change this template use File | Settings | File Templates.
- */
 @XmlRootElement(name = "job")
 @XmlAccessorType(XmlAccessType.NONE)
 public class ResponseJob {

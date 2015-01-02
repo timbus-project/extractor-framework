@@ -27,13 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: jorge
- * Date: 1/21/14
- * Time: 3:40 PM
- * To change this template use File | Settings | File Templates.
- */
 public class RequestWrapper {
 
     @XmlElement

@@ -27,13 +27,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 
-/**
- * Created with IntelliJ IDEA.
- * User: jorge
- * Date: 10/15/13
- * Time: 10:42 AM
- * To change this template use File | Settings | File Templates.
- */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
 public class ResponseExtractor {
