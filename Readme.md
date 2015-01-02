@@ -69,7 +69,7 @@ them, the aforementioned lshw tool provides more detailed information, however t
 GPU is better described in this tool's output, particularly its memory capacity.
 
 lshw Output Layout
-	#!json
+	#!JSON
 	"children" : [
 		{
 			"id" : "display:0",
@@ -97,7 +97,8 @@ lshw Output Layout
 		},
  
 i-nex-cpuid Output Layout 
-	#!json
+
+	#!JSON
 	"VENDOR_STR": "GenuineIntel",
 	"CPU_CODENAME": "Merom (Core 2 Duo) 2048K",
 	"BRAND_STR": "Intel(R) Core(TM)2 Duo CPU T7250 @ 2.00GHz",
@@ -125,6 +126,7 @@ i-nex-cpuid Output Layout
 			"DESC": "AMD MMX-extended instructions supported"
 		}, 
 lspci output layout
+	
 	#!bash
 	00:02.0 VGA compatible controller: Intel Corporation Mobile GM965/GL960 Integrated Graphics
 	Controller (primary) (rev 0c) (prog-if 00 [VGA controller])
