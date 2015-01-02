@@ -37,7 +37,7 @@ This is helpful when the target is a remote machine and you dont have physical a
 &nbsp;
 
 ##How to execute
-Locally:
+**Locally:**
 
 	#!bash
 
@@ -51,7 +51,7 @@ Available options:
 - -o,--out file to save output to
 - -s,--show-extraction Show extraction in stdout (no arguments)
 &nbsp;
-Remotely:
+**Remotely:**
 The [Context Population GUI](testbed.timbusproject.net:3001) was developed as an interface for the [Core Extraction Manager tool](https://opensourceprojects.eu/p/timbus/context-population/extraction-manager/). 
  To perform an extraction on a remote machine through the GUI, all is needed is to access the GUI, select Linux HW module in the extractors selection box and provide the target machine's information.
   Further information on how to install and use the Extractors Manager and Context Population GUI is available [here](http://timbusproject.net/portal).
@@ -71,7 +71,7 @@ provides further detailed information about the machine's processor;
 them, the aforementioned lshw tool provides more detailed information, however the machine's
 GPU is better described in this tool's output, particularly its memory capacity.
 
-lshw Output Layout
+**lshw Output Layout**
 	
 	#!JSON
 
@@ -101,7 +101,7 @@ lshw Output Layout
 			}
 		},
  
-i-nex-cpuid Output Layout 
+**i-nex-cpuid Output Layout**
 
 	#!JSON
 
@@ -131,7 +131,7 @@ i-nex-cpuid Output Layout
 			"HAVEWEBSITE": 1,
 			"DESC": "AMD MMX-extended instructions supported"
 		}, 
-lspci output layout
+**lspci output layout**
 	
 	#!bash
 
