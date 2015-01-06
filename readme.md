@@ -25,8 +25,15 @@ This project cannot be used as a standalone.
 
 In order to be able to deploy this project to Virgo, execute the following command from project's root folder:
 
+	#!bash
+	
 	$ mvn clean package
 
+Once the API is built and Virgo is running, access the Virgo's control panel and deploy the resulting .war file.
+
+### Working with extractors
+ As mentioned, this project is responsible for delegating extractions to all extractor modules. The [Osgi Framework](http://www.osgi.org/Main/HomePage) is used to modularize the Context Population Framework and, hence, the Extractors API searches through OSGI for any extractor module that implements the IExtractor interface - present in [Extractors Core](https://opensourceprojects.eu/p/timbus/context-population/extractors-core) - and making its service available. Further information on how to implement an extractor that Extractors API recognizes and is able to use can be found in this **[guide](https://opensourceprojects.eu/p/timbus/context-population/extractors/wiki/How%20to%20create%20a%20new%20Extractor/)**.
+  The Extractors API contains a web service that accepts HTML extraction requests. To perform such requests, the [Context Population GUI](https://opensourceprojects.eu/p/timbus/context-population/context-population-gui/) can be used.
 
 ##Author
 
