@@ -24,8 +24,6 @@ This project cannot be used as a standalone.
 
 ## Usage
 
-&nbsp;
-
 ### Virgo server
 
 In order to be able to deploy this project to Virgo, execute the following command from project's root folder:
