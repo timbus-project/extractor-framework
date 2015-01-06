@@ -49,14 +49,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Hashtable;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lduarte
- * Date: 8/20/13
- * Time: 9:30 AM
- * To change this template use File | Settings | File Templates.
- */
-
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
 @Path("/")
@@ -148,8 +140,8 @@ public class JerseyApiController {
     @Path("/extract")
     public Response extract(RequestExtractionList extractionsList, @Context HttpServletRequest req) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
 
-        System.out.println("REQUEST TYPE REQUESTED: " + extractionsList.getCallbackInfo().originRequestType);
-        if (extractionsList.getCallbackInfo().endpointPath != null && extractionsList.getCallbackInfo().endpointPort != null) {
+//        System.out.println("REQUEST TYPE REQUESTED: " + extractionsList.getCallbackInfo().originRequestType);
+        if (extractionsList.getCallbackInfo() != null && extractionsList.getCallbackInfo().endpointPath != null && extractionsList.getCallbackInfo().endpointPort != null) {
             String endpoint = req.getRemoteAddr() + ":" + extractionsList.getCallbackInfo().endpointPort;
             if (extractionsList.getCallbackInfo().endpointPath.startsWith("/"))
                 endpoint += extractionsList.getCallbackInfo().endpointPath;

@@ -17,22 +17,10 @@
  */
 package net.timbusproject.extractors.pojo;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-
 import javax.xml.bind.annotation.*;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Semaphore;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lduarte
- * Date: 7/31/13
- * Time: 10:58 AM
- * To change this template use File | Settings | File Templates.
- */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlSeeAlso(RequestExtraction.class)

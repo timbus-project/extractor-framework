@@ -22,13 +22,6 @@ import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lduarte
- * Date: 8/26/13
- * Time: 11:31 AM
- * To change this template use File | Settings | File Templates.
- */
 public class JerseySpringCorsServlet extends SpringServlet {
     private static final long serialVersionUID = 1709334385963238433L;
 

@@ -26,13 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: jorge
- * Date: 10/15/13
- * Time: 3:19 PM
- * To change this template use File | Settings | File Templates.
- */
 @XmlRootElement(name = "jobs")
 @XmlAccessorType(XmlAccessType.NONE)
 public class ResponseJobsList {
