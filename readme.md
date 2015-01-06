@@ -31,7 +31,7 @@ To deploy this project on Virgo from source code, execute the following command 
 In order to be able to develop new extractors or compile extraction-related projects, run the following command from project's root folder:
 
 	$ mvn clean install
-
+[This page](https://opensourceprojects.eu/p/timbus/context-population/extractors/wiki/How%20to%20create%20a%20new%20Extractor/) contains a comprehensive tutorial on how to develop an extractor that complies with TIMBUS architecture
 
 ##Author
 
