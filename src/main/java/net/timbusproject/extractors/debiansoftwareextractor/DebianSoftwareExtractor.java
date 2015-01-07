@@ -63,7 +63,8 @@ public class DebianSoftwareExtractor implements IExtractor {
         parameters.put("fqdn", new Parameter(false, true));
         parameters.put("port", new Parameter(false, false, ParameterType.NUMBER));
         parameters.put("user", new Parameter(false, true));
-        parameters.put("password", new Parameter(true));
+        parameters.put("password", new Parameter(true, false));
+        parameters.put("privateKey", new Parameter(true, false, ParameterType.FILE));
         return parameters;
     }
 

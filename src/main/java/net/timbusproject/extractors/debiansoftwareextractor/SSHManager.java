@@ -41,7 +41,7 @@ public class SSHManager {
     }
     public SSHManager(String username, String fqdn, int port, String privateKey, InputStream knownHosts) throws JSchException {
         JSch jSch = new JSch();
-        if (privateKey != null && !privateKey.isEmpty()) jSch.addIdentity(privateKey);
+        if (privateKey != null && !privateKey.isEmpty()) jSch.addIdentity("tmp", privateKey.getBytes(), null, null);
         if (knownHosts != null) jSch.setKnownHosts(knownHosts);
         session = jSch.getSession(username, fqdn, port);
         // TODO: comment for production use
