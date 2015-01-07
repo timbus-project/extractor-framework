@@ -65,19 +65,14 @@ public class DebianSoftwareExtractor implements IExtractor {
         parameters.put("user", new Parameter(false, true));
         parameters.put("password", new Parameter(true, false));
         parameters.put("privateKey", new Parameter(true, false, ParameterType.FILE));
+        try {
+            parameters.put("privateKey", new Parameter(true, false, ParameterType.valueOf("FILE")));
+        } catch (IllegalArgumentException ignored) {}
         return parameters;
     }
 
     @Override
     public String extract(Endpoint endpoint, boolean b) throws Exception {
-/*
-        FileInputStream knownHosts;
-        try {
-            knownHosts = endpoint.hasProperty("knownHosts") && endpoint.getProperty("knownHosts") != null
-                    && !endpoint.getProperty("knownHosts").isEmpty()
-                    ? new FileInputStream(endpoint.getProperty("knownHosts")) : null;
-        } catch (FileNotFoundException e) { knownHosts = null; }
-*/
         SSHManager sshManager = new SSHManager(
                 endpoint.getProperty("user"),
                 endpoint.getProperty("fqdn"),
