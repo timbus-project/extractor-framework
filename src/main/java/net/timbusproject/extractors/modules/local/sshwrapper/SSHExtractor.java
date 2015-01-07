@@ -70,7 +70,6 @@ public class SSHExtractor implements IExtractor {
         parameters.put("password", new Parameter(true));
         parameters.put("port", new Parameter(false, ParameterType.NUMBER));
         parameters.put("fqdn", new Parameter(false));
-//        parameters.put("paths", new Parameter(false, ParameterType.ARRAY));
         parameters.put("commands", new Parameter(false, ParameterType.ARRAY));
         return parameters;
     }
@@ -111,15 +110,5 @@ public class SSHExtractor implements IExtractor {
 
         } else
             throw new IllegalArgumentException("No commands provided");
-
-        /*if (jsonObject.has("paths")) {
-            JSONArray receivedPathsArray = new JSONArray(endpoint.getProperty("paths"));
-            if (receivedPathsArray.length() != 0) {
-                for (int i = 0; i < receivedPathsArray.length(); i++) {
-                    responseArray.put(engine.runWithPath(instance, (String) receivedPathsArray.get(i)));
-                }
-            }
-        }*/
-
     }
 }

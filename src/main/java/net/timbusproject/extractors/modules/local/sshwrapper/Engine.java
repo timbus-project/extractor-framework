@@ -26,25 +26,9 @@ import java.io.IOException;
 
 public class Engine {
 
-    /*public JSONObject runWithPath(SSHManager instance, String path) {
-        String command;
-        path.trim();
-        if (path.endsWith(".jar"))
-            command = "java -jar " + path;
-        else if (path.endsWith(".pl"))
-            command = "perl " + path;
-        else if (path.endsWith(".py"))
-            command = "python " + path;
-        else
-            command = path;
-        return run(instance, command);
-    }
-*/
     public JSONObject run(SSHManager instance, String command) {
         try {
             instance.connect();
-//            command = command.substring(1);
-//            command = command.substring(0, command.length() - 1);
             command = command.replaceAll("\\\\", "");
             System.out.println("IN ENGINE: SENDING COMMAND " + command);
             String output = instance.sendCommand(command);

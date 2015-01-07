@@ -6,10 +6,10 @@ SSH Wrapper Extractor is a tool that is able to send any list of commands to a r
 
 ##How to get the code
 
-	git clone https://@opensourceprojects.eu/git/p/timbus/context-population/extractors/wrapper-ssh timbus-context-population-extractors-wrapper-ssh
+	git clone https://opensourceprojects.eu/git/p/timbus/context-population/extractors/wrapper-ssh timbus-context-population-extractors-wrapper-ssh
  
 
-&nbsp;m
+&nbsp;
 
 ##Install Requirements
 
