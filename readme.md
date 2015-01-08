@@ -42,7 +42,7 @@ In order to be able to develop new extractors or compile extraction-related proj
 
 ### Within an Extractor project
 
-The most relevant component of Extractors Core is the interface IExtractor. To develop an extractor that is recognized within the Context Population Framework, it is mandatory to implement this class. The *extract* method returns a String and this is where the result of the Extraction must be returned.
+The most relevant component of Extractors Core is the interface **IExtractor**. To develop an extractor that is recognized within the Context Population Framework, it is mandatory to implement this class. The *extract* method returns a String and this is where the result of the Extraction must be provided.
 In Timbus Project Extractors, the Spring Framework was used to implement the OSGI framework. A typical Timbus extractor declares the following dependency in the *pom.xml* file:
 
 	<dependency>
@@ -56,10 +56,11 @@ With this dependency within the project build path, it is now possible to declar
 
 	@Autowired
 	private BundleContext bundleContext;
-
+This object is to be used in overriding the *IExtractor* methods, which ask information about the extractor to be used in the Osgi Framework.
 Further on, in order for this bundle to be recognized within the Osgi framework, two .xml files are added in the resources folder, under **META-INF --> spring**:
 
 **bundle-context-osgi.xml**:
+	
 	<?xml version="1.0" encoding="UTF-8"?>
 	<beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -80,6 +81,7 @@ Further on, in order for this bundle to be recognized within the Osgi framework,
 	</beans>
 
 **bundle-context.xml**:
+
 	<?xml version="1.0" encoding="UTF-8"?>
 	<beans xmlns="http://www.springframework.org/schema/beans"
 	       xmlns:context="http://www.springframework.org/schema/context"
@@ -97,7 +99,7 @@ Further on, in order for this bundle to be recognized within the Osgi framework,
 	    <context:annotation-config/>
 	</beans>
 
-**Note:** These examples are from the Linux Hardware Extractor. To implement a new extractor values in the .xml files obviously have to be updated.
+**Note:** These examples are from the Linux Hardware Extractor. To implement a new extractor, values in the .xml files obviously have to be updated.
 
 &nbsp;
 
