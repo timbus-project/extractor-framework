@@ -99,7 +99,7 @@ Further on, in order for this bundle to be recognized within the Osgi framework,
 	    <context:annotation-config/>
 	</beans>
 
-**bundle-context-osgi.xml** states that there is an *Osgi service* called *extractor" that implements the interface *IExtractor*, and **bundle-context.xml** specifies which class is actually implementing *IExtractor*, consequently representing this service. 
+**bundle-context-osgi.xml** states that there is an *Osgi service* called *extractor* that implements the interface *IExtractor*, and **bundle-context.xml** specifies which class is actually implementing *IExtractor*, consequently representing this service. 
 **Note:** These examples are from the Linux Hardware Extractor. To implement a new extractor, values in the .xml files obviously have to be updated.
 
 &nbsp;
