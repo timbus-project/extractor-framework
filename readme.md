@@ -37,8 +37,37 @@ Once the API is built and Virgo is running, access the Virgo's control panel and
 &nbsp;
 
 ### Working with extractors
- As mentioned, this project is responsible for delegating extractions to all extractor modules. The [Osgi Framework](http://www.osgi.org/Main/HomePage) is used to modularize the Context Population Framework and, hence, the Extractors API searches through OSGI for any extractor module that implements the IExtractor interface - present in [Extractors Core](https://opensourceprojects.eu/p/timbus/context-population/extractors-core) - and making its service available. Further information on how to implement an extractor that Extractors API recognizes and is able to use can be found in this **[guide](https://opensourceprojects.eu/p/timbus/context-population/extractors/wiki/How%20to%20create%20a%20new%20Extractor/)**.
-  The Extractors API contains a web service that accepts HTML extraction requests. To perform such requests, the [Context Population GUI](https://opensourceprojects.eu/p/timbus/context-population/context-population-gui/) can be used.
+As mentioned, this project is responsible for delegating extractions to all extractor modules. The [Osgi Framework](http://www.osgi.org/Main/HomePage) is used to modularize the Context Population Framework and, hence, the Extractors API searches through OSGI for any extractor module that implements the *IExtractor* interface - present in [Extractors Core](https://opensourceprojects.eu/p/timbus/context-population/extractors-core) - and making its service available. Further information on how to implement an extractor that Extractors API recognizes and is able to use can be found in this **[guide](https://opensourceprojects.eu/p/timbus/context-population/extractors/wiki/How%20to%20create%20a%20new%20Extractor/)**.
+The API offers a Web Service with a set of endpoints to query information from the framework or order *Jobs* - Each Extraction is delegated as a *Job*, which consists of an independent thread in the system.
+"/extractors/api/extract" endpoint accepts the following POST format requests:
+
+	#!json
+
+	{
+	extractions: [
+		{
+			{
+				parameters: {
+					fqdn: "localhost",
+					port: "22",
+					user: "timbus",
+					password: "password"
+				},
+				module: "Linux Hardware Extractor"
+			}
+		}
+	],
+	callback: {
+		endpointPath : '/results',
+		endpointPort: 3000,
+		originRequestType: 'post'
+		}
+	}
+
+This request orders a list of extraction jobs, each of them a single *Job*. As can be seen, besides the extractor's information the Extractors API also receives callback information: As the job response is assynchronous, Extractors API can be called to send a request to a certain endpoint upon finishing a Job. In this case, the callback is being asked in the form of a POST request - which contains the result of the extraction in its body - and it even specifies the endpoint path and port. 
+
+In order to facilitate such requests, the [Context Population GUI](https://opensourceprojects.eu/p/timbus/context-population/context-population-gui/) was developed. This is a **nodejs** service which communicates with Extractors API and [Converters API](https://opensourceprojects.eu/p/timbus/context-model/converters-api).
+
 
 &nbsp;
 
