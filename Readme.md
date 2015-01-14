@@ -18,6 +18,7 @@ through the framework and a local CLI tool to be used locally, through the Termi
 ##Install Requirements
 
 1. [Oracle Java JDK 1.7](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+2. [Apache Maven installed](http://maven.apache.org/)
 
 ##Requirements for the extraction target
 
@@ -26,6 +27,16 @@ through the framework and a local CLI tool to be used locally, through the Termi
 3. [lspci Installed](http://en.wikipedia.org/wiki/Lspci) - included in most linux distributions
 4. Running sftp server
 5. [SSH server running with authenticated user](http://www.cyberciti.biz/faq/how-to-installing-and-using-ssh-client-server-in-linux/)
+
+##How to install
+This project, like most others in Timbus, is built through Maven. All that is required to build the entire project is to run the following command on the root project folder:
+
+	#!bash
+
+	mvn clean package
+
+This will create a *target* folder in which it saves two different .jar files - The *cli* module, which is used to run locally on the machine and the *bundle* module. which is to be deployed into [Virgo](https://eclipse.org/virgo/) Container.
+A tutorial on how to properly install Virgo and deploy Timbus artefacts into it can be found **[here](https://opensourceprojects.eu/p/timbus/support/wiki/Building%20and%20deploying%20the%20TIMBUS%20Context%20Acquisition%20tool/)**
 
 &nbsp;
 
@@ -50,11 +61,14 @@ Available options:
 - -l,--local-extraction Do local extraction (no arguments)
 - -o,--out file to save output to
 - -s,--show-extraction Show extraction in stdout (no arguments)
+
 &nbsp;
+
 **Remotely:**
 The [Context Population GUI](testbed.timbusproject.net:3001) was developed as an interface for the [Core Extraction Manager tool](https://opensourceprojects.eu/p/timbus/context-population/extraction-manager/). 
  To perform an extraction on a remote machine through the GUI, all is needed is to access the GUI, select Linux HW module in the extractors selection box and provide the target machine's information.
   Further information on how to install and use the Extractors Manager and Context Population GUI is available [here](http://timbusproject.net/portal).
+
 &nbsp;
 
 ##Collected information
