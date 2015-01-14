@@ -33,7 +33,7 @@ This project, like most others in Timbus, is built through Maven. All that is re
 
 	#!bash
 
-	mvn clean package
+	$> mvn clean package
 
 This will create a *target* folder in which it saves two different .jar files - The *cli* module, which is used to run locally on the machine and the *bundle* module. which is to be deployed into [Virgo](https://eclipse.org/virgo/) Container.
 A tutorial on how to properly install Virgo and deploy Timbus artefacts into it can be found **[here](https://opensourceprojects.eu/p/timbus/support/wiki/Building%20and%20deploying%20the%20TIMBUS%20Context%20Acquisition%20tool/)**
