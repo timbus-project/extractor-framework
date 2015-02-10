@@ -1,11 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>net.timbusproject</groupId>
-    <artifactId>debian-software-extractor</artifactId>
-    <version>0.4.5-SNAPSHOT</version>
-  </parent>
-  <artifactId>debian-software-core</artifactId>
-  <name>Debian Software Extractor Core</name>
-  <description>Core code and APIs for the TIMBUS Debian Software Extractor.</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.timbusproject</groupId>
+		<artifactId>debian-software-extractor</artifactId>
+		<version>0.4.5-SNAPSHOT</version>
+	</parent>
+	<artifactId>debian-software-core</artifactId>
+	<name>Debian Software Extractor Core</name>
+	<description>Core code and APIs for the TIMBUS Debian Software Extractor.</description>
+	<dependencies>
+		<dependency>
+			<groupId>net.timbusproject</groupId>
+			<artifactId>extractors-core</artifactId>
+			<version>2.0</version>
+		</dependency>
+	</dependencies>
 </project>
