@@ -28,4 +28,13 @@
         </license>
     </licenses>
 
+    <dependencies>
+        <!-- OSGi -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>${osgi.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>
