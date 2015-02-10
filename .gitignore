@@ -1,3 +1,38 @@
-.classpath
+*.class
+
+javadoc/
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Maven Directories
+target/
+
+# Ant Directories
+build/
+
+# Other Build Directories
+lib/
+bin/
+
+# IntelliJ Stuff
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Spring Directories
+.springBeans
+
+# Eclipse Directories
 .project
-.settings
+.classpath
+.settings/
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath

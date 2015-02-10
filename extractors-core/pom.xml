@@ -9,4 +9,23 @@
 	<artifactId>extractors-core</artifactId>
 	<name>TIMBUS Extractors core</name>
 	<description>APIs and core dependencies for TIMBUS extractors.</description>
+
+	<developers>
+        <developer>
+            <name>Luís Duarte</name>
+            <email>luis.duarte@caixamagica.pt</email>
+        </developer>
+        <developer>
+            <name>Jorge Simões</name>
+            <email>jorge.simoes@caixamagica.pt</email>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
 </project>
