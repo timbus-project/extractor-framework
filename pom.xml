@@ -1,9 +1,44 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>net.timbusproject</groupId>
-  <artifactId>extractors</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>TIMBUS Extractor Project</name>
-  <description>Complete set of TIMBUS Extractor Framework packages.</description>
-  <packaging>pom</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>net.timbusproject</groupId>
+	<artifactId>extractors</artifactId>
+	<version>2.0</version>
+	<name>TIMBUS Extractor Project</name>
+	<description>Complete set of TIMBUS Extractor Framework packages.</description>
+	<packaging>pom</packaging>
+
+	<organization>
+		<name>The TIMBUS Consortium</name>
+		<url>http://timbusproject.net/about/project-partners</url>
+	</organization>
+	<url>http://timbusproject.net/</url>
+
+	<modules>
+		<module>extractors-core</module>
+	</modules>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.source.version>1.6</jdk.source.version>
+		<jdk.target.version>1.6</jdk.target.version>
+		<junit.version>4.12</junit.version>
+	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.2</version>
+					<configuration>
+						<source>${jdk.source.version}</source>
+						<target>${jdk.target.version}</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>
