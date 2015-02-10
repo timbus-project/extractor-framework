@@ -19,6 +19,8 @@ package net.timbusproject.extractors.core;
 
 import java.util.HashMap;
 
+import org.osgi.framework.Version;
+
 /**
  * Interface for extractors to implement.
  *
@@ -48,14 +50,14 @@ public interface IExtractor {
      * @return version
      * @see <a href="http://www.osgi.org/javadoc/r4v43/core/org/osgi/framework/Version.html">Version</a>
      */
-    public org.osgi.framework.Version getVersion();
+    public Version getVersion();
 
     /**
      * Returns the list of supported operating systems.
      *
      * @return list of supported {@link OperatingSystem}s
      */
-    public java.util.EnumSet<net.timbusproject.extractors.core.OperatingSystem> getSupportedOperatingSystems();
+    public java.util.EnumSet<OperatingSystem> getSupportedOperatingSystems();
 
     public HashMap<String, Parameter> getParameters();
     /**
@@ -65,6 +67,6 @@ public interface IExtractor {
      * @return extraction result
      * @throws java.lang.Exception
      */
-    public java.lang.String extract(net.timbusproject.extractors.core.Endpoint endpoint, boolean useCache) throws java.lang.Exception;
+    public java.lang.String extract(Endpoint endpoint, boolean useCache) throws java.lang.Exception;
 
 }
