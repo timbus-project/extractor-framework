@@ -17,6 +17,9 @@ build/
 lib/
 bin/
 
+# VIM stuff
+*~
+
 # IntelliJ Stuff
 *.iml
 *.ipr
