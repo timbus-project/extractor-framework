@@ -20,6 +20,7 @@
     <modules>
         <module>bundle</module>
         <module>cli</module>
+        <module>debian-software-core</module>
     </modules>
 
     <dependencies>
