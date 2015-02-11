@@ -4,7 +4,6 @@
     <groupId>net.timbusproject.extractors</groupId>
     <artifactId>helpers</artifactId>
     <version>0.1.1</version>
-    <packaging>bundle</packaging>
     <description>Helper applications for context extractors</description>
     <url>http://timbusproject.net/</url>
     <name>extractors-helpers</name>
@@ -67,31 +66,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.4.0</version>
-                <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <classifier>bundle</classifier>
-                    <manifestLocation>${project.build.directory}/META-INF</manifestLocation>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <repository>
-            <id>olymp.ifs.tuwien.ac.at</id>
-            <url>http://olymp.ifs.tuwien.ac.at:8080/archiva/repository/snapshots/</url>
-        </repository>
-    </distributionManagement>
 </project>
