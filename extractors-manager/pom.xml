@@ -3,15 +3,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>pt.caixamagica.parents</groupId>
-        <artifactId>osgi-jersey-webservice</artifactId>
-        <version>2-beta-3</version>
-    </parent>
+	<parent>
+		<groupId>net.timbusproject.extractors</groupId>
+		<artifactId>extractors</artifactId>
+		<version>2.0</version>
+	</parent>
 
-	<groupId>net.timbusproject.extractors</groupId>
 	<artifactId>extractors-manager</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <packaging>war</packaging>
     <name>Context Population Framework - Extractors Manager</name>
     <url>http://www.timbusproject.net/</url>
@@ -33,17 +32,39 @@
         <plugin.bundle.embed.dependency>*;scope=compile</plugin.bundle.embed.dependency>
         <plugin.bundle.embed.directory>WEB-INF/lib</plugin.bundle.embed.directory>
         <plugin.bundle.import>com.sun.jersey.api.json,*</plugin.bundle.import>
-
+        <dependency.javax.servlet.version>2.5.0</dependency.javax.servlet.version>
+        <dependency.jersey.version>1.17.1</dependency.jersey.version>
+        <dependency.jackson.version>1.9.13</dependency.jackson.version>
+        <dependency.osgi.version>4.3.1</dependency.osgi.version>
         <dependency.springframework.version>3.2.3.RELEASE</dependency.springframework.version>
         <dependency.springbatch.version>2.2.1.RELEASE</dependency.springbatch.version>
 	</properties>
 
 	<dependencies>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>com.springsource.javax.servlet</artifactId>
+            <version>${dependency.javax.servlet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-servlet</artifactId>
+            <version>${dependency.jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>${dependency.jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-xc</artifactId>
+            <version>${dependency.jackson.version}</version>
+        </dependency>
+        <dependency>
             <groupId>net.timbusproject.extractors</groupId>
             <artifactId>extractors-core</artifactId>
-            <version>0.0.3-RELEASE</version>
-            <scope>provided</scope>
+            <version>2.0</version>
         </dependency>
 
         <dependency>
@@ -180,10 +201,6 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
-        <repository>
-            <id>timbus.repository</id>
-            <url>http://timbus.teco.edu/maven</url>
         </repository>
     </repositories>
 </project>
