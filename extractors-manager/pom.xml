@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>pt.caixamagica.parents</groupId>
+        <artifactId>osgi-jersey-webservice</artifactId>
+        <version>2-beta-3</version>
+    </parent>
+
+	<groupId>net.timbusproject.extractors</groupId>
+	<artifactId>extractors-manager</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>Context Population Framework - Extractors Manager</name>
+    <url>http://www.timbusproject.net/</url>
+
+	<developers>
+        <developer>
+            <name>Jorge Simões</name>
+            <email>jorge.simoes@caixamagica.pt</email>
+        </developer>
+        <developer>
+            <name>Luís Duarte</name>
+            <email>luis.duarte@caixamagica.pt</email>
+        </developer>
+	</developers>
+
+	<properties>
+        <project.java.version>1.7</project.java.version>
+        <project.web.context>extractors/api</project.web.context>
+        <plugin.bundle.embed.dependency>*;scope=compile</plugin.bundle.embed.dependency>
+        <plugin.bundle.embed.directory>WEB-INF/lib</plugin.bundle.embed.directory>
+        <plugin.bundle.import>com.sun.jersey.api.json,*</plugin.bundle.import>
+
+        <dependency.springframework.version>3.2.3.RELEASE</dependency.springframework.version>
+        <dependency.springbatch.version>2.2.1.RELEASE</dependency.springbatch.version>
+	</properties>
+
+	<dependencies>
+        <dependency>
+            <groupId>net.timbusproject.extractors</groupId>
+            <artifactId>extractors-core</artifactId>
+            <version>0.0.3-RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>3.0-Prelude-Embedded-m2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-osgi</artifactId>
+            <version>4.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring Framework -->
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-spring</artifactId>
+            <version>${dependency.jersey.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>org.springframework.web.servlet</artifactId>
+            <version>${dependency.springframework.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring Batch -->
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-core</artifactId>
+            <version>${dependency.springbatch.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- OSGi -->
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+			<version>${dependency.osgi.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- module's specific dependencies -->
+		<dependency>
+			<groupId>org.codehaus.jettison</groupId>
+			<artifactId>jettison</artifactId>
+			<version>1.3.4</version>
+            <scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>com.sun.org.apache</groupId>
+            <artifactId>jaxp-ri</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.parsers</groupId>
+            <artifactId>jaxp-ri</artifactId>
+            <version>1.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+         <!--compile scoped-->
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+    </dependencies>
+
+	<build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**</exclude>
+                </excludes>
+            </resource>
+        </resources>
+		<plugins>
+<!--
+            <plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<additionalProjectnatures>
+						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+					</additionalProjectnatures>
+					<additionalBuildcommands>
+						<buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+					</additionalBuildcommands>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+				</configuration>
+			</plugin>
+-->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Library>org.springframework.spring;version="[3.2,4)"</Import-Library>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+        </plugins>
+	</build>
+
+    <repositories>
+        <repository>
+            <id>com.springsource.repository.bundles.release</id>
+            <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>timbus.repository</id>
+            <url>http://timbus.teco.edu/maven</url>
+        </repository>
+    </repositories>
+</project>
