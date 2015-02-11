@@ -1,12 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.timbusproject.extractors</groupId>
-    <artifactId>helpers</artifactId>
-    <version>0.1.1</version>
+	<parent>
+		<groupId>net.timbusproject.extractors</groupId>
+		<artifactId>extractors</artifactId>
+		<version>2.0</version>
+	</parent>
+    <artifactId>extractors-helpers</artifactId>
+    <name>extractors-helpers</name>
     <description>Helper applications for context extractors</description>
     <url>http://timbusproject.net/</url>
-    <name>extractors-helpers</name>
 
     <developers>
         <developer>
