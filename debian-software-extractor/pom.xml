@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>net.timbusproject</groupId>
+        <groupId>net.timbusproject.extractors</groupId>
         <artifactId>extractors</artifactId>
         <version>2.0</version>
     </parent>
@@ -26,14 +26,8 @@
     <dependencies>
         <dependency>
             <groupId>net.timbusproject.extractors</groupId>
-            <artifactId>helpers</artifactId>
-            <version>0.1.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>org.osgi.core</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>extractors-helpers</artifactId>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
