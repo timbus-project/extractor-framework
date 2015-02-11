@@ -18,13 +18,14 @@
 	<modules>
 		<module>extractors-core</module>
 		<module>extractors-helpers</module>
+		<module>extractors-manager</module>
 		<module>debian-software-extractor</module>
 	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.source.version>1.6</jdk.source.version>
-		<jdk.target.version>1.6</jdk.target.version>
+		<jdk.source.version>1.7</jdk.source.version>
+		<jdk.target.version>1.7</jdk.target.version>
 		<junit.version>4.12</junit.version>
 		<osgi.version>4.3.1</osgi.version>
 	</properties>
