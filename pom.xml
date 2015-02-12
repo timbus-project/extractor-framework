@@ -21,6 +21,7 @@
 		<module>extractors-manager</module>
 		<module>debian-software-extractor</module>
 		<module>rpm-software-extractor</module>
+		<module>linux-hardware-extractor</module>
 	</modules>
 
 	<properties>
