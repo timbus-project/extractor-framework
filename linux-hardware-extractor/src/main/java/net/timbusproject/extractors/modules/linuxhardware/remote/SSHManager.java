@@ -18,15 +18,20 @@
 
 package net.timbusproject.extractors.modules.linuxhardware.remote;
 
-import com.jcraft.jsch.*;
-import org.apache.commons.io.IOUtils;
-import org.codehaus.jettison.json.JSONArray;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.Properties;
+
+import org.apache.commons.io.IOUtils;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 
 public class SSHManager {
     private JSch jschSSHChannel;

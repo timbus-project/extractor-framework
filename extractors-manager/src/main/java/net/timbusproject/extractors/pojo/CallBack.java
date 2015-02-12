@@ -17,10 +17,23 @@
  */
 package net.timbusproject.extractors.pojo;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Properties;
+import java.util.Scanner;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -29,15 +42,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.service.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.mail.*;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Properties;
-import java.util.Scanner;
 
 /**
  * Created with IntelliJ IDEA.

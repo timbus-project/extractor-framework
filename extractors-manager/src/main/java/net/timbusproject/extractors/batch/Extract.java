@@ -20,8 +20,8 @@ package net.timbusproject.extractors.batch;
 import net.timbusproject.extractors.core.Endpoint;
 import net.timbusproject.extractors.core.IExtractor;
 import net.timbusproject.extractors.osgi.OSGiClient;
+
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
 import org.osgi.service.log.LogService;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;

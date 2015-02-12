@@ -17,18 +17,23 @@
  */
 package net.timbusproject.extractors.modules.linuxhardware.remote;
 
-import com.fasterxml.uuid.Generators;
-import net.timbusproject.extractors.core.*;
+import java.util.EnumSet;
+import java.util.HashMap;
+
+import net.timbusproject.extractors.core.Endpoint;
+import net.timbusproject.extractors.core.IExtractor;
+import net.timbusproject.extractors.core.OperatingSystem;
+import net.timbusproject.extractors.core.Parameter;
+import net.timbusproject.extractors.core.ParameterType;
 import net.timbusproject.extractors.modules.linuxhardware.absolute.Engine;
-import org.codehaus.jettison.json.JSONArray;
+
 import org.codehaus.jettison.json.JSONObject;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 import org.osgi.service.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.EnumSet;
-import java.util.HashMap;
+import com.fasterxml.uuid.Generators;
 
 public class LinuxHardwareExtractor implements IExtractor {
     @Autowired

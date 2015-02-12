@@ -17,15 +17,17 @@
  */
 package net.timbusproject.extractors.pojo;
 
-import net.timbusproject.extractors.core.Parameter;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.springframework.batch.core.JobExecution;
-
-import javax.xml.bind.annotation.*;
-import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Scanner;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+
+import net.timbusproject.extractors.core.Parameter;
+
+import org.springframework.batch.core.JobExecution;
 
 /**
  * Created with IntelliJ IDEA.

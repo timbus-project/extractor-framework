@@ -1,16 +1,14 @@
 package net.timbusproject.extractors.modules.linuxhardware.local;
 
-import com.jcraft.jsch.JSchException;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.codec.binary.StringUtils;
-import org.apache.commons.io.FileUtils;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.cli.ParseException;
+import org.codehaus.jettison.json.JSONException;
+
+import com.jcraft.jsch.JSchException;
 
 /**
  * Created by miguel on 31-01-2014.

@@ -17,15 +17,15 @@
  */
 package net.timbusproject.extractors.pojo;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.annotation.XmlElement;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-
-import javax.xml.bind.annotation.XmlElement;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class RequestWrapper {
 
