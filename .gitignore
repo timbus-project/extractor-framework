@@ -1,3 +1,4 @@
+*.class
 javadoc/
 
 # Package Files
@@ -37,3 +38,8 @@ bin/
 
 # PDT-specific
 .buildpath
+<<<<<<< HEAD
+=======
+
+# Output Files
+*.json
