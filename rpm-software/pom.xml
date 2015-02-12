@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.timbusproject.extractors</groupId>
         <artifactId>extractors</artifactId>
-        <version>2</version>
+        <version>2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,13 +21,14 @@
     <modules>
         <module>bundle</module>
         <module>cli</module>
+        <module>rpm-software-core</module>
     </modules>
 
     <dependencies>
         <dependency>
             <groupId>net.timbusproject.extractors</groupId>
-            <artifactId>helpers</artifactId>
-            <version>0.1.1</version>
+            <artifactId>extractors-helpers</artifactId>
+            <version>2.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.felix</groupId>
@@ -74,10 +75,6 @@
     </build>
 
     <repositories>
-        <repository>
-            <id>timbus.repository</id>
-            <url>http://timbus.teco.edu/maven</url>
-        </repository>
         <repository>
             <id>com.springsource.repository.bundles.external</id>
             <url>http://repository.springsource.com/maven/bundles/external</url>
