@@ -1,6 +1,4 @@
-*.class
 javadoc/
-src/main/resources/*/
 
 # Package Files
 *.jar

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>net.timbusproject.extractors</groupId>
+        <artifactId>extractors</artifactId>
+        <version>2</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>rpm-software-extractor</artifactId>
+    <version>0.1.4-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Red Hat Software Packages Extractor</name>
+
+    <properties>
+        <dependency.timbus.extractors.version>0.0.4-RELEASE</dependency.timbus.extractors.version>
+        <!--<bundle.embedded.dependencies/>-->
+    </properties>
+
+    <modules>
+        <module>bundle</module>
+        <module>cli</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.timbusproject.extractors</groupId>
+            <artifactId>helpers</artifactId>
+            <version>0.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>org.osgi.core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.uuid</groupId>
+            <artifactId>java-uuid-generator</artifactId>
+            <version>3.1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+            <version>1.3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft.jsch</groupId>
+            <artifactId>com.springsource.com.jcraft.jsch</artifactId>
+            <version>0.1.41</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>default/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>timbus.repository</id>
+            <url>http://timbus.teco.edu/maven</url>
+        </repository>
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+</project>
