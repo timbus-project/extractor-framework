@@ -18,7 +18,6 @@ bin/
 
 # VIM stuff
 *~
-
 # IntelliJ Stuff
 *.iml
 *.ipr
@@ -38,8 +37,6 @@ bin/
 
 # PDT-specific
 .buildpath
-<<<<<<< HEAD
-=======
 
 # Output Files
 *.json
