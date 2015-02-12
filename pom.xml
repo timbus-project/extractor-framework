@@ -22,6 +22,7 @@
 		<module>debian-software-extractor</module>
 		<module>rpm-software-extractor</module>
 		<module>linux-hardware-extractor</module>
+		<module>ssh-wrapper-extractor</module>
 	</modules>
 
 	<properties>

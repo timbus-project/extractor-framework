@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.timbusproject.extractors</groupId>
-    <artifactId>sshwrapper-extractor</artifactId>
+    <artifactId>ssh-wrapper-extractor</artifactId>
     <version>1.1-SNAPSHOT</version>
     <name>SSH Wrapper Extractor</name>
     <packaging>bundle</packaging>
@@ -31,8 +31,7 @@
         <dependency>
             <groupId>net.timbusproject.extractors</groupId>
             <artifactId>extractors-core</artifactId>
-            <version>0.0.3-RELEASE</version>
-            <scope>provided</scope>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <!--
@@ -128,10 +127,6 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
-        <repository>
-            <id>timbus.repository</id>
-            <url>http://timbus.teco.edu/maven</url>
         </repository>
     </repositories>
 </project>
