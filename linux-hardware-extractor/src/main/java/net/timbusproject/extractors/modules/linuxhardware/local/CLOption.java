@@ -33,18 +33,18 @@ class CLOption {
         return new CLOption(option);
     }
 
-    static CLOption buildOption(Option option, Class type) {
+    static CLOption buildOption(Option option, Class<?> type) {
         option.setType(type);
         return new CLOption(option);
     }
 
-    static CLOption buildOption(Option option, String argName, Class type) {
+    static CLOption buildOption(Option option, String argName, Class<?> type) {
         option.setArgName(argName);
         option.setType(type);
         return new CLOption(option);
     }
 
-    static CLOption buildOption(Option option, String argName, Class type, String defaultValue) {
+    static CLOption buildOption(Option option, String argName, Class<?> type, String defaultValue) {
         option.setArgName(argName);
         option.setType(type);
         return new CLOption(option, defaultValue);

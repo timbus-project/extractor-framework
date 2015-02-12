@@ -171,12 +171,12 @@ public class CLI {
     public boolean isValid() { return cmd.getOptions() != null && cmd.getOptions().length > 0; }
 
     private OutputStream getLoggerStdOut() {
-        return ((OutputStreamAppender)
+        return ((OutputStreamAppender<?>)
                 ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("root")).getAppender("STDOUT")
         ).getOutputStream();
     }
     private OutputStream getLoggerStdErr() {
-        return ((OutputStreamAppender)
+        return ((OutputStreamAppender<?>)
                 ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("root")).getAppender("STDERR")
         ).getOutputStream();
     }
