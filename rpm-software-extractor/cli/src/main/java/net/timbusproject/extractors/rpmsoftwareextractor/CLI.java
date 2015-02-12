@@ -19,8 +19,10 @@ package net.timbusproject.extractors.rpmsoftwareextractor;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.core.OutputStreamAppender;
+
 import com.fasterxml.uuid.Generators;
 import com.jcraft.jsch.JSchException;
+
 import org.apache.commons.cli.*;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -37,8 +39,8 @@ public class CLI {
     private final Options options = new Options();
     private CommandLine cmd;
 
-    @SuppressWarnings("AccessStaticViaInstance")
-    public CLI() {
+    @SuppressWarnings("static-access")
+	public CLI() {
         addOptions(
                 OptionBuilder.withLongOpt("help").withDescription("Shows help").create('h'),
                 createOptionGroup(
