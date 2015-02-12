@@ -194,29 +194,30 @@ public class CallBack {
     }
 
     public void setMailConfiguration() {
-        Scanner s = new Scanner(CallBack.class.getResourceAsStream("/default/callback"));
-        s.findInLine("mail:");
-        fromMail = s.nextLine().trim().toLowerCase();
-        while (s.hasNextLine()) {
-            switch (s.next().trim().replace(":", "")) {
-                case "smtp":
-                    smtp = s.nextLine().trim();
-                    break;
-                case "password":
-                    password = s.nextLine().trim();
-                    break;
-                case "port":
-                    port = s.nextLine().trim();
-                    break;
-                case "socketfactoryclass":
-                    socketFactoryClass = s.nextLine().trim();
-                    break;
-                case "mailauthentication":
-                    mailAuth = s.nextLine().trim();
-                    break;
-                default:
-                    s.nextLine();
-                    break;
+        try (Scanner s = new Scanner(CallBack.class.getResourceAsStream("/default/callback"))) {
+            s.findInLine("mail:");
+            fromMail = s.nextLine().trim().toLowerCase();
+            while (s.hasNextLine()) {
+                switch (s.next().trim().replace(":", "")) {
+                    case "smtp":
+                        smtp = s.nextLine().trim();
+                        break;
+                    case "password":
+                        password = s.nextLine().trim();
+                        break;
+                    case "port":
+                        port = s.nextLine().trim();
+                        break;
+                    case "socketfactoryclass":
+                        socketFactoryClass = s.nextLine().trim();
+                        break;
+                    case "mailauthentication":
+                        mailAuth = s.nextLine().trim();
+                        break;
+                    default:
+                        s.nextLine();
+                        break;
+                }
             }
         }
     }
