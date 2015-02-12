@@ -20,6 +20,7 @@
 		<module>extractors-helpers</module>
 		<module>extractors-manager</module>
 		<module>debian-software-extractor</module>
+		<module>rpm-software-extractor</module>
 	</modules>
 
 	<properties>
