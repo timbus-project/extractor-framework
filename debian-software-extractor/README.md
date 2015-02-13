@@ -1,56 +1,58 @@
-# Debian Software Extractor
-This tool allows extracting software packages metadata from [Debian-based Linux distributions][debian-based].
+Debian Software Extractor
+========================
 
-It features two extracting methods:
+The Debian Software extractor gathers software package metadata from [Linux](http://en.wikipedia.org/wiki/Linux) Distributions based on the 
+[Advanced Packaging Tool](https://wiki.debian.org/Apt) (apt), known collectively as [Debian based distributions](https://www.debian.org/misc/children-distros).
+
+Introduction
+------------
+
+The extractor operates in one of two modes:
 
 - **installed packages extraction:** extracts all installed packages on the target machine; and
-- **universe extraction:** extracts all known packages to the target machine, including installed remote repositories (or [Personal Package Archives (PPA)][ppa])
+- **universe extraction:** extracts all known packages to the target machine, including installed remote repositories, known as [Personal Package Archives](http://en.wikipedia.org/wiki/Personal_Package_Archive) (PPAs).
 
-Collected information mainly refers to:
+Collected information mainly includes:
 
 - **package control information** (name, version, dependencies, etc);
 - **licenses**;
 - **installers remote location**; and
 - **distribution information** (id, release, codename, architecture)
 
-This tool is able to extract from local or remote target machines.
+This tool can extract package information from local machines or remote targets, via [Secure Shell](http://en.wikipedia.org/wiki/Secure_Shell) (SSH).
 
----
+Dependencies
+------------
 
-## Requirements
-
-### Requirements for running the tool
+### Dependencies for running Debian Extactor
 On the server or machine running the command-line interface:
 
-- Java Runtime Environment (JRE) 1.6 ([OpenJDK][] or [Oracle JRE][])
+ * Java Runtime Environment (JRE) 1.7, e.g. [OpenJDK](http://openjdk.java.net/install/) or [Oracle JRE](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
-On the target machines:
+On all target machines:
 
-- [Debian-based distribution][debian-based] with:
-    - low-level [dpkg][];
-    - higher-level [apt][] _(optional, allows extracting installers remote location)_;
-    - [devscripts][] package _(optional, allows extracting packages' licenses)_; and
-    - [lsb-release][] package _(optional, allows extracting operating system information)_
-- **(if remotely:)** [SSH server running][ssh-server] with authenticated user
+ A Debian-based distribution with:
+ 
+    * [dpkg](https://www.debian.org/doc/manuals/debian-faq/ch-pkgtools.en.html), the base package management tool;
+    * [apt](https://wiki.debian.org/Apt) , the Advanced Packaging Tool _(optional, allows extracting installers remote location)_;
+    * [devscripts](https://packages.debian.org/search?keywords=devscripts) package _(optional, allows extracting packages' licenses)_;
+    * [lsb-release](https://packages.debian.org/sid/lsb) package _(optional, allows extracting operating system information)_ ; and
+    * [SSH Server](https://wiki.debian.org/SSH#Installation_of_the_server) required for remote access with authenticated user
 
-### Requirements for building the tool
-- Java Development Kit (JDK) 1.6 ([OpenJDK][] or [Oracle JDK][]); and
-- [Apache Maven][maven]
+### Dependecies to build the Debian Extractor
 
----
+ * Java Development Kit (JDK) 1.6 ([OpenJDK][]http://openjdk.java.net/install/ or [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html); and
+ * [Apache Maven](http://maven.apache.org/)
 
-## How to get the code
-    :::bash
-    $ git clone https://opensourceprojects.eu/git/p/timbus/context-population/extractors/debian-software
-
----
-
-## Using the tool
+Using the Debian Extractor
+--------------
 
 ### Using the tool from the GUI (Graphical User Interface)
+
 Run the [Context Population GUI][], open it on a web browser and follow on-screen instructions.
 
 ### Using the tool from the CLI (Command-Line Interface)
+
 The command-line interface offers a range of parameters:
 
     java -jar debian-software-extractor-cli-{version}.jar [--debug | -q] [-h]
@@ -64,11 +66,11 @@ The command-line interface offers a range of parameters:
       -r,--remote <user@host:port> Extracts remotely
       -u,--universe                Extracts universe
 
-**Local extraction** does not need extra input or authentication. **Remote extraction** allows multiple targets to be set.
+**Local extraction** does not need extra input or authentication.
+
+**Remote extraction** allows multiple targets to be set.
 
 By default, result is printed to the _standard output_. If output file is set, it is then saved to file and not printed. For **multiple extractions**, output files are named after remote location and port (this is appended).
-
----
 
 ## Extracted information
 This tool gathers all the information into JSON format, which is afterwards sent for conversion, using the [Debian Software Converter][], into ontology.
@@ -130,8 +132,6 @@ This tool gathers all the information into JSON format, which is afterwards sent
 
 This is an example extraction, showing a single package on a specific system from a specific time. Extractions are expected to vary due to systems themselves and packages actually known to (or installed on) the target system.
 
----
-
 ## TIMBUS Use Cases
 This extractor is relevant to all [TIMBUS][] use cases concerning [Debian-based Linux environments][debian-based]:
 
@@ -144,13 +144,10 @@ Each of these use cases is run on top of a [Debian-based Linux environment][debi
 
 Taking the extraction depicted above, describing `lsb-release` package, it shows it has multiple dependencies. The same is expected to happen with other packages (as well as with `lsb-release`'s dependencies). During the process of conversion, this package and corresponding dependencies are linked one to the other on the ontology. The package being extracted is identified with its name and version and linked to its dependencies. Each dependency is identified with corresponding name and version restriction (both comparator and version). These dependencies are then linked to other concrete packages either installed or known to the package manager.
 
----
-
 ## Authors
 - Luís Marques
 - Jorge Simões (<jorge.simoes@caixamagica.pt>)
 
----
 
 ## License
 Copyright (c) 2014, Caixa Magica Software Lda (CMS)

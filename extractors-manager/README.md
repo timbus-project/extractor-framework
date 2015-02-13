@@ -1,14 +1,9 @@
-# Extractors API
+Extractors Manager
+------------------
 
 This API is responsible for all external access and internal management of given requests. It shall start a process for each request and return corresponding result.
 
 This project cannot be used as a standalone.
-
-&nbsp;
-
-## How to get the code
-
-	$ git clone https://opensourceprojects.eu/git/p/timbus/context-population/extraction-manager extractors-api
 
 &nbsp;
 
@@ -19,8 +14,6 @@ This project cannot be used as a standalone.
 - [_core_, _osgi_ and _osgi-jersey-webservice_ parents](/p/timbus/support/maven-parents/)
 - [Extractors Core](/p/timbus/context-population/extractors-core) library
 - Internet access **or** manually download and install dependencies to Maven local repository
-
-&nbsp;
 
 ## Usage
 
@@ -33,8 +26,6 @@ In order to be able to deploy this project to Virgo, execute the following comma
 	$ mvn clean package
 
 Once the API is built and Virgo is running, access the Virgo's control panel and deploy the resulting .war file.
-
-&nbsp;
 
 ### Working with extractors
 As mentioned, this project is responsible for delegating extractions to all extractor modules. The [Osgi Framework](http://www.osgi.org/Main/HomePage) is used to modularize the Context Population Framework and, hence, the Extractors API searches through OSGI for any extractor module that implements the *IExtractor* interface - present in [Extractors Core](https://opensourceprojects.eu/p/timbus/context-population/extractors-core) - and making its service available. Further information on how to implement an extractor that Extractors API recognizes and is able to use can be found in this **[guide](https://opensourceprojects.eu/p/timbus/context-population/extractors/wiki/How%20to%20create%20a%20new%20Extractor/)**.

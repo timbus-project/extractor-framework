@@ -1,4 +1,6 @@
 # RPM Software Extractor
+------------------------------
+
 This tool allows extracting all installed software packages metadata on a given target machine from [RPM-based Linux distributions][rpm-based].
 
 Collected information mainly refers to:

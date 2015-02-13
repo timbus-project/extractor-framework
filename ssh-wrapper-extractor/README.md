@@ -1,15 +1,7 @@
-#SSH Wrapper Extractor
+SSH Wrapper Extractor
+---------------------
 
 SSH Wrapper Extractor is a tool that is able to send any list of commands to a remote machine and capture its output.
-
-&nbsp;
-
-##How to get the code
-
-	git clone https://opensourceprojects.eu/git/p/timbus/context-population/extractors/wrapper-ssh timbus-context-population-extractors-wrapper-ssh
- 
-
-&nbsp;
 
 ##Install Requirements
 
@@ -19,14 +11,10 @@ SSH Wrapper Extractor is a tool that is able to send any list of commands to a r
 
 1. Any operating system with [authenticated user running SSH server](http://www.cyberciti.biz/faq/how-to-installing-and-using-ssh-client-server-in-linux/)
 
-&nbsp;
-
 ##Collected Information
 
 SSH, standing for Secure Shell, is part of the TCP/IP protocol suite and offers a nearly unanimous safe way to administrate UNIX remote machines. It can also be used in other operating systems such as Windows by using proper emulators.
 Example: [PuTTY](http://en.wikipedia.org/wiki/PuTTY)
-
-&nbsp;
 
 ##Relevant parameters
 
@@ -34,14 +22,10 @@ Example: [PuTTY](http://en.wikipedia.org/wiki/PuTTY)
 2. Computer fqdn and port (defaults to 22)
 3. List of commands to be performed in machine 
 
-&nbsp;
-
 ##Expected output
 	 
 As the Extractor Wrapper is aimed to capture the output of any local extractor or remote file containing a previously performed extraction, it does not expect any specific output. In this moment, it is designed to perform punctual remote-to-local extractions.
 Version 0.0.3 of Extractors API will include a functionality in which it expects each extraction's output to contain a header which explicitly declares the format of the output.   
-
-&nbsp;
 
 ##TIMBUS Use Cases
 

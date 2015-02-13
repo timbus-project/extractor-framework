@@ -1,4 +1,5 @@
-#Hardware Linux Extractor
+Hardware Linux Extractor
+------------------------
 
 The Hardware Linux Extractor is a tool developed in Java and extracts hardware information of a Linux
 machine.

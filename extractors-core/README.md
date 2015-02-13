@@ -1,27 +1,19 @@
-# Extractors Core
+Extractors Core
+===============
 
 This core library contains main communication interface between all extraction-related OSGi-based projects.
 
-This project cannot be used as a standalone.
+This is a software library used as a dependency and cannot be executed as a standalone program.
 
-&nbsp;
-
-## How to get the code
-
-	$ git clone https://opensourceprojects.eu/git/p/timbus/context-population/extractors-core
-
-&nbsp;
-
-## Requirements
+Requirements
+------------
 
 - [Java Development Kit][req-java] (>= 1.6) _[how to install][osp-install-java]_
 - [Maven][req-maven] (>= 2)
-- [_core_ and _osgi_ parents][req-parents]
 - Internet access **or** manually download and install [OSGi 4.3 core companion code](http://www.osgi.org/Download) to Maven local repository
 
-&nbsp;
-
-## Usage
+Installation
+------------
 
 ### Virgo server
 
@@ -29,21 +21,19 @@ To deploy this project on Virgo from source code, execute the following command 
 
 	$ mvn clean package
 
-&nbsp;
-
 ### Install to Maven local repository
 
 In order to be able to develop new extractors or compile extraction-related projects, run the following command from project's root folder:
 
 	$ mvn clean install
-[This page](https://opensourceprojects.eu/p/timbus/context-population/extractors/wiki/How%20to%20create%20a%20new%20Extractor/) contains a comprehensive tutorial on how to develop an extractor that complies with TIMBUS architecture
 
-&nbsp;
+[This page](https://opensourceprojects.eu/p/timbus/context-population/extractors/wiki/How%20to%20create%20a%20new%20Extractor/) contains a comprehensive tutorial on how to develop an extractor that complies with TIMBUS architecture
 
 ### Within an Extractor project
 
 The most relevant component of Extractors Core is the interface **IExtractor**. To develop an extractor that is recognized within the Context Population Framework, it is mandatory to implement this class. The *extract* method returns a String and this is where the result of the Extraction must be provided.
-In Timbus Project Extractors, the Spring Framework was used to implement the OSGI framework. A typical Timbus extractor declares the following dependency in the *pom.xml* file:
+
+In Timbus Project Extractors, the Spring Framework was used to implement the OSGI framework. Typically a Timbus Extractor would declare the following dependency in the *pom.xml* file:
 
 	<dependency>
         <groupId>org.springframework</groupId>
@@ -56,6 +46,7 @@ With this dependency within the project build path, it is now possible to declar
 
 	@Autowired
 	private BundleContext bundleContext;
+
 This object is to be used in overriding the *IExtractor* methods, which ask information about the extractor to be used in the Osgi Framework.
 Further on, in order for this bundle to be recognized within the Osgi framework, two .xml files are added in the resources folder, under **META-INF --> spring**:
 

@@ -7,15 +7,10 @@ This library provides common functionality for the extractors.
 Usage
 -----
 
-Import the lib using Maven:
+Import the helper jar via Maven:
 
     <dependency>
         <groupId>net.timbusproject.extractors</groupId>
-        <artifactId>helpers</artifactId>
+        <artifactId>extractors-helper</artifactId>
         <version>0.1</version>
     </dependency>
-
-    <repository>
-        <id>olymp.ifs.tuwien.ac.at</id>
-        <url>http://olymp.ifs.tuwien.ac.at:8080/archiva/repository/snapshots/</url>
-    </repository>
