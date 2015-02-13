@@ -40,3 +40,5 @@ bin/
 
 # Output Files
 *.json
+
+ssh-wrapper-extractor/META-INF
