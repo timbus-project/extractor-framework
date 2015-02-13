@@ -6,8 +6,8 @@
 
     <groupId>net.timbusproject.extractors</groupId>
     <artifactId>ssh-wrapper-extractor</artifactId>
-    <version>1.1-SNAPSHOT</version>
-    <name>SSH Wrapper Extractor</name>
+    <version>1.1</version>
+    <name>TIMBUS SSH Wrapper Extractor</name>
     <packaging>bundle</packaging>
 
     <properties>

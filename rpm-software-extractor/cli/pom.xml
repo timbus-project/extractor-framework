@@ -11,7 +11,7 @@
 
     <artifactId>rpm-software-extractor-cli</artifactId>
     <packaging>jar</packaging>
-    <name>RPM Software Extractor - command-line interface</name>
+    <name>RPM Software Extractor command-line interface</name>
 
     <properties>
         <project.mainClass>net.timbusproject.extractors.rpmsoftwareextractor.CLI</project.mainClass>

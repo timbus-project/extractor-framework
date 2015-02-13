@@ -13,7 +13,7 @@
     <artifactId>rpm-software-extractor-bundle</artifactId>
     <version>${project.parent.version}</version>
     <packaging>bundle</packaging>
-    <name>RPM Software Extractor</name>
+    <name>RPM Software Extractor bundle</name>
 
     <properties>
         <!--<bundle.embedded.dependencies/>-->

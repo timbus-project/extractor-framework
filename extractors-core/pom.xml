@@ -3,30 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>net.timbusproject.extractors</groupId>
-		<artifactId>extractors</artifactId>
+		<artifactId>extractors-reactor</artifactId>
 		<version>2.0</version>
 	</parent>
 	<artifactId>extractors-core</artifactId>
 	<name>TIMBUS Extractors core</name>
-	<description>APIs and core dependencies for TIMBUS extractors.</description>
-
-	<developers>
-        <developer>
-            <name>Luís Duarte</name>
-            <email>luis.duarte@caixamagica.pt</email>
-        </developer>
-        <developer>
-            <name>Jorge Simões</name>
-            <email>jorge.simoes@caixamagica.pt</email>
-        </developer>
-    </developers>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-        </license>
-    </licenses>
+	<description>APIs and core libraries for TIMBUS extractors.</description>
 
     <dependencies>
         <!-- OSGi -->

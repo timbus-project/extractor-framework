@@ -11,7 +11,7 @@
 	<artifactId>debian-software-extractor-bundle</artifactId>
 	<version>${project.parent.version}</version>
 	<packaging>bundle</packaging>
-	<name>Debian Software Extractor</name>
+	<name>Debian Software Extractor Bundle</name>
 
 	<properties>
 		<!--<bundle.embedded.dependencies/> -->

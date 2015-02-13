@@ -6,6 +6,7 @@
     <version>0.1.4-SNAPSHOT</version>
   </parent>
   <artifactId>rpm-software-core</artifactId>
+  <name>RPM Software Extractor core</name>
 	<dependencies>
 		<dependency>
 			<groupId>net.timbusproject.extractors</groupId>

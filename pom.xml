@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.timbusproject.extractors</groupId>
-	<artifactId>extractors</artifactId>
+	<artifactId>extractors-reactor</artifactId>
 	<version>2.0</version>
-	<name>TIMBUS Extractor Project</name>
-	<description>Complete set of TIMBUS Extractor Framework packages.</description>
+	<name>TIMBUS Extractor Framework reactor</name>
+	<description>Reactor for the TIMBUS Extractor Framework packages.</description>
 	<packaging>pom</packaging>
 
 	<organization>
@@ -14,6 +14,29 @@
 		<url>http://timbusproject.net/about/project-partners</url>
 	</organization>
 	<url>http://timbusproject.net/</url>
+
+	<developers>
+        <developer>
+            <name>Luís Duarte</name>
+            <email>luis.duarte@caixamagica.pt</email>
+        </developer>
+        <developer>
+            <name>Jorge Simões</name>
+            <email>jorge.simoes@caixamagica.pt</email>
+        </developer>
+        <developer>
+            <name>Rudolf Mayer</name>
+            <email>rmayer@sba-research.org</email>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
 
 	<modules>
 		<module>extractors-core</module>
@@ -29,8 +52,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.source.version>1.7</jdk.source.version>
 		<jdk.target.version>1.7</jdk.target.version>
-		<junit.version>4.12</junit.version>
 		<osgi.version>4.3.1</osgi.version>
+        <owlapi.version>3.4.10</owlapi.version>
 	</properties>
 
 	<build>

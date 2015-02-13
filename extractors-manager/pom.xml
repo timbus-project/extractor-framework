@@ -5,30 +5,16 @@
 
 	<parent>
 		<groupId>net.timbusproject.extractors</groupId>
-		<artifactId>extractors</artifactId>
+		<artifactId>extractors-reactor</artifactId>
 		<version>2.0</version>
 	</parent>
 
 	<artifactId>extractors-manager</artifactId>
-    <version>0.0.2</version>
     <packaging>war</packaging>
-    <name>Context Population Framework - Extractors Manager</name>
-    <url>http://www.timbusproject.net/</url>
-
-	<developers>
-        <developer>
-            <name>Jorge Simões</name>
-            <email>jorge.simoes@caixamagica.pt</email>
-        </developer>
-        <developer>
-            <name>Luís Duarte</name>
-            <email>luis.duarte@caixamagica.pt</email>
-        </developer>
-	</developers>
+    <name>TIMBUS Extractor Framework manager</name>
+    <description></description>
 
 	<properties>
-        <project.java.version>1.7</project.java.version>
-        <project.web.context>extractors/api</project.web.context>
         <plugin.bundle.embed.dependency>*;scope=compile</plugin.bundle.embed.dependency>
         <plugin.bundle.embed.directory>WEB-INF/lib</plugin.bundle.embed.directory>
         <plugin.bundle.import>com.sun.jersey.api.json,*</plugin.bundle.import>
@@ -154,22 +140,6 @@
             </resource>
         </resources>
 		<plugins>
-<!--
-            <plugin>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<additionalProjectnatures>
-						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
-					</additionalProjectnatures>
-					<additionalBuildcommands>
-						<buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
-					</additionalBuildcommands>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>true</downloadJavadocs>
-				</configuration>
-			</plugin>
--->
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>

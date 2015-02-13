@@ -3,36 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>net.timbusproject.extractors</groupId>
-		<artifactId>extractors</artifactId>
+		<artifactId>extractors-reactor</artifactId>
 		<version>2.0</version>
 	</parent>
     <artifactId>extractors-helpers</artifactId>
-    <name>extractors-helpers</name>
-    <description>Helper applications for context extractors</description>
-    <url>http://timbusproject.net/</url>
-
-    <developers>
-        <developer>
-            <name>Rudolf Mayer</name>
-            <email>rmayer@sba-research.org</email>
-        </developer>
-    </developers>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <owlapi.version>3.4.10</owlapi.version>
-    </properties>
-
-    <organization>
-        <url>http://timbusproject.net/</url>
-    </organization>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-        </license>
-    </licenses>
+    <name>TIMBUS Extractor Framework helpers</name>
+    <description>Helper library for context extractors</description>
 
     <dependencies>
         <dependency>
